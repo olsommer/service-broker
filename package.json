@@ -1,0 +1,26 @@
+{
+  "name": "service-broker",
+  "version": "1.0.0",
+  "source": "src/index.ts",
+  "main": "dist/main.js",
+  "scripts": {
+    "watch": "parcel watch",
+    "build": "parcel build src/index.ts"
+  },
+  "devDependencies": {
+    "@parcel/packager-ts": "^2.10.0",
+    "@parcel/transformer-typescript-types": "^2.10.0",
+    "parcel": "^2.10.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@supabase/realtime-js": "^2.8.0",
+    "@supabase/supabase-js": "^2.38.1",
+    "axios": "^1.5.1",
+    "dom-parser": "^0.1.6",
+    "openai": "^4.12.1"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
