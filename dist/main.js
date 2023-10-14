@@ -1,9 +1,8 @@
-var $8zHUo$child_process = require("child_process");
-var $8zHUo$process = require("process");
-var $8zHUo$axios = require("axios");
-var $8zHUo$supabaserealtimejs = require("@supabase/realtime-js");
-var $8zHUo$supabasesupabasejs = require("@supabase/supabase-js");
-var $8zHUo$openai = require("openai");
+var $jZMcD$child_process = require("child_process");
+var $jZMcD$axios = require("axios");
+var $jZMcD$supabaserealtimejs = require("@supabase/realtime-js");
+var $jZMcD$supabasesupabasejs = require("@supabase/supabase-js");
+var $jZMcD$openai = require("openai");
 
 
 function $parcel$interopDefault(a) {
@@ -14,23 +13,23 @@ function $parcel$interopDefault(a) {
 // WARNING: The service role key has admin priviliges and should only be used in secure server environments!
 
 
-const $fe559aa6c1aff731$var$rturl = "wss://ndxhivyksquaghuolyig.supabase.co/realtime/v1";
+const $19920bad422f0bb2$var$rturl = "wss://ndxhivyksquaghuolyig.supabase.co/realtime/v1";
 // wss://[project-ref].supabase.co/realtime/v1/websocket?apikey=[anon-token]&log_level=info&vsn=1.0.0
-const $fe559aa6c1aff731$var$url = "https://ndxhivyksquaghuolyig.supabase.co";
-const $fe559aa6c1aff731$var$key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5keGhpdnlrc3F1YWdodW9seWlnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY5MjI3NjEyNywiZXhwIjoyMDA3ODUyMTI3fQ.hRHgz6ZomMHf7RlKUp1JeoYx0frcvqELHxof4GN9RRk";
-if (!$fe559aa6c1aff731$var$url) throw new Error("Missing url");
-if (!$fe559aa6c1aff731$var$key) throw new Error("Missing service role key");
-const $fe559aa6c1aff731$export$ea80eb855ab064f8 = new (0, $8zHUo$supabaserealtimejs.RealtimeClient)($fe559aa6c1aff731$var$rturl, {
+const $19920bad422f0bb2$var$url = "https://ndxhivyksquaghuolyig.supabase.co";
+const $19920bad422f0bb2$var$key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5keGhpdnlrc3F1YWdodW9seWlnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY5MjI3NjEyNywiZXhwIjoyMDA3ODUyMTI3fQ.hRHgz6ZomMHf7RlKUp1JeoYx0frcvqELHxof4GN9RRk";
+if (!$19920bad422f0bb2$var$url) throw new Error("Missing url");
+if (!$19920bad422f0bb2$var$key) throw new Error("Missing service role key");
+const $19920bad422f0bb2$export$ea80eb855ab064f8 = new (0, $jZMcD$supabaserealtimejs.RealtimeClient)($19920bad422f0bb2$var$rturl, {
     params: {
-        apikey: $fe559aa6c1aff731$var$key,
+        apikey: $19920bad422f0bb2$var$key,
         reconnect: true
     }
 });
-const $fe559aa6c1aff731$export$e40e0db08f6c644f = (0, $8zHUo$supabasesupabasejs.createClient)($fe559aa6c1aff731$var$url, $fe559aa6c1aff731$var$key);
+const $19920bad422f0bb2$export$e40e0db08f6c644f = (0, $jZMcD$supabasesupabasejs.createClient)($19920bad422f0bb2$var$url, $19920bad422f0bb2$var$key);
 
 
-async function $86fcb1e1a0235707$export$bef1f36f5486a6a3(status, meta, id, task) {
-    const { error: error } = await (0, $fe559aa6c1aff731$export$e40e0db08f6c644f).from("leads_jobs_logs").insert({
+async function $a4e0c77f633e416d$export$bef1f36f5486a6a3(status, meta, id, task) {
+    const { error: error } = await (0, $19920bad422f0bb2$export$e40e0db08f6c644f).from("leads_jobs_logs").insert({
         status: status,
         meta: meta,
         ref_id: id,
@@ -40,13 +39,13 @@ async function $86fcb1e1a0235707$export$bef1f36f5486a6a3(status, meta, id, task)
 }
 
 
-function $09957ba9e5b78d1e$export$bef94a5618bf18bf(url) {
+function $81f4223fb3da852e$export$bef94a5618bf18bf(url) {
     const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9.-]+)(:[0-9]+)?(\/[^\s]*)?$/;
     return urlPattern.test(url);
 }
 
 
-function $aa4bd33aa7fd5a65$export$f784c93c2c19988(inputUrl) {
+function $b1e28e1395f6cc2c$export$f784c93c2c19988(inputUrl) {
     // Remove 'https://' or 'http://' if present
     let transformedUrl = inputUrl.replace(/^(https?:\/\/)/, "");
     // Remove 'www.' if present
@@ -59,22 +58,22 @@ function $aa4bd33aa7fd5a65$export$f784c93c2c19988(inputUrl) {
 
 
 
-async function $ccfefd7f5678eccd$export$6c0ecc2862ebf379(record) {
+async function $0dfe712be313046e$export$6c0ecc2862ebf379(record) {
     const { id: id, lead_id: lead_id } = record;
     try {
         if (!lead_id) throw new Error("No lead_id provided");
         const uuid = crypto.randomUUID();
         // Get lead data
         // --------------------------------------
-        const { data: leadData, error: leadErr } = await (0, $fe559aa6c1aff731$export$e40e0db08f6c644f).from("leads").select("*").eq("id", lead_id).limit(1).single();
+        const { data: leadData, error: leadErr } = await (0, $19920bad422f0bb2$export$e40e0db08f6c644f).from("leads").select("*").eq("id", lead_id).limit(1).single();
         if (leadErr) throw leadErr;
         if (!leadData) throw new Error("No data");
         const url = leadData.lead.Website;
         if (!url) throw new Error("Website URL is empty or null");
         // Transform url
         // -------------------------------------------------
-        if ((0, $09957ba9e5b78d1e$export$bef94a5618bf18bf)(url) === false) await (0, $86fcb1e1a0235707$export$bef1f36f5486a6a3)("ERROR", "result: invalid url", id, "scrape");
-        const tUrl = (0, $aa4bd33aa7fd5a65$export$f784c93c2c19988)(url);
+        if ((0, $81f4223fb3da852e$export$bef94a5618bf18bf)(url) === false) await (0, $a4e0c77f633e416d$export$bef1f36f5486a6a3)("ERROR", "result: invalid url", id, "scrape");
+        const tUrl = (0, $b1e28e1395f6cc2c$export$f784c93c2c19988)(url);
         // Scraping job
         // -------------------------------------------------
         const callbackURL = `https://ndxhivyksquaghuolyig.supabase.co/functions/v1/webhook?scrapeId=${uuid}&leadJobId=${id}`;
@@ -89,16 +88,16 @@ async function $ccfefd7f5678eccd$export$6c0ecc2862ebf379(record) {
         };
         const reqURL = "https://async.scraperapi.com/jobs";
         // -------------------------------------------------
-        (0, ($parcel$interopDefault($8zHUo$axios))).post(reqURL, body, {
+        (0, ($parcel$interopDefault($jZMcD$axios))).post(reqURL, body, {
             headers: {
                 "Content-Type": "application/json"
             }
         }).then(async (res)=>{
-            await (0, $86fcb1e1a0235707$export$bef1f36f5486a6a3)("OK", res, id, "scrape");
+            await (0, $a4e0c77f633e416d$export$bef1f36f5486a6a3)("OK", res, id, "scrape");
             //
             //
             // Add dummy scrape but without any content
-            const { error: error } = await (0, $fe559aa6c1aff731$export$e40e0db08f6c644f).from("scrapes").insert({
+            const { error: error } = await (0, $19920bad422f0bb2$export$e40e0db08f6c644f).from("scrapes").insert({
                 id: uuid,
                 lead_job_id: id,
                 log_request: res,
@@ -111,7 +110,7 @@ async function $ccfefd7f5678eccd$export$6c0ecc2862ebf379(record) {
         });
     //
     /* Error handling */ } catch (error) {
-        await (0, $86fcb1e1a0235707$export$bef1f36f5486a6a3)("ERROR", error.message, id, "scrape");
+        await (0, $a4e0c77f633e416d$export$bef1f36f5486a6a3)("ERROR", error.message, id, "scrape");
     }
 }
 
@@ -119,30 +118,30 @@ async function $ccfefd7f5678eccd$export$6c0ecc2862ebf379(record) {
 
 
 
-const $7be3bf518b2125d1$export$464f99bcbd6e7094 = new (0, ($parcel$interopDefault($8zHUo$openai)))({
+const $11a59547a2577d36$export$464f99bcbd6e7094 = new (0, ($parcel$interopDefault($jZMcD$openai)))({
     apiKey: "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"
 });
 
 
 
 
-async function $2689391225d2f8e6$export$5a8b80f35baeb72c(id, status, tries) {
-    const { error: error } = await (0, $fe559aa6c1aff731$export$e40e0db08f6c644f).from("leads_jobs").update({
+async function $7aec9f2f80fc47f3$export$5a8b80f35baeb72c(id, status, tries) {
+    const { error: error } = await (0, $19920bad422f0bb2$export$e40e0db08f6c644f).from("leads_jobs").update({
         status: status,
         tries: tries
     }).eq("id", id);
     if (error) throw error;
-    await (0, $86fcb1e1a0235707$export$bef1f36f5486a6a3)("OK", status, id, "next state");
+    await (0, $a4e0c77f633e416d$export$bef1f36f5486a6a3)("OK", status, id, "next state");
 }
 
 
-async function $d2bbfdf59f152f3d$export$1e70e29ad6d71f19(record) {
+async function $66a5d00e3d64bc80$export$1e70e29ad6d71f19(record) {
     const { id: id, job_id: job_id } = record;
     try {
         if (!job_id) throw new Error("No job id");
         // Get form data
         // --------------------------------------
-        const { data: scrData, error: scrErr } = await (0, $fe559aa6c1aff731$export$e40e0db08f6c644f).from("scrapes").select("*").eq("lead_job_id", id).order("created_at", {
+        const { data: scrData, error: scrErr } = await (0, $19920bad422f0bb2$export$e40e0db08f6c644f).from("scrapes").select("*").eq("lead_job_id", id).order("created_at", {
             ascending: false
         }).limit(1).single();
         if (scrErr) throw scrErr;
@@ -150,7 +149,7 @@ async function $d2bbfdf59f152f3d$export$1e70e29ad6d71f19(record) {
         const content_cleaned = scrData.content_cleaned;
         // Get job data
         // --------------------------------------
-        const { data: jobsData, error: jobsErr } = await (0, $fe559aa6c1aff731$export$e40e0db08f6c644f).from("jobs").select("*").eq("id", job_id).limit(1).single();
+        const { data: jobsData, error: jobsErr } = await (0, $19920bad422f0bb2$export$e40e0db08f6c644f).from("jobs").select("*").eq("id", job_id).limit(1).single();
         if (jobsErr) throw jobsErr;
         if (!jobsData) throw new Error("No data");
         const form = jobsData.meta;
@@ -169,7 +168,7 @@ async function $d2bbfdf59f152f3d$export$1e70e29ad6d71f19(record) {
        Write at least 5 sentences.
        `;
         //
-        const chatCompletion = await (0, $7be3bf518b2125d1$export$464f99bcbd6e7094).chat.completions.create({
+        const chatCompletion = await (0, $11a59547a2577d36$export$464f99bcbd6e7094).chat.completions.create({
             messages: [
                 {
                     role: "user",
@@ -188,17 +187,17 @@ async function $d2bbfdf59f152f3d$export$1e70e29ad6d71f19(record) {
         };
         // Save the summary content to the database
         // --------------------------------------
-        const { error: error } = await (0, $fe559aa6c1aff731$export$e40e0db08f6c644f).from("summaries").insert({
+        const { error: error } = await (0, $19920bad422f0bb2$export$e40e0db08f6c644f).from("summaries").insert({
             content: summary,
             meta: meta,
             type: "HOMEPAGE",
             lead_job_id: id
         });
         if (error) throw error;
-        await (0, $2689391225d2f8e6$export$5a8b80f35baeb72c)(id, "FLAG_TO_GENERATE");
+        await (0, $7aec9f2f80fc47f3$export$5a8b80f35baeb72c)(id, "FLAG_TO_GENERATE");
     } catch (error) {
         console.log(error);
-        await (0, $86fcb1e1a0235707$export$bef1f36f5486a6a3)("ERROR", error.message, id, "summarize");
+        await (0, $a4e0c77f633e416d$export$bef1f36f5486a6a3)("ERROR", error.message, id, "summarize");
     }
 }
 
@@ -207,19 +206,19 @@ async function $d2bbfdf59f152f3d$export$1e70e29ad6d71f19(record) {
 
 
 
-async function $ceac83cea96254e1$export$80d376111cc09ad7(record) {
+async function $1ac1e0ae6caa28da$export$80d376111cc09ad7(record) {
     const { id: id, lead_id: lead_id, job_id: job_id } = record;
     try {
         if (!job_id) throw new Error("No job id");
         // Get form data
         // --------------------------------------
-        const { data: jobsData, error: jobsErr } = await (0, $fe559aa6c1aff731$export$e40e0db08f6c644f).from("jobs").select("*").eq("id", job_id).limit(1).single();
+        const { data: jobsData, error: jobsErr } = await (0, $19920bad422f0bb2$export$e40e0db08f6c644f).from("jobs").select("*").eq("id", job_id).limit(1).single();
         if (jobsErr) throw jobsErr;
         if (!jobsData) throw new Error("No data");
         const form = jobsData.meta;
         // Get summary data
         // --------------------------------------
-        const { data: sumData, error: sumErr } = await (0, $fe559aa6c1aff731$export$e40e0db08f6c644f).from("summaries").select("*").eq("lead_job_id", id).order("created_at", {
+        const { data: sumData, error: sumErr } = await (0, $19920bad422f0bb2$export$e40e0db08f6c644f).from("summaries").select("*").eq("lead_job_id", id).order("created_at", {
             ascending: false
         }).limit(1).single();
         if (sumErr) throw sumErr;
@@ -270,7 +269,7 @@ async function $ceac83cea96254e1$export$80d376111cc09ad7(record) {
     `;
         // --------------------------------------
         console.log(prompt);
-        const chatCompletion = await (0, $7be3bf518b2125d1$export$464f99bcbd6e7094).chat.completions.create({
+        const chatCompletion = await (0, $11a59547a2577d36$export$464f99bcbd6e7094).chat.completions.create({
             messages: [
                 {
                     role: "user",
@@ -290,7 +289,7 @@ async function $ceac83cea96254e1$export$80d376111cc09ad7(record) {
         // --------------------------------------
         // Save to the database
         // --------------------------------------
-        const { error: error } = await (0, $fe559aa6c1aff731$export$e40e0db08f6c644f).from("lines").insert({
+        const { error: error } = await (0, $19920bad422f0bb2$export$e40e0db08f6c644f).from("lines").insert({
             content: generated_line,
             meta: meta,
             active: true,
@@ -300,10 +299,10 @@ async function $ceac83cea96254e1$export$80d376111cc09ad7(record) {
             ascending: false
         });
         if (error) throw error;
-        await (0, $2689391225d2f8e6$export$5a8b80f35baeb72c)(id, "FLAG_TO_FINISH");
+        await (0, $7aec9f2f80fc47f3$export$5a8b80f35baeb72c)(id, "FLAG_TO_FINISH");
     } catch (error) {
         console.error(error);
-        await (0, $86fcb1e1a0235707$export$bef1f36f5486a6a3)("ERROR", error.message, id, "generate");
+        await (0, $a4e0c77f633e416d$export$bef1f36f5486a6a3)("ERROR", error.message, id, "generate");
     }
 }
 
@@ -314,9 +313,9 @@ async function $ceac83cea96254e1$export$80d376111cc09ad7(record) {
 
 
 
-async function $ebb16d65b3a91466$export$d87cfcc979a5825c(props) {
+async function $67c0e8b064fdbe0d$export$d87cfcc979a5825c(props) {
     const { job_id: job_id, count_gen_lines: count_gen_lines, count_file_rows: count_file_rows, user_id: user_id, leads_job_id: leads_job_id } = props;
-    const { data: billData, error: billErr } = await (0, $fe559aa6c1aff731$export$e40e0db08f6c644f).from("billings").update({
+    const { data: billData, error: billErr } = await (0, $19920bad422f0bb2$export$e40e0db08f6c644f).from("billings").update({
         quantity_generated: count_gen_lines,
         quantity: count_file_rows
     }).eq("job_id", job_id).select("*").limit(1).single();
@@ -327,16 +326,16 @@ async function $ebb16d65b3a91466$export$d87cfcc979a5825c(props) {
     const delta = Math.max(billData.quantity - billData.quantity_generated, 0);
     const carryover = billData.carryover ?? 0;
     // Get current credits
-    const { data: rlData, error: rlErr } = await (0, $fe559aa6c1aff731$export$e40e0db08f6c644f).from("ratelimits").select("credits").eq("id", job_id).limit(1).single();
+    const { data: rlData, error: rlErr } = await (0, $19920bad422f0bb2$export$e40e0db08f6c644f).from("ratelimits").select("credits").eq("id", job_id).limit(1).single();
     if (rlErr) throw rlErr;
     if (!rlData) throw new Error("No ratelimits found");
     const currentCredits = rlData.credits;
     const newCreditAmount = currentCredits + delta + carryover;
-    const { error: bill2Err } = await (0, $fe559aa6c1aff731$export$e40e0db08f6c644f).from("ratelimits").update({
+    const { error: bill2Err } = await (0, $19920bad422f0bb2$export$e40e0db08f6c644f).from("ratelimits").update({
         credits: newCreditAmount
     }).eq("id", user_id);
     if (bill2Err) throw bill2Err;
-    await (0, $86fcb1e1a0235707$export$bef1f36f5486a6a3)("OK", {
+    await (0, $a4e0c77f633e416d$export$bef1f36f5486a6a3)("OK", {
         currentCredits: currentCredits,
         carryover: carryover,
         delta: delta
@@ -344,14 +343,14 @@ async function $ebb16d65b3a91466$export$d87cfcc979a5825c(props) {
 }
 
 
-async function $dc3b4a1550b65dd3$export$5953b28951b32649(record) {
+async function $7b97d96b9cdff879$export$5953b28951b32649(record) {
     const { id: id, lead_id: lead_id, job_id: job_id } = record;
     try {
         if (!lead_id) throw new Error("No lead provided");
         if (!job_id) throw new Error("No job provided");
         // Get job data
         // --------------------------------------
-        const { data: jobData, error: jobErr } = await (0, $fe559aa6c1aff731$export$e40e0db08f6c644f).from("jobs").select("*").eq("id", job_id).limit(1).single();
+        const { data: jobData, error: jobErr } = await (0, $19920bad422f0bb2$export$e40e0db08f6c644f).from("jobs").select("*").eq("id", job_id).limit(1).single();
         if (jobErr) throw jobErr;
         if (!jobData) throw new Error("No data");
         if (!jobData.count_file_rows) throw new Error("Could not could rows provided");
@@ -365,13 +364,13 @@ async function $dc3b4a1550b65dd3$export$5953b28951b32649(record) {
         if (count_errors + count_gen_lines === count_file_rows) {
             // Update job data
             // --------------------------------------
-            const { error: job3Err } = await (0, $fe559aa6c1aff731$export$e40e0db08f6c644f).from("jobs").update({
+            const { error: job3Err } = await (0, $19920bad422f0bb2$export$e40e0db08f6c644f).from("jobs").update({
                 status: "DONE",
                 count_gen_lines: count_gen_lines
             }).eq("id", job_id);
             if (job3Err) throw job3Err;
             // If Pro job, create billing
-            if (jobData.product == "PRO") await (0, $ebb16d65b3a91466$export$d87cfcc979a5825c)({
+            if (jobData.product == "PRO") await (0, $67c0e8b064fdbe0d$export$d87cfcc979a5825c)({
                 job_id: job_id,
                 count_gen_lines: count_gen_lines,
                 count_file_rows: count_file_rows,
@@ -381,22 +380,22 @@ async function $dc3b4a1550b65dd3$export$5953b28951b32649(record) {
         } else {
             // Update job data
             // --------------------------------------
-            const { error: job2Err } = await (0, $fe559aa6c1aff731$export$e40e0db08f6c644f).from("jobs").update({
+            const { error: job2Err } = await (0, $19920bad422f0bb2$export$e40e0db08f6c644f).from("jobs").update({
                 count_gen_lines: count_gen_lines
             }).eq("id", job_id);
             if (job2Err) throw job2Err;
         }
         // Set the next state
         // --------------------------------------
-        await (0, $2689391225d2f8e6$export$5a8b80f35baeb72c)(id, "DONE");
+        await (0, $7aec9f2f80fc47f3$export$5a8b80f35baeb72c)(id, "DONE");
     } catch (error) {
         console.log(error);
-        await (0, $86fcb1e1a0235707$export$bef1f36f5486a6a3)("ERROR", error.message, id, "finish");
+        await (0, $a4e0c77f633e416d$export$bef1f36f5486a6a3)("ERROR", error.message, id, "finish");
     }
 }
 
 
-async function $24c34b1a225989b6$export$8f34ce051745d39e(payload) {
+async function $04580f7d8c481d21$export$8f34ce051745d39e(payload) {
     console.log(payload);
     let id = "";
     try {
@@ -404,16 +403,16 @@ async function $24c34b1a225989b6$export$8f34ce051745d39e(payload) {
         id = record.id;
         switch(record.status){
             case "FLAG_TO_SCRAPE":
-                await (0, $ccfefd7f5678eccd$export$6c0ecc2862ebf379)(record);
+                await (0, $0dfe712be313046e$export$6c0ecc2862ebf379)(record);
                 break;
             case "FLAG_TO_SUMMARIZE":
-                await (0, $d2bbfdf59f152f3d$export$1e70e29ad6d71f19)(record);
+                await (0, $66a5d00e3d64bc80$export$1e70e29ad6d71f19)(record);
                 break;
             case "FLAG_TO_GENERATE":
-                await (0, $ceac83cea96254e1$export$80d376111cc09ad7)(record);
+                await (0, $1ac1e0ae6caa28da$export$80d376111cc09ad7)(record);
                 break;
             case "FLAG_TO_FINISH":
-                await (0, $dc3b4a1550b65dd3$export$5953b28951b32649)(record);
+                await (0, $7b97d96b9cdff879$export$5953b28951b32649)(record);
                 break;
             case "DONE":
                 break;
@@ -424,49 +423,45 @@ async function $24c34b1a225989b6$export$8f34ce051745d39e(payload) {
         }
     } catch (error) {
         console.error(error.message);
-        await (0, $86fcb1e1a0235707$export$bef1f36f5486a6a3)("ERROR", error.message, id, "task_manager");
+        await (0, $a4e0c77f633e416d$export$bef1f36f5486a6a3)("ERROR", error.message, id, "task_manager");
     }
 }
 
 
-
-const $833428333a3fe13d$export$94672d1f46a84401 = (payload)=>{
+const $ffe21ffd9afd10dc$export$94672d1f46a84401 = (payload)=>{
     const payloadString = JSON.stringify(payload);
-    const child = (0, $8zHUo$child_process.spawn)("node", [
+    const child = (0, $jZMcD$child_process.spawn)("node", [
         "-e",
-        `(${(0, $24c34b1a225989b6$export$8f34ce051745d39e).toString()})(JSON.parse('${payloadString}'))`
+        `(${(0, $04580f7d8c481d21$export$8f34ce051745d39e).toString()})(JSON.parse('${payloadString}'))`
     ], {
-        cwd: $8zHUo$process.cwd(),
+        cwd: process.cwd(),
         detached: true,
         stdio: "inherit"
     });
-//   const child = spawn("node", ["./worker.js", payloadString]);
-//   child.stdout.setEncoding("utf8");
-//   child.stdout.on("data", (data) => {
-//     console.log(`stdout: ${data}`);
-//   });
-//   child.stderr.on("data", (data) => {
-//     console.log(`stdout: ${data}`);
-//   });
-// Handle process events
-//   child.on("exit", (code, signal) => {
-//     if (code === 0) {
-//       console.log("Worker finished successfully.");
-//     } else {
-//       console.error(`Worker failed with code ${code} and signal ${signal}.`);
-//     }
-//   });
+    //   const child = spawn("node", ["./worker.js", payloadString]);
+    //   child.stdout.setEncoding("utf8");
+    //   child.stdout.on("data", (data) => {
+    //     console.log(`stdout: ${data}`);
+    //   });
+    //   child.stderr.on("data", (data) => {
+    //     console.log(`stdout: ${data}`);
+    //   });
+    // Handle process events
+    child.on("exit", (code, signal)=>{
+        if (code === 0) console.log("Worker finished successfully.");
+        else console.error(`Worker failed with code ${code} and signal ${signal}.`);
+    });
 };
 
 
 
-const $882b6d93070905b3$var$channel = (0, $fe559aa6c1aff731$export$ea80eb855ab064f8).channel("#id");
-$882b6d93070905b3$var$channel.on("postgres_changes", {
+const $8bfaa5924e7a5eff$var$channel = (0, $19920bad422f0bb2$export$ea80eb855ab064f8).channel("#id");
+$8bfaa5924e7a5eff$var$channel.on("postgres_changes", {
     event: "*",
     schema: "public",
     table: "leads_jobs"
-}, (payload)=>(0, $833428333a3fe13d$export$94672d1f46a84401)(payload));
-$882b6d93070905b3$var$channel.subscribe((status, err)=>{
+}, (payload)=>(0, $ffe21ffd9afd10dc$export$94672d1f46a84401)(payload));
+$8bfaa5924e7a5eff$var$channel.subscribe((status, err)=>{
     if (status === "SUBSCRIBED") console.log("Connected!");
     if (status === "CHANNEL_ERROR") console.log(`There was an error subscribing to channel: ${err?.message}`);
     if (status === "TIMED_OUT") console.log("Realtime server did not respond in time.");
