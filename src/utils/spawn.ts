@@ -1,16 +1,24 @@
 import { spawn } from "child_process";
-import { handle } from "../handle";
+import { handle, Payload } from "../worker";
 
-export const spawnChild = (payload) => {
+export const spawnChild = (payload: { [key: string]: any }) => {
   const payloadString = JSON.stringify(payload);
-  const child = spawn("node", [
-    "-e",
-    `(${handle.toString()})(JSON.parse('${payloadString}'))`,
-  ], {
+
+  // Spawn a new Node.js process and execute the worker script with parameters
+  const child = spawn("node", ["./dist/worker.js", payloadString], {
     cwd: process.cwd(),
     detached: true,
     stdio: "inherit",
   });
+
+  // const child = spawn("node", [
+  //   "-e",
+  //   `(${handle.toString()})(JSON.parse('${payloadString}'))`,
+  // ], {
+  //   cwd: process.cwd(),
+  //   detached: true,
+  //   stdio: "inherit",
+  // });
   //   const child = spawn("node", ["./worker.js", payloadString]);
 
   //   child.stdout.setEncoding("utf8");

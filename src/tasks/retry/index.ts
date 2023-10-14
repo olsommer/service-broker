@@ -48,6 +48,6 @@ export async function retry(
     }
   } catch (error) {
     console.log(error);
-    await log("ERROR", error.message, id, "retry");
+    await log("ERROR", (error as Error).message, id, "retry");
   }
 }

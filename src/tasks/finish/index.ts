@@ -71,6 +71,6 @@ export async function finish(record: Tables<"leads_jobs">) {
     await setNextState(id, "DONE");
   } catch (error) {
     console.log(error);
-    await log("ERROR", error.message, id, "finish");
+    await log("ERROR", error as any, id, "finish");
   }
 }

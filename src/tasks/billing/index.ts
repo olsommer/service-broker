@@ -19,27 +19,25 @@ export async function billing(props: Props) {
       quantity: count_file_rows,
     })
     .eq("job_id", job_id)
-    .select("*")
-    .limit(1)
-    .single();
+    .select();
   if (billErr) throw billErr;
   if (!billData) new Error("No billings found");
 
   // Get delta amount between quantity and quantity_generated
-  if (!billData.quantity_generated || !billData.quantity) {
+  if (!billData[0].quantity_generated || !billData[0].quantity) {
     throw new Error("No quantity");
   }
   const delta = Math.max(
-    billData.quantity - billData.quantity_generated,
+    billData[0].quantity - billData[0].quantity_generated,
     0,
   );
-  const carryover = billData.carryover ?? 0;
+  const carryover = billData[0].carryover ?? 0;
 
   // Get current credits
   const { data: rlData, error: rlErr } = await supa
     .from("ratelimits")
     .select("credits")
-    .eq("id", job_id)
+    .eq("id", user_id)
     .limit(1)
     .single();
   if (rlErr) throw rlErr;

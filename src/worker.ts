@@ -7,14 +7,24 @@ import { log } from "./tasks/log";
 import { finish } from "./tasks/finish";
 import { retry } from "./tasks/retry";
 
-export async function handle(payload) {
+export type Payload = {
+  schema: string;
+  table: string;
+  commit_timestamp: string;
+  eventType: "UPDATE" | "INSERT";
+  new: Tables<"leads_jobs">;
+  old: Tables<"leads_jobs"> | null;
+  errors: any[];
+};
+
+export async function handle(payload: { [key: string]: any }) {
   console.log(payload);
-  let id = "";
+  let id: string = "";
   try {
-    const { new: record, old: old_record } = payload;
+    const { new: record, old: old_record } = payload as Payload;
     id = record.id;
 
-    switch (record.status) {
+    switch (record.status as FlagStates) {
       case ("FLAG_TO_SCRAPE"):
         await scrape(record);
         break;
@@ -36,7 +46,9 @@ export async function handle(payload) {
         break;
     }
   } catch (error) {
-    console.error(error.message);
-    await log("ERROR", error.message, id, "task_manager");
+    if (error instanceof Error) {
+      console.error(error.message);
+      await log("ERROR", error.message, id, "task_manager");
+    }
   }
 }

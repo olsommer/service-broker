@@ -7,7 +7,11 @@ import { log } from "./tasks/log";
 import { finish } from "./tasks/finish";
 import { retry } from "./tasks/retry";
 
-type Payload = {
+// Access the serialized objects passed as command-line arguments
+const payloadString = process.argv[2];
+console.log(payloadString);
+
+export type Payload = {
   schema: string;
   table: string;
   commit_timestamp: string;
@@ -17,11 +21,13 @@ type Payload = {
   errors: any[];
 };
 
-export async function handle(payload: Payload) {
+handle(JSON.parse(payloadString) as Payload);
+
+export async function handle(payload: { [key: string]: any }) {
   console.log(payload);
   let id: string = "";
   try {
-    const { new: record, old: old_record } = payload;
+    const { new: record, old: old_record } = payload as Payload;
     id = record.id;
 
     switch (record.status as FlagStates) {
@@ -46,7 +52,9 @@ export async function handle(payload: Payload) {
         break;
     }
   } catch (error) {
-    console.error(error.message);
-    await log("ERROR", error.message, id, "task_manager");
+    if (error instanceof Error) {
+      console.error(error.message);
+      await log("ERROR", error.message, id, "task_manager");
+    }
   }
 }

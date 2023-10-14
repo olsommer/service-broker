@@ -81,6 +81,6 @@ export async function summarize(record: Tables<"leads_jobs">) {
     await setNextState(id, "FLAG_TO_GENERATE");
   } catch (error) {
     console.log(error);
-    await log("ERROR", error.message, id, "summarize");
+    await log("ERROR", (error as Error).message, id, "summarize");
   }
 }

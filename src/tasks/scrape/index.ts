@@ -51,7 +51,7 @@ export async function scrape(record: Tables<"leads_jobs">) {
     axios.post(reqURL, body, {
       headers: { "Content-Type": "application/json" },
     }).then(async (res) => {
-      await log("OK", res as any, id, "scrape");
+      await log("OK", res.data as any, id, "scrape");
       //
       //
       // Add dummy scrape but without any content
@@ -60,7 +60,7 @@ export async function scrape(record: Tables<"leads_jobs">) {
         .insert({
           id: uuid,
           lead_job_id: id,
-          log_request: res,
+          log_request: res.data,
           log_callback_url: callbackURL,
         });
       if (error) throw error;
@@ -72,6 +72,6 @@ export async function scrape(record: Tables<"leads_jobs">) {
     //
     /* Error handling */
   } catch (error) {
-    await log("ERROR", error.message, id, "scrape");
+    await log("ERROR", (error as Error).message, id, "scrape");
   }
 }

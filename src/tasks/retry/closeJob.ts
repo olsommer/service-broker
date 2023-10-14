@@ -65,7 +65,9 @@ export async function closeJob(record: Tables<"leads_jobs">) {
       if (job2Err) throw job2Err;
     }
   } catch (error) {
-    console.log(error);
-    await log("ERROR", error.message, id, "retry finish");
+    if (error instanceof Error) {
+      console.log(error);
+      await log("ERROR", error.message, id, "retry finish");
+    }
   }
 }

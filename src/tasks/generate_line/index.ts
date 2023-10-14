@@ -89,7 +89,6 @@ export async function generate(record: Tables<"leads_jobs">) {
     `;
 
     // --------------------------------------
-    console.log(prompt);
     const chatCompletion = await openai.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
       model: "gpt-3.5-turbo",
@@ -120,6 +119,6 @@ export async function generate(record: Tables<"leads_jobs">) {
     await setNextState(id, "FLAG_TO_FINISH");
   } catch (error) {
     console.error(error);
-    await log("ERROR", error.message, id, "generate");
+    await log("ERROR", (error as Error).message, id, "generate");
   }
 }

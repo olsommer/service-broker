@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { spawnChild } from "./utils/spawn";
 import { realtime } from "./utils/supabase";
+import { handle } from "./worker";
 
 const channel = realtime.channel("#id");
 
@@ -11,7 +12,8 @@ channel.on(
     schema: "public",
     table: "leads_jobs",
   },
-  (payload) => spawnChild(payload),
+  (payload) => handle(payload),
+  // (payload) => spawnChild(payload),
 );
 
 channel.subscribe((status, err) => {

@@ -2,16 +2,13 @@
   "name": "service-broker",
   "version": "1.0.0",
   "source": "src/index.ts",
-  "main": "dist/main.js",
+  "main": "dist/index.js",
   "scripts": {
-    "watch": "parcel watch",
-    "build": "npm install",
-    "pre": "parcel build src/index.ts"
+    "build": "npx tsc -p ./tsconfig.json",
+    "start": "node dist/index.js"
   },
   "devDependencies": {
-    "@parcel/packager-ts": "^2.10.0",
-    "@parcel/transformer-typescript-types": "^2.10.0",
-    "parcel": "^2.10.0",
+    "@types/dom-parser": "^0.1.2",
     "typescript": "^5.2.2"
   },
   "dependencies": {
