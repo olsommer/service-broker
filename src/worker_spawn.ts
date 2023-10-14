@@ -9,7 +9,6 @@ import { retry } from "./tasks/retry";
 
 // Access the serialized objects passed as command-line arguments
 const payloadString = process.argv[2];
-console.log(payloadString);
 
 export type Payload = {
   schema: string;
@@ -27,7 +26,7 @@ export async function handle(payload: { [key: string]: any }) {
   console.log(payload);
   let id: string = "";
   try {
-    const { new: record, old: old_record } = payload as Payload;
+    const { new: record } = payload as Payload;
     id = record.id;
 
     switch (record.status as FlagStates) {

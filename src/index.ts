@@ -12,8 +12,8 @@ channel.on(
     schema: "public",
     table: "leads_jobs",
   },
-  (payload) => handle(payload),
-  // (payload) => spawnChild(payload),
+  // (payload) => handle(payload),
+  (payload) => spawnChild(payload),
 );
 
 channel.subscribe((status, err) => {

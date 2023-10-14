@@ -5,7 +5,7 @@ export const spawnChild = (payload: { [key: string]: any }) => {
   const payloadString = JSON.stringify(payload);
 
   // Spawn a new Node.js process and execute the worker script with parameters
-  const child = spawn("node", ["./dist/worker.js", payloadString], {
+  const child = spawn("node", ["./dist/worker_spawn.js", payloadString], {
     cwd: process.cwd(),
     detached: true,
     stdio: "inherit",
