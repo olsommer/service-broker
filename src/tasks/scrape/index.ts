@@ -36,7 +36,7 @@ export async function scrape(record: Tables<"leads_jobs">) {
     // -------------------------------------------------
     const callbackURL =
       `https://ndxhivyksquaghuolyig.supabase.co/functions/v1/webhook?scrapeId=${uuid}&leadJobId=${id}`;
-    const key = "69113361a61d29ac2e511e2fa563f2bf";
+    const key = process.env.SCRAPER_API_KEY;
     const body = {
       apiKey: key,
       url: tUrl,

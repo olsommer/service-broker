@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { spawnChild } from "./utils/spawn";
 import { realtime } from "./utils/supabase";
 
