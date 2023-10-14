@@ -46,15 +46,11 @@ export async function handle(payload: { [key: string]: any }) {
       case ("DONE"):
         break;
       case ("FLAG_TO_RETRY"):
-        // if (!old_record) throw new Error("No old_record provided");
-        console.log("RETRY");
-        // await retry(record, old_record);
+        await retry(record);
         break;
     }
   } catch (error) {
-    if (error instanceof Error) {
-      console.error(error.message);
-      await log("ERROR", error.message, id, "task_manager");
-    }
+    console.error(error);
+    await log("ERROR", (error as Error).message, id, "task_manager");
   }
 }

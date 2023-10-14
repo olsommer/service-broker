@@ -7,13 +7,11 @@ import { supa } from "../../utils/supabase";
 
 export async function retry(
   record: Tables<"leads_jobs">,
-  old_record: Tables<"leads_jobs">,
 ) {
-  const { id, tries } = record;
-  const { status } = old_record;
+  const { id, tries, status_before } = record;
   try {
     if (tries < 3) {
-      switch (status as FlagStates) {
+      switch (status_before as FlagStates) {
         case ("FLAG_TO_SCRAPE"):
           {
             // Get current credits

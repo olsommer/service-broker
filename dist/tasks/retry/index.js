@@ -5,12 +5,11 @@ const log_1 = require("../log");
 const closeJob_1 = require("./closeJob");
 const next_1 = require("../next");
 const supabase_1 = require("../../utils/supabase");
-async function retry(record, old_record) {
-    const { id, tries } = record;
-    const { status } = old_record;
+async function retry(record) {
+    const { id, tries, status_before } = record;
     try {
         if (tries < 3) {
-            switch (status) {
+            switch (status_before) {
                 case ("FLAG_TO_SCRAPE"):
                     {
                         // Get current credits

@@ -6,6 +6,7 @@ const summarize_1 = require("./tasks/summarize");
 const generate_line_1 = require("./tasks/generate_line");
 const log_1 = require("./tasks/log");
 const finish_1 = require("./tasks/finish");
+const retry_1 = require("./tasks/retry");
 // Access the serialized objects passed as command-line arguments
 const payloadString = process.argv[2];
 console.log(payloadString);
@@ -32,17 +33,13 @@ async function handle(payload) {
             case ("DONE"):
                 break;
             case ("FLAG_TO_RETRY"):
-                // if (!old_record) throw new Error("No old_record provided");
-                console.log("RETRY");
-                // await retry(record, old_record);
+                await (0, retry_1.retry)(record);
                 break;
         }
     }
     catch (error) {
-        if (error instanceof Error) {
-            console.error(error.message);
-            await (0, log_1.log)("ERROR", error.message, id, "task_manager");
-        }
+        console.error(error);
+        await (0, log_1.log)("ERROR", error.message, id, "task_manager");
     }
 }
 exports.handle = handle;
