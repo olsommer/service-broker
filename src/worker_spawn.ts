@@ -23,7 +23,9 @@ export type Payload = {
 handle(JSON.parse(payloadString) as Payload);
 
 export async function handle(payload: { [key: string]: any }) {
-  console.log(payload);
+  console.log(
+    `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
+  );
   let id: string = "";
   try {
     const { new: record } = payload as Payload;
