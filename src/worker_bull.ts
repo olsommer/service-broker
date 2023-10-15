@@ -6,8 +6,8 @@ import { generate } from "./tasks/generate_line";
 import { log } from "./tasks/log";
 import { finish } from "./tasks/finish";
 import { retry } from "./tasks/retry";
-import { queue } from "./utils/bull";
-import Bull from "bull";
+
+import { Job, Worker } from "bullmq";
 
 export type Payload = {
   schema: string;
@@ -19,12 +19,24 @@ export type Payload = {
   errors: any[];
 };
 
-queue.process("ilProcess", 5, async (job, done) => {
-  // job.progress(42);
+const worker = new Worker("ilProcess", async (job) => {
   return handle(job);
 });
 
-const handle = async (job: Bull.Job) => {
+worker.on("completed", (job) => {
+  console.log(`${job.id} has completed!`);
+});
+
+worker.on("failed", (job, err) => {
+  console.log(`${job?.id} has failed with ${err.message}`);
+});
+
+// queue.process("ilProcess", 5, async (job, done) => {
+//   // job.progress(42);
+//   return handle(job);
+// });
+
+const handle = async (job: Job) => {
   const payload = job.data as Payload;
 
   console.log(
@@ -59,7 +71,3 @@ const handle = async (job: Bull.Job) => {
     await log("ERROR", (error as Error).message, id, "task_manager");
   }
 };
-
-queue.on("completed", (job, result) => {
-  console.log(`Job completed with result ${result}`);
-});
