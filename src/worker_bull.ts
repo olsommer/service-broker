@@ -1,14 +1,16 @@
+/* bullmq */
+import { Job, Worker } from "bullmq";
+/* utils */
+import { connection } from "./utils/bull";
 import { FlagStates } from "./utils/states";
 import { Tables } from "./utils/database.helpers";
+/* tasks */
 import { scrape } from "./tasks/scrape";
 import { summarize } from "./tasks/summarize";
 import { generate } from "./tasks/generate_line";
 import { log } from "./tasks/log";
 import { finish } from "./tasks/finish";
 import { retry } from "./tasks/retry";
-
-import { Job, Worker } from "bullmq";
-import { connection } from "./utils/bull";
 
 export type Payload = {
   schema: string;
@@ -23,14 +25,13 @@ export type Payload = {
 async function handle(job: Job) {
   const payload = job.data as Payload;
 
-  // Optionally report some progress
-  await job.updateProgress(42);
-
-  console.log(`handling job: [${job.id}]`);
+  // await job.updateProgress(42);
+  job.log(`handling job: [${job.id}]`);
   console.log({ jobName: job.name, jobId: job.id, data: job.data });
-  // console.log(
-  //   `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
-  // );
+  console.log(
+    `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
+  );
+
   let id: string = "";
   try {
     const { new: record } = payload as Payload;

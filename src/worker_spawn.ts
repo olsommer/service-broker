@@ -31,6 +31,7 @@ export async function handle(payload: { [key: string]: any }) {
     const { new: record } = payload as Payload;
     id = record.id;
 
+    /* ############ */
     switch (record.status as FlagStates) {
       case ("FLAG_TO_SCRAPE"):
         await scrape(record);
