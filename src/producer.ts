@@ -15,7 +15,7 @@ channel.on(
   },
   // (payload) => handle(payload),
   // (payload) => spawnChild(payload),
-  async (payload) => await queue.add("pg-realtime", payload),
+  async (payload) => await queue.createJob(payload).save(),
 );
 
 channel.subscribe((status, err) => {
