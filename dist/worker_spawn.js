@@ -16,6 +16,7 @@ async function handle(payload) {
     try {
         const { new: record } = payload;
         id = record.id;
+        /* ############ */
         switch (record.status) {
             case ("FLAG_TO_SCRAPE"):
                 await (0, scrape_1.scrape)(record);

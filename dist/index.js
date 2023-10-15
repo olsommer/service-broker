@@ -8,6 +8,10 @@ const producer = (0, child_process_1.spawn)("node", ["./dist/producer.js"], {
     stdio: "inherit",
 });
 // Handle process events
+producer.on("spawn", () => {
+    console.error(`Producer spawned!`);
+});
+// Handle process events
 producer.on("exit", (code, signal) => {
     if (code === 0) {
         console.log("Producer finished successfully.");
@@ -23,6 +27,9 @@ const worker = (0, child_process_1.spawn)("node", ["./dist/worker_bull.js"], {
     stdio: "inherit",
 });
 // Handle process events
+worker.on("spawn", () => {
+    console.error(`Worker spawned!`);
+});
 worker.on("exit", (code, signal) => {
     if (code === 0) {
         console.log("Worker finished successfully.");

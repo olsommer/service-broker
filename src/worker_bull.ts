@@ -64,7 +64,9 @@ async function handle(job: Job) {
   };
 }
 
-const worker = new Worker("ilProcess", handle, {
+const worker = new Worker("ilProcess", async () => {
+  console.log("lets go");
+}, {
   connection,
 });
 
