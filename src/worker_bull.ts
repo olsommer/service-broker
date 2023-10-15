@@ -23,6 +23,9 @@ export type Payload = {
 async function handle(job: Job) {
   const payload = job.data as Payload;
 
+  // Optionally report some progress
+  await job.updateProgress(42);
+
   console.log(`handling job: [${job.id}]`);
   console.log({ jobName: job.name, jobId: job.id, data: job.data });
   // console.log(
@@ -58,7 +61,9 @@ async function handle(job: Job) {
   }
 }
 
-const worker = new Worker("ilProcess", handle, { connection });
+const worker = new Worker("ilProcess", handle, {
+  connection,
+});
 
 worker.on("completed", (job) => {
   console.log(`${job.id} has completed!`);
@@ -71,8 +76,3 @@ worker.on("failed", (job, err) => {
 worker.on("error", (err) => {
   console.error(`Worker has errored with ${err.message}`);
 });
-
-// queue.process("ilProcess", 5, async (job, done) => {
-//   // job.progress(42);
-//   return handle(job);
-// });

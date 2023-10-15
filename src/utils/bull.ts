@@ -9,6 +9,10 @@ export const connection = new IORedis(process.env.REDIS_URL ?? "", {
 
 export const queue = new Queue("introlines", {
   connection,
+  defaultJobOptions: {
+    removeOnComplete: true,
+    removeOnFail: 1000,
+  },
   // redis: process.env.REDIS_URL,
   // limiter: {
   //   max: 1000,
