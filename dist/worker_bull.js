@@ -7,19 +7,6 @@ const log_1 = require("./tasks/log");
 const finish_1 = require("./tasks/finish");
 const retry_1 = require("./tasks/retry");
 const bullmq_1 = require("bullmq");
-const worker = new bullmq_1.Worker("ilProcess", async (job) => {
-    return handle(job);
-});
-worker.on("completed", (job) => {
-    console.log(`${job.id} has completed!`);
-});
-worker.on("failed", (job, err) => {
-    console.log(`${job?.id} has failed with ${err.message}`);
-});
-// queue.process("ilProcess", 5, async (job, done) => {
-//   // job.progress(42);
-//   return handle(job);
-// });
 const handle = async (job) => {
     const payload = job.data;
     console.log(`${payload.eventType} - ${payload.new.status} - ${payload.new.id}`);
@@ -52,4 +39,15 @@ const handle = async (job) => {
         await (0, log_1.log)("ERROR", error.message, id, "task_manager");
     }
 };
+const worker = new bullmq_1.Worker("ilProcess", handle);
+worker.on("completed", (job) => {
+    console.log(`${job.id} has completed!`);
+});
+worker.on("failed", (job, err) => {
+    console.log(`${job?.id} has failed with ${err.message}`);
+});
+// queue.process("ilProcess", 5, async (job, done) => {
+//   // job.progress(42);
+//   return handle(job);
+// });
 //# sourceMappingURL=worker_bull.js.map

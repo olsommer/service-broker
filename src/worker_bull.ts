@@ -19,29 +19,14 @@ export type Payload = {
   errors: any[];
 };
 
-const worker = new Worker("ilProcess", async (job) => {
-  return handle(job);
-});
-
-worker.on("completed", (job) => {
-  console.log(`${job.id} has completed!`);
-});
-
-worker.on("failed", (job, err) => {
-  console.log(`${job?.id} has failed with ${err.message}`);
-});
-
-// queue.process("ilProcess", 5, async (job, done) => {
-//   // job.progress(42);
-//   return handle(job);
-// });
-
-const handle = async (job: Job) => {
+async function handle(job: Job) {
   const payload = job.data as Payload;
 
-  console.log(
-    `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
-  );
+  console.log(`handling job: [${job.id}]`);
+  console.log({ jobName: job.name, jobId: job.id, data: job.data });
+  // console.log(
+  //   `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
+  // );
   let id: string = "";
   try {
     const { new: record } = payload as Payload;
@@ -70,4 +55,23 @@ const handle = async (job: Job) => {
     console.error(error);
     await log("ERROR", (error as Error).message, id, "task_manager");
   }
-};
+}
+
+const worker = new Worker("ilProcess", handle);
+
+worker.on("completed", (job) => {
+  console.log(`${job.id} has completed!`);
+});
+
+worker.on("failed", (job, err) => {
+  console.log(`${job?.id} has failed with ${err.message}`);
+});
+
+worker.on("error", (err) => {
+  console.error(`Worker has errored with ${err.message}`);
+});
+
+// queue.process("ilProcess", 5, async (job, done) => {
+//   // job.progress(42);
+//   return handle(job);
+// });

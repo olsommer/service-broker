@@ -1,13 +1,15 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.queue = void 0;
 const bullmq_1 = require("bullmq");
+const ioredis_1 = __importDefault(require("ioredis"));
+// Redis connection details
+const connection = new ioredis_1.default(process.env.REDIS_URL ?? "");
 exports.queue = new bullmq_1.Queue("introlines", {
-    connection: {
-        host: "ec2-52-51-176-162.eu-west-1.compute.amazonaws.com",
-        password: "peb687183a55fafff3be0835c38df7e6f3a961831ee445bd73d79e518040a2c68",
-        port: 19090,
-    },
+    connection,
     // redis: process.env.REDIS_URL,
     // limiter: {
     //   max: 1000,
