@@ -1,11 +1,15 @@
+/* utils */
+import { queue } from "./utils/bee";
 import { FlagStates } from "./utils/states";
 import { Tables } from "./utils/database.helpers";
+/* tasks */
 import { scrape } from "./tasks/scrape";
 import { summarize } from "./tasks/summarize";
 import { generate } from "./tasks/generate_line";
 import { log } from "./tasks/log";
 import { finish } from "./tasks/finish";
 import { retry } from "./tasks/retry";
+import { DoneCallback, Job } from "bee-queue";
 
 export type Payload = {
   schema: string;
@@ -17,25 +21,34 @@ export type Payload = {
   errors: any[];
 };
 
-export async function handle(payload: { [key: string]: any }) {
-  console.log(payload);
+async function handle(job: Job<Payload>) {
+  const payload = job.data as Payload;
+  console.log(
+    `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
+  );
+
   let id: string = "";
   try {
     const { new: record } = payload as Payload;
     id = record.id;
 
+    const was = (before: FlagStates | null) => {
+      return record.status_before === before ||
+        record.status_before === "FLAG_TO_RETRY";
+    };
+
     switch (record.status as FlagStates) {
       case ("FLAG_TO_SCRAPE"):
-        await scrape(record);
+        if (was(null)) await scrape(record);
         break;
       case ("FLAG_TO_SUMMARIZE"):
-        await summarize(record);
+        if (was("FLAG_TO_SCRAPE")) await summarize(record);
         break;
       case ("FLAG_TO_GENERATE"):
-        await generate(record);
+        if (was("FLAG_TO_SUMMARIZE")) await generate(record);
         break;
       case ("FLAG_TO_FINISH"):
-        await finish(record);
+        if (was("FLAG_TO_FINISH")) await finish(record);
         break;
       case ("DONE"):
         break;
@@ -48,3 +61,7 @@ export async function handle(payload: { [key: string]: any }) {
     await log("ERROR", (error as Error).message, id, "task_manager");
   }
 }
+
+queue.process(function (job: Job<Payload>, done: DoneCallback<any>) {
+  handle(job).then(() => done(null));
+});

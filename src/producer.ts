@@ -1,8 +1,7 @@
 import "dotenv/config";
-import { spawnChild } from "./utils/spawn";
-import { realtime } from "./utils/supabase";
-import { handle } from "./worker";
-import { queue } from "./utils/bull";
+import { realtime, supa } from "./utils/supabase";
+import { queue } from "./utils/bee";
+import { Tables } from "./utils/database.helpers";
 
 const channel = realtime.channel("#id");
 
@@ -15,7 +14,16 @@ channel.on(
   },
   // (payload) => handle(payload),
   // (payload) => spawnChild(payload),
-  async (payload) => await queue.createJob(payload).save(),
+  async (payload) => {
+    await queue.createJob(payload).save().then(async (job) => {
+      await supa
+        .from("leads_jobs")
+        .update({
+          job_collected: true,
+        })
+        .eq("id", (payload.new as Tables<"leads_jobs">).id);
+    });
+  },
 );
 
 channel.subscribe((status, err) => {

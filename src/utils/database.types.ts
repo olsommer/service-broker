@@ -15,7 +15,7 @@ export interface Database {
           carryover: number | null
           created_at: string
           id: string
-          job_id: string
+          job_id: string | null
           payment_intent: Json | null
           profiles_id: string
           quantity: number | null
@@ -26,7 +26,7 @@ export interface Database {
           carryover?: number | null
           created_at?: string
           id?: string
-          job_id: string
+          job_id?: string | null
           payment_intent?: Json | null
           profiles_id: string
           quantity?: number | null
@@ -37,7 +37,7 @@ export interface Database {
           carryover?: number | null
           created_at?: string
           id?: string
-          job_id?: string
+          job_id?: string | null
           payment_intent?: Json | null
           profiles_id?: string
           quantity?: number | null
@@ -216,48 +216,39 @@ export interface Database {
       }
       leads_jobs: {
         Row: {
-          campaign_id: string | null
           created_at: string
           id: string
+          job_collected: boolean | null
           job_id: string | null
           lead_id: string | null
-          meta: string | null
           status: string | null
           status_before: string | null
           tries: number
           updated_at: string | null
         }
         Insert: {
-          campaign_id?: string | null
           created_at?: string
           id?: string
+          job_collected?: boolean | null
           job_id?: string | null
           lead_id?: string | null
-          meta?: string | null
           status?: string | null
           status_before?: string | null
           tries?: number
           updated_at?: string | null
         }
         Update: {
-          campaign_id?: string | null
           created_at?: string
           id?: string
+          job_collected?: boolean | null
           job_id?: string | null
           lead_id?: string | null
-          meta?: string | null
           status?: string | null
           status_before?: string | null
           tries?: number
           updated_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "leads_jobs_campaign_id_fkey"
-            columns: ["campaign_id"]
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "leads_jobs_job_id_fkey"
             columns: ["job_id"]
