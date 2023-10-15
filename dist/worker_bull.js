@@ -8,8 +8,7 @@ const finish_1 = require("./tasks/finish");
 const retry_1 = require("./tasks/retry");
 const bull_1 = require("./utils/bull");
 bull_1.queue.process("ilProcess", 5, async (job, done) => {
-    // transcode asynchronously and report progress
-    job.progress(42);
+    // job.progress(42);
     return handle(job);
 });
 const handle = async (job) => {

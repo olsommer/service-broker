@@ -6,7 +6,6 @@ const producer = (0, child_process_1.spawn)("node", ["./dist/producer.js"], {
     cwd: process.cwd(),
     detached: true,
     stdio: "inherit",
-    timeout: undefined,
 });
 // Handle process events
 producer.on("exit", (code, signal) => {
@@ -30,6 +29,21 @@ worker.on("exit", (code, signal) => {
     }
     else {
         console.error(`Worker failed with code ${code} and signal ${signal}.`);
+    }
+});
+// Spawn a new Node.js process and execute the worker script with parameters
+const monitor = (0, child_process_1.spawn)("node", ["./dist/monitor.js"], {
+    cwd: process.cwd(),
+    detached: true,
+    stdio: "inherit",
+});
+// Handle process events
+producer.on("exit", (code, signal) => {
+    if (code === 0) {
+        console.log("Monitor finished successfully.");
+    }
+    else {
+        console.error(`Monitor failed with code ${code} and signal ${signal}.`);
     }
 });
 //# sourceMappingURL=index.js.map

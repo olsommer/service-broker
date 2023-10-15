@@ -20,8 +20,7 @@ export type Payload = {
 };
 
 queue.process("ilProcess", 5, async (job, done) => {
-  // transcode asynchronously and report progress
-  job.progress(42);
+  // job.progress(42);
   return handle(job);
 });
 
