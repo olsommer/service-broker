@@ -2,7 +2,7 @@ import { Queue } from "bullmq";
 import IORedis from "ioredis";
 
 // Redis connection details
-const connection = new IORedis(process.env.REDIS_URL ?? "");
+export const connection = new IORedis(process.env.REDIS_URL ?? "");
 
 export const queue = new Queue("introlines", {
   connection,

@@ -8,6 +8,7 @@ import { finish } from "./tasks/finish";
 import { retry } from "./tasks/retry";
 
 import { Job, Worker } from "bullmq";
+import { connection } from "./utils/bull";
 
 export type Payload = {
   schema: string;
@@ -57,7 +58,7 @@ async function handle(job: Job) {
   }
 }
 
-const worker = new Worker("ilProcess", handle);
+const worker = new Worker("ilProcess", handle, { connection });
 
 worker.on("completed", (job) => {
   console.log(`${job.id} has completed!`);
