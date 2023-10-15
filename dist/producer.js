@@ -11,7 +11,7 @@ channel.on("postgres_changes", {
 }, 
 // (payload) => handle(payload),
 // (payload) => spawnChild(payload),
-async (payload) => await bull_1.queue.add(payload));
+async (payload) => await bull_1.queue.add("pg-realtime", payload));
 channel.subscribe((status, err) => {
     if (status === "SUBSCRIBED") {
         console.log("Connected!");

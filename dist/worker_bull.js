@@ -6,11 +6,20 @@ const generate_line_1 = require("./tasks/generate_line");
 const log_1 = require("./tasks/log");
 const finish_1 = require("./tasks/finish");
 const retry_1 = require("./tasks/retry");
-const bull_1 = require("./utils/bull");
-bull_1.queue.process("ilProcess", 5, async (job, done) => {
-    // job.progress(42);
+const bullmq_1 = require("bullmq");
+const worker = new bullmq_1.Worker("ilProcess", async (job) => {
     return handle(job);
 });
+worker.on("completed", (job) => {
+    console.log(`${job.id} has completed!`);
+});
+worker.on("failed", (job, err) => {
+    console.log(`${job?.id} has failed with ${err.message}`);
+});
+// queue.process("ilProcess", 5, async (job, done) => {
+//   // job.progress(42);
+//   return handle(job);
+// });
 const handle = async (job) => {
     const payload = job.data;
     console.log(`${payload.eventType} - ${payload.new.status} - ${payload.new.id}`);
@@ -43,7 +52,4 @@ const handle = async (job) => {
         await (0, log_1.log)("ERROR", error.message, id, "task_manager");
     }
 };
-bull_1.queue.on("completed", (job, result) => {
-    console.log(`Job completed with result ${result}`);
-});
 //# sourceMappingURL=worker_bull.js.map
