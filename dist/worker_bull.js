@@ -1,14 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handle = void 0;
 const scrape_1 = require("./tasks/scrape");
 const summarize_1 = require("./tasks/summarize");
 const generate_line_1 = require("./tasks/generate_line");
 const log_1 = require("./tasks/log");
 const finish_1 = require("./tasks/finish");
 const retry_1 = require("./tasks/retry");
-async function handle(payload) {
-    console.log(payload);
+const bull_1 = require("./utils/bull");
+bull_1.queue.process("ilProcess", 5, async (job, done) => {
+    // transcode asynchronously and report progress
+    job.progress(42);
+    return handle(job);
+});
+const handle = async (job) => {
+    const payload = job.data;
+    console.log(`${payload.eventType} - ${payload.new.status} - ${payload.new.id}`);
     let id = "";
     try {
         const { new: record } = payload;
@@ -37,6 +43,8 @@ async function handle(payload) {
         console.error(error);
         await (0, log_1.log)("ERROR", error.message, id, "task_manager");
     }
-}
-exports.handle = handle;
-//# sourceMappingURL=worker.js.map
+};
+bull_1.queue.on("completed", (job, result) => {
+    console.log(`Job completed with result ${result}`);
+});
+//# sourceMappingURL=worker_bull.js.map

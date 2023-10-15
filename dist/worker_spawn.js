@@ -7,8 +7,11 @@ const generate_line_1 = require("./tasks/generate_line");
 const log_1 = require("./tasks/log");
 const finish_1 = require("./tasks/finish");
 const retry_1 = require("./tasks/retry");
+// Access the serialized objects passed as command-line arguments
+const payloadString = process.argv[2];
+handle(JSON.parse(payloadString));
 async function handle(payload) {
-    console.log(payload);
+    console.log(`${payload.eventType} - ${payload.new.status} - ${payload.new.id}`);
     let id = "";
     try {
         const { new: record } = payload;
@@ -39,4 +42,4 @@ async function handle(payload) {
     }
 }
 exports.handle = handle;
-//# sourceMappingURL=worker.js.map
+//# sourceMappingURL=worker_spawn.js.map

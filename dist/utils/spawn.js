@@ -5,7 +5,7 @@ const child_process_1 = require("child_process");
 const spawnChild = (payload) => {
     const payloadString = JSON.stringify(payload);
     // Spawn a new Node.js process and execute the worker script with parameters
-    const child = (0, child_process_1.spawn)("node", ["./dist/worker.js", payloadString], {
+    const child = (0, child_process_1.spawn)("node", ["./dist/worker_spawn.js", payloadString], {
         cwd: process.cwd(),
         detached: true,
         stdio: "inherit",

@@ -8,6 +8,7 @@
     "start": "node dist/index.js"
   },
   "devDependencies": {
+    "@types/bull": "^4.10.0",
     "@types/dom-parser": "^0.1.2",
     "typescript": "^5.2.2"
   },
@@ -15,6 +16,7 @@
     "@supabase/realtime-js": "^2.8.0",
     "@supabase/supabase-js": "^2.38.1",
     "axios": "^1.5.1",
+    "bull": "^4.11.4",
     "dom-parser": "^0.1.6",
     "dotenv": "^16.3.1",
     "openai": "^4.12.1"

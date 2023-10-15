@@ -1,26 +1,35 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-require("dotenv/config");
-const supabase_1 = require("./utils/supabase");
-const worker_1 = require("./worker");
-const channel = supabase_1.realtime.channel("#id");
-channel.on("postgres_changes", {
-    event: "*",
-    schema: "public",
-    table: "leads_jobs",
-}, (payload) => (0, worker_1.handle)(payload));
-channel.subscribe((status, err) => {
-    if (status === "SUBSCRIBED") {
-        console.log("Connected!");
+const child_process_1 = require("child_process");
+// Spawn a new Node.js process and execute the worker script with parameters
+const producer = (0, child_process_1.spawn)("node", ["./dist/producer.js"], {
+    cwd: process.cwd(),
+    detached: true,
+    stdio: "inherit",
+    timeout: undefined,
+});
+// Handle process events
+producer.on("exit", (code, signal) => {
+    if (code === 0) {
+        console.log("Producer finished successfully.");
     }
-    if (status === "CHANNEL_ERROR") {
-        console.log(`There was an error subscribing to channel: ${err?.message}`);
+    else {
+        console.error(`Producer failed with code ${code} and signal ${signal}.`);
     }
-    if (status === "TIMED_OUT") {
-        console.log("Realtime server did not respond in time.");
+});
+// Spawn a new Node.js process and execute the worker script with parameters
+const worker = (0, child_process_1.spawn)("node", ["./dist/worker_bull.js"], {
+    cwd: process.cwd(),
+    detached: true,
+    stdio: "inherit",
+});
+// Handle process events
+worker.on("exit", (code, signal) => {
+    if (code === 0) {
+        console.log("Worker finished successfully.");
     }
-    if (status === "CLOSED") {
-        console.log("Realtime channel was unexpectedly closed.");
+    else {
+        console.error(`Worker failed with code ${code} and signal ${signal}.`);
     }
 });
 //# sourceMappingURL=index.js.map
