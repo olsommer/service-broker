@@ -8,7 +8,7 @@ import redis from "redis";
 //  redis.createClient({ url: process.env.REDIS_URL }),
 
 export const queue = new Queue("introlines", {
-  isWorker: false,
+  isWorker: true,
   redis: process.env.REDIS_URL,
 });
 
