@@ -4,7 +4,6 @@ import { isValidUrl } from "./isValid";
 import { transformUrl } from "./transformUrl";
 import { Tables } from "../../utils/database.helpers";
 import { supa } from "../../utils/supabase";
-import { Json } from "../../utils/database.types";
 
 export async function scrape(record: Tables<"leads_jobs">) {
   const { id, lead_id } = record;

@@ -1,6 +1,5 @@
 import { log } from "../log";
 import { Tables } from "../../utils/database.helpers";
-import { FlagStates } from "../../utils/states";
 import { closeJob } from "./closeJob";
 import { setNextState } from "../next";
 import { supa } from "../../utils/supabase";
@@ -11,7 +10,7 @@ export async function retry(
   const { id, tries, status_before } = record;
   try {
     if (tries < 3) {
-      switch (status_before as FlagStates) {
+      switch (status_before) {
         case ("FLAG_TO_SCRAPE"):
           {
             // Get current credits

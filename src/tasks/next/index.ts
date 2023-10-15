@@ -1,10 +1,10 @@
 import { supa } from "../../utils/supabase";
 import { log } from "../log";
-import { FlagStates } from "../../utils/states";
+import { Tables } from "../../utils/database.helpers";
 
 export async function setNextState(
   id: string,
-  status: FlagStates,
+  status: Tables<"leads_jobs">["status"],
   tries?: number,
 ) {
   const { error } = await supa

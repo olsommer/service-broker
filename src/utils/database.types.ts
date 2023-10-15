@@ -221,8 +221,8 @@ export interface Database {
           job_collected: boolean | null
           job_id: string | null
           lead_id: string | null
-          status: string | null
-          status_before: string | null
+          status: Database["public"]["Enums"]["job_states"] | null
+          status_before: Database["public"]["Enums"]["job_states"] | null
           tries: number
           updated_at: string | null
         }
@@ -232,8 +232,8 @@ export interface Database {
           job_collected?: boolean | null
           job_id?: string | null
           lead_id?: string | null
-          status?: string | null
-          status_before?: string | null
+          status?: Database["public"]["Enums"]["job_states"] | null
+          status_before?: Database["public"]["Enums"]["job_states"] | null
           tries?: number
           updated_at?: string | null
         }
@@ -243,8 +243,8 @@ export interface Database {
           job_collected?: boolean | null
           job_id?: string | null
           lead_id?: string | null
-          status?: string | null
-          status_before?: string | null
+          status?: Database["public"]["Enums"]["job_states"] | null
+          status_before?: Database["public"]["Enums"]["job_states"] | null
           tries?: number
           updated_at?: string | null
         }
@@ -479,7 +479,14 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      job_states:
+        | "FLAG_TO_SCRAPE"
+        | "FLAG_TO_SUMMARIZE"
+        | "FLAG_TO_GENERATE"
+        | "FLAG_TO_FINISH"
+        | "DONE"
+        | "FLAG_TO_RETRY"
+        | "ERROR_TIMEOUT"
     }
     CompositeTypes: {
       [_ in never]: never
