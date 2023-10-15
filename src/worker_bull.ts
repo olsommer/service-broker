@@ -27,39 +27,41 @@ async function handle(job: Job) {
 
   // await job.updateProgress(42);
   job.log(`handling job: [${job.id}]`);
-  console.log({ jobName: job.name, jobId: job.id, data: job.data });
-  console.log(
-    `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
-  );
+  return async () => {
+    console.log({ jobName: job.name, jobId: job.id, data: job.data });
+    console.log(
+      `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
+    );
 
-  let id: string = "";
-  try {
-    const { new: record } = payload as Payload;
-    id = record.id;
+    let id: string = "";
+    try {
+      const { new: record } = payload as Payload;
+      id = record.id;
 
-    switch (record.status as FlagStates) {
-      case ("FLAG_TO_SCRAPE"):
-        await scrape(record);
-        break;
-      case ("FLAG_TO_SUMMARIZE"):
-        await summarize(record);
-        break;
-      case ("FLAG_TO_GENERATE"):
-        await generate(record);
-        break;
-      case ("FLAG_TO_FINISH"):
-        await finish(record);
-        break;
-      case ("DONE"):
-        break;
-      case ("FLAG_TO_RETRY"):
-        await retry(record);
-        break;
+      switch (record.status as FlagStates) {
+        case ("FLAG_TO_SCRAPE"):
+          await scrape(record);
+          break;
+        case ("FLAG_TO_SUMMARIZE"):
+          await summarize(record);
+          break;
+        case ("FLAG_TO_GENERATE"):
+          await generate(record);
+          break;
+        case ("FLAG_TO_FINISH"):
+          await finish(record);
+          break;
+        case ("DONE"):
+          break;
+        case ("FLAG_TO_RETRY"):
+          await retry(record);
+          break;
+      }
+    } catch (error) {
+      console.error(error);
+      await log("ERROR", (error as Error).message, id, "task_manager");
     }
-  } catch (error) {
-    console.error(error);
-    await log("ERROR", (error as Error).message, id, "task_manager");
-  }
+  };
 }
 
 const worker = new Worker("ilProcess", handle, {
