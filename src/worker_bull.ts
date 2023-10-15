@@ -1,5 +1,3 @@
-/* bullmq */
-
 /* utils */
 import { queue } from "./utils/bull";
 import { FlagStates } from "./utils/states";
