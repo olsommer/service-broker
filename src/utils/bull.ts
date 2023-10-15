@@ -2,7 +2,6 @@ import { Queue } from "bullmq";
 export const queue = new Queue("introlines", {
   connection: {
     host: process.env.REDIS_URL,
-    port: 19090,
   },
   // redis: process.env.REDIS_URL,
   // limiter: {
