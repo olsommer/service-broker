@@ -22,7 +22,7 @@ producer.on("exit", (code, signal) => {
 });
 
 // Spawn a new Node.js process and execute the worker script with parameters
-const worker = spawn("node", ["./dist/worker_bull.js"], {
+const worker = spawn("node", ["./dist/worker.js"], {
   cwd: process.cwd(),
   detached: true,
   stdio: "inherit",
