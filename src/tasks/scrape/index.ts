@@ -46,25 +46,30 @@ export async function scrape(record: Tables<"leads_jobs">) {
         "block_ads": "true",
       },
     }).then(async function (response) {
-      const content = response.data;
-      // Clean the HTML
-      const content_cleaned = convertToPlain(content);
+      try {
+        const content = response.data;
+        // Clean the HTML
+        const content_cleaned = convertToPlain(content);
 
-      // Save the scraped content received from the scraper
-      // -------------------------------------------------
-      const { data: scrCurrData, error } = await supa
-        .from("scrapes")
-        .insert({
-          lead_job_id: id,
-          log_request: tUrl,
-          log_callback_url: "",
-          content,
-          content_cleaned,
-        })
-        .select();
-      if (error) throw error;
-      if (!scrCurrData) throw new Error("No data");
-      await setNextState(id, "FLAG_TO_SUMMARIZE");
+        // Save the scraped content received from the scraper
+        // -------------------------------------------------
+        const { data: scrCurrData, error } = await supa
+          .from("scrapes")
+          .insert({
+            lead_job_id: id,
+            log_request: tUrl,
+            log_callback_url: "",
+            content,
+            content_cleaned,
+          })
+          .select();
+        if (error) throw error;
+        if (!scrCurrData) throw new Error("No data");
+        await setNextState(id, "FLAG_TO_SUMMARIZE");
+      } catch (err) {
+        // If the status is not "finished", return an error
+        await log("ERROR", err as any, lead_id, "could not scrape url");
+      }
     }).catch(async () => {
       // If the status is not "finished", return an error
       await log("ERROR", tUrl, lead_id, "could not scrape url");
