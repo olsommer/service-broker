@@ -50,7 +50,7 @@ export async function scrape(record: Tables<"leads_jobs">) {
       try {
         await log("OK", content, id, "scrape");
         // Clean the HTML
-        const content_cleaned = convertToPlain(content);
+        const content_cleaned = await convertToPlain(content);
 
         await log("OK", content_cleaned, id, "scrape");
         // Save the scraped content received from the scraper
