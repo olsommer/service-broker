@@ -6,6 +6,18 @@ import { Tables } from "../../utils/database.helpers";
 import { supa } from "../../utils/supabase";
 import { setNextState } from "../next";
 import { convertToPlain } from "./convertToPlain3";
+import scrapingbee from "scrapingbee";
+
+async function get(url: string) {
+  var client = new scrapingbee.ScrapingBeeClient(
+    "VQP41QHSB75CBDAK0UW3LDW34A386NFA5KLJU0B1T730V9GOKO26S5XU37IIAEPRHNLBYMBEIR78IXEG",
+  );
+  var response = await client.get({
+    url: url,
+    params: {},
+  });
+  return response;
+}
 
 export async function scrape(record: Tables<"leads_jobs">) {
   const { id, lead_id } = record;
@@ -37,16 +49,17 @@ export async function scrape(record: Tables<"leads_jobs">) {
     // -------------------------------------------------
     // request Axios
 
-    axios.get("https://app.scrapingbee.com/api/v1", {
-      params: {
-        "api_key":
-          "VQP41QHSB75CBDAK0UW3LDW34A386NFA5KLJU0B1T730V9GOKO26S5XU37IIAEPRHNLBYMBEIR78IXEG",
-        "url": tUrl,
-        "wait": "100",
-        "block_ads": "true",
-      },
-    }).then(async function (response) {
-      const content = response.data;
+    // axios.get("https://app.scrapingbee.com/api/v1", {
+    //   params: {
+    //     "api_key":
+    //       "VQP41QHSB75CBDAK0UW3LDW34A386NFA5KLJU0B1T730V9GOKO26S5XU37IIAEPRHNLBYMBEIR78IXEG",
+    //     "url": tUrl,
+    //     "wait": "100",
+    //     "block_ads": "true",
+    //   },
+    // })
+    get(tUrl).then(async function (response) {
+      const content = new TextDecoder().decode(response.data);
       try {
         await log("OK", content, id, "scrape");
         // Clean the HTML

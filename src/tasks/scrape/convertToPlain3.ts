@@ -35,8 +35,6 @@ export async function convertToPlain(html: string) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, "text/html");
 
-  await log("OK", String(doc), "2d64c8d0-5f66-4729-b076-c2d68c176981", "1");
-
   if (!doc) {
     throw new Error("Could not parse HTML");
   }
@@ -44,25 +42,11 @@ export async function convertToPlain(html: string) {
   // Find the container element (e.g., <div>) to start the extraction
   const container = doc.getElementsByTagName("body")[0];
 
-  await log(
-    "OK",
-    String(container),
-    "2d64c8d0-5f66-4729-b076-c2d68c176981",
-    "2",
-  );
-
   if (!container) {
     throw new Error("Could not parse HTML");
   }
   // Extract raw text content from the container element and its children
   const rawTextContent = extractRawText(container);
-
-  await log(
-    "OK",
-    String(rawTextContent),
-    "2d64c8d0-5f66-4729-b076-c2d68c176981",
-    "3",
-  );
 
   // const cleanedText = rawTextContent.replace(/\s+/g, " ");
   // The regular expression [\n\r\t]+ matches one or more line breaks
@@ -70,10 +54,10 @@ export async function convertToPlain(html: string) {
   // Afterward, the regular expression /\s+/g is used to replace multiple consecutive
   // spaces with a single space. This should give you a cleaned text with
   // line breaks removed and spaces between words preserved.
-  const cleanedText = rawTextContent.replace(/[\n\r\t]+/g, " ").replace(
-    /\s+/g,
-    " ",
-  ).replace(/"/g, " ") // Escape double quotes
+  const cleanedText = rawTextContent
+    .replace(/[\n\r\t]+/g, " ")
+    .replace(/\s+/g, " ")
+    .replace(/"/g, " ") // Escape double quotes
     .replace(/{/g, " ") // Escape curly braces {
     .replace(/}/g, " ") // Escape curly braces }
     .replace(/\\/g, " ") // Escape backslashes

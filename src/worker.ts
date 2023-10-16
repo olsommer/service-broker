@@ -60,6 +60,6 @@ async function handle(job: Job<Payload>) {
   }
 }
 
-queue.process(5, function (job: Job<Payload>, done: DoneCallback<any>) {
+queue.process(2, function (job: Job<Payload>, done: DoneCallback<any>) {
   handle(job).then(() => done(null));
 });
