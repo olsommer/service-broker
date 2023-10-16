@@ -9,6 +9,7 @@ async function setNextState(id, status, tries) {
         .update({
         status,
         tries,
+        job_collected: false,
     })
         .eq("id", id);
     if (error)
