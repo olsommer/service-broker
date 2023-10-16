@@ -14,7 +14,10 @@ export async function convertToPlain(html: string) {
 
   // core = core.find("p, h1, h2, h3, h4, h5, h6, li, span, div, a, b, i, u, s");
   // core = core.find("p, h1, h2, h3, h4, h5, h6, li, span, div, a, b, i, u, s");
-  core = core.filter("script, style, nav, a, img, svg, video, audio, iframe");
+  core = core.filter("script").filter("style").filter("nav").filter("a").filter(
+    "img",
+  ).filter("svg").filter("video").filter("audio").filter("iframe");
+  // style, nav, a, img, svg, video, audio, iframe;
 
   // Extract raw text content from the container element and its children
   const rawTextContent = core.text();
