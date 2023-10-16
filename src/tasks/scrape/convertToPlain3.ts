@@ -6,9 +6,9 @@ function extractRawText(node: Node): string {
   let result = "";
 
   // If the node is a text node, concatenate its text
-  if (node.nodeType === Node.TEXT_NODE) {
-    result += node.textContent || "";
-  } else if (node.nodeType === Node.ELEMENT_NODE) {
+  if (node.nodeType === 3) { // 3 corresponds to TEXT_NODE
+    result += node.nodeValue || "";
+  } else if (node.nodeType === 1) { // 1 corresponds to ELEMENT_NODE
     const nodeName = node.nodeName.toLowerCase();
 
     // Exclude script and style elements and their content
@@ -19,8 +19,11 @@ function extractRawText(node: Node): string {
       return result;
     }
     // If the node is an element node, recursively extract text from its child nodes
-    for (const childNode of node.childNodes) {
-      result = " " + result + " " + extractRawText(childNode) + " ";
+    // for (const childNode of node.childNodes) {
+    //   result = " " + result + " " + extractRawText(childNode) + " ";
+    // }
+    for (let i = 0; i < node.childNodes.length; i++) {
+      result += " " + extractRawText(node.childNodes[i]) + " ";
     }
   }
 
