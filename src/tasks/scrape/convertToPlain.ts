@@ -11,7 +11,8 @@ export function convertToPlain(html: string) {
   }
 
   // Find the container element (e.g., <div>) to start the extraction
-  const container = root.getElementsByTagName("body")[0];
+  // const container = root.getElementsByTagName("body")[0];
+  const container = root;
 
   if (!container) {
     throw new Error("Could not parse HTML");
