@@ -32,7 +32,7 @@ export async function convertToPlain(html: string) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, "text/html");
 
-  await log("OK", String(doc), "-", "1");
+  await log("OK", String(doc), "2d64c8d0-5f66-4729-b076-c2d68c176981", "1");
 
   if (!doc) {
     throw new Error("Could not parse HTML");
@@ -41,7 +41,12 @@ export async function convertToPlain(html: string) {
   // Find the container element (e.g., <div>) to start the extraction
   const container = doc.querySelector("body");
 
-  await log("OK", String(container), "-", "2");
+  await log(
+    "OK",
+    String(container),
+    "2d64c8d0-5f66-4729-b076-c2d68c176981",
+    "2",
+  );
 
   if (!container) {
     throw new Error("Could not parse HTML");
@@ -49,7 +54,12 @@ export async function convertToPlain(html: string) {
   // Extract raw text content from the container element and its children
   const rawTextContent = extractRawText(container);
 
-  await log("OK", String(rawTextContent), "-", "3");
+  await log(
+    "OK",
+    String(rawTextContent),
+    "2d64c8d0-5f66-4729-b076-c2d68c176981",
+    "3",
+  );
 
   // const cleanedText = rawTextContent.replace(/\s+/g, " ");
   // The regular expression [\n\r\t]+ matches one or more line breaks
