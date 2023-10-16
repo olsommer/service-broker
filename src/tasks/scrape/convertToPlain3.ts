@@ -1,4 +1,5 @@
 import { DOMParser } from "@xmldom/xmldom";
+import { log } from "../log";
 
 // Function to extract raw text content recursively
 function extractRawText(node: Node): string {
@@ -26,10 +27,12 @@ function extractRawText(node: Node): string {
   return result;
 }
 
-export function convertToPlain(html: string) {
+export async function convertToPlain(html: string) {
   // Parse the HTML string into a DOM document
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, "text/html");
+
+  await log("OK", String(doc), "-", "1");
 
   if (!doc) {
     throw new Error("Could not parse HTML");
@@ -38,11 +41,15 @@ export function convertToPlain(html: string) {
   // Find the container element (e.g., <div>) to start the extraction
   const container = doc.querySelector("body");
 
+  await log("OK", String(container), "-", "2");
+
   if (!container) {
     throw new Error("Could not parse HTML");
   }
   // Extract raw text content from the container element and its children
   const rawTextContent = extractRawText(container);
+
+  await log("OK", String(rawTextContent), "-", "3");
 
   // const cleanedText = rawTextContent.replace(/\s+/g, " ");
   // The regular expression [\n\r\t]+ matches one or more line breaks
