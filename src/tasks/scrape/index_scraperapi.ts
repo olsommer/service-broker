@@ -4,8 +4,6 @@ import { isValidUrl } from "./isValid";
 import { transformUrl } from "./transformUrl";
 import { Tables } from "../../utils/database.helpers";
 import { supa } from "../../utils/supabase";
-import { setNextState } from "../next";
-import { convertToPlain } from "./convertToPlain2";
 
 export async function scrape(record: Tables<"leads_jobs">) {
   const { id, lead_id } = record;
@@ -35,40 +33,40 @@ export async function scrape(record: Tables<"leads_jobs">) {
 
     // Scraping job
     // -------------------------------------------------
-    // request Axios
-
-    axios.get("https://app.scrapingbee.com/api/v1", {
-      params: {
-        "api_key":
-          "VQP41QHSB75CBDAK0UW3LDW34A386NFA5KLJU0B1T730V9GOKO26S5XU37IIAEPRHNLBYMBEIR78IXEG",
-        "url": tUrl,
-        "wait": "100",
-        "block_ads": "true",
+    const callbackURL =
+      `https://ndxhivyksquaghuolyig.supabase.co/functions/v1/webhook?scrapeId=${uuid}&leadJobId=${id}`;
+    const key = process.env.SCRAPER_API_KEY;
+    const body = {
+      apiKey: key,
+      url: tUrl,
+      callback: {
+        type: "webhook",
+        url: callbackURL,
       },
-    }).then(async function (response) {
-      const content = response.data;
-      // Clean the HTML
-      const content_cleaned = convertToPlain(content);
+    };
+    const reqURL = "https://async.scraperapi.com/jobs";
 
-      // Save the scraped content received from the scraper
-      // -------------------------------------------------
-      const { data: scrCurrData, error } = await supa
+    // -------------------------------------------------
+    axios.post(reqURL, body, {
+      headers: { "Content-Type": "application/json" },
+    }).then(async (res) => {
+      await log("OK", res.data as any, id, "scrape");
+      //
+      //
+      // Add dummy scrape but without any content
+      const { error } = await supa
         .from("scrapes")
         .insert({
+          id: uuid,
           lead_job_id: id,
-          log_request: tUrl,
-          log_callback_url: "",
-          content,
-          content_cleaned,
-        })
-        .select();
+          log_request: res.data,
+          log_callback_url: callbackURL,
+        });
       if (error) throw error;
-      if (!scrCurrData) throw new Error("No data");
-      await setNextState(id, "FLAG_TO_SUMMARIZE");
-    }).catch(async () => {
-      // If the status is not "finished", return an error
-      await log("ERROR", tUrl, lead_id, "could not scrape url");
-      // TODO: Better error handling here
+      //
+      /* Error handling */
+    }).catch((err) => {
+      throw err;
     });
     //
     /* Error handling */

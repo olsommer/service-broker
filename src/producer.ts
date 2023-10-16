@@ -3,7 +3,7 @@ import { realtime, supa } from "./utils/supabase";
 import { queue } from "./utils/bee";
 import { Tables } from "./utils/database.helpers";
 
-const channel = realtime.channel("#id");
+const channel = realtime.channel("any");
 
 channel.on(
   "postgres_changes",
@@ -33,7 +33,7 @@ channel.subscribe((status, err) => {
   }
 
   if (status === "CHANNEL_ERROR") {
-    console.log(`There was an error subscribing to channel: ${err?.message}`);
+    console.log(`There was an error subscribing to channel: ${err}`);
   }
 
   if (status === "TIMED_OUT") {
