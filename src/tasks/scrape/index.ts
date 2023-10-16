@@ -1,4 +1,3 @@
-import axios from "axios";
 import { log } from "../log";
 import { isValidUrl } from "./isValid";
 import { transformUrl } from "./transformUrl";
@@ -6,18 +5,7 @@ import { Tables } from "../../utils/database.helpers";
 import { supa } from "../../utils/supabase";
 import { setNextState } from "../next";
 import { convertToPlain } from "./convertToPlain3";
-import scrapingbee from "scrapingbee";
-
-async function get(url: string) {
-  const client = new scrapingbee.ScrapingBeeClient(
-    "VQP41QHSB75CBDAK0UW3LDW34A386NFA5KLJU0B1T730V9GOKO26S5XU37IIAEPRHNLBYMBEIR78IXEG",
-  );
-  const response = await client.get({
-    url: url,
-    params: {},
-  });
-  return response;
-}
+import axios from "axios";
 
 export async function scrape(record: Tables<"leads_jobs">) {
   const { id, lead_id } = record;
@@ -48,19 +36,18 @@ export async function scrape(record: Tables<"leads_jobs">) {
     // Scraping job
     // -------------------------------------------------
     // request Axios
+    const key = process.env.SCRAPER_API_KEY;
+    const scUrl =
+      `http://api.scraperapi.com/?api_key=${key}&url=${tUrl}&render=true`;
 
-    // axios.get("https://app.scrapingbee.com/api/v1", {
-    //   params: {
-    //     "api_key":
-    //       "VQP41QHSB75CBDAK0UW3LDW34A386NFA5KLJU0B1T730V9GOKO26S5XU37IIAEPRHNLBYMBEIR78IXEG",
-    //     "url": tUrl,
-    //     "wait": "100",
-    //     "block_ads": "true",
-    //   },
-    // })
-    get(tUrl).then(async function (response) {
+    axios.get(scUrl).then(async (response) => {
       await log("OK", response.data, id, "scrape");
-      const content = new TextDecoder().decode(response.data);
+      // // If the status is not "finished", return an error
+      // if (response.statusCode !== 200) {
+      //   await log("ERROR", response, scrapeId, "scrape_callback");
+      // // TODO: Better error handling here
+      // }
+      const content = response.data.body;
       try {
         await log("OK", content, id, "scrape");
         // Clean the HTML
