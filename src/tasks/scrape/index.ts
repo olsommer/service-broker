@@ -72,9 +72,9 @@ export async function scrape(record: Tables<"leads_jobs">) {
         // If the status is not "finished", return an error
         await log("ERROR", err as any, lead_id, "could not scrape url");
       }
-    }).catch(async () => {
+    }).catch(async (err) => {
       // If the status is not "finished", return an error
-      await log("ERROR", tUrl, lead_id, "could not scrape url");
+      await log("ERROR", err, lead_id, "could not scrape url");
       // TODO: Better error handling here
     });
     //
