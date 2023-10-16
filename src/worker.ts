@@ -46,7 +46,7 @@ async function handle(job: Job<Payload>) {
         if (was("FLAG_TO_SUMMARIZE")) await generate(record);
         break;
       case ("FLAG_TO_FINISH"):
-        if (was("FLAG_TO_FINISH")) await finish(record);
+        if (was("FLAG_TO_GENERATE")) await finish(record);
         break;
       case ("DONE"):
         break;

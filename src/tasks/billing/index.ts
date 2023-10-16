@@ -13,13 +13,6 @@ export async function billing(props: Props) {
   const { job_id, count_gen_lines, count_file_rows, user_id, leads_job_id } =
     props;
 
-  await log(
-    "OK",
-    props as any,
-    leads_job_id,
-    "log",
-  );
-
   // Update job data
   const { data: billData, error: billErr } = await supa
     .from("billings")
