@@ -47,7 +47,7 @@ export async function scrape(record: Tables<"leads_jobs">) {
       //   await log("ERROR", response, scrapeId, "scrape_callback");
       // // TODO: Better error handling here
       // }
-      const content = response.data.body;
+      const content = response.data;
       try {
         await log("OK", content, id, "scrape");
         // Clean the HTML
