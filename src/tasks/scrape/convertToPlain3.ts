@@ -39,7 +39,7 @@ export async function convertToPlain(html: string) {
   }
 
   // Find the container element (e.g., <div>) to start the extraction
-  const container = doc.querySelector("body");
+  const container = doc.getElementsByTagName("body")[0];
 
   await log(
     "OK",
