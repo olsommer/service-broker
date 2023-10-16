@@ -1,5 +1,4 @@
 import Queue from "bee-queue";
-import redis from "redis";
 
 // Redis connection details
 // https://github.com/redis/ioredis/blob/v4/API.md

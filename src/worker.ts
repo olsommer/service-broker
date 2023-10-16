@@ -1,6 +1,5 @@
 /* utils */
 import { queue } from "./utils/bee";
-import { FlagStates } from "./utils/states";
 import { Tables } from "./utils/database.helpers";
 /* tasks */
 import { scrape } from "./tasks/scrape";
@@ -20,7 +19,6 @@ export type Payload = {
   old: Tables<"leads_jobs"> | null;
   errors: any[];
 };
-
 async function handle(job: Job<Payload>) {
   const payload = job.data as Payload;
   console.log(
@@ -32,12 +30,12 @@ async function handle(job: Job<Payload>) {
     const { new: record } = payload as Payload;
     id = record.id;
 
-    const was = (before: FlagStates | null) => {
+    const was = (before: Tables<"leads_jobs">["status"]) => {
       return record.status_before === before ||
         record.status_before === "FLAG_TO_RETRY";
     };
 
-    switch (record.status as FlagStates) {
+    switch (record.status) {
       case ("FLAG_TO_SCRAPE"):
         if (was(null)) await scrape(record);
         break;

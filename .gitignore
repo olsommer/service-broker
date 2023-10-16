@@ -1,5 +1,4 @@
 /node_modules
-.parcel-cache
 npm-debug.log
 .DS_Store
 /*.env
