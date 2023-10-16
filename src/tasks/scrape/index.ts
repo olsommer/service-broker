@@ -46,8 +46,8 @@ export async function scrape(record: Tables<"leads_jobs">) {
         "block_ads": "true",
       },
     }).then(async function (response) {
+      const content = response.data;
       try {
-        const content = response.data;
         // Clean the HTML
         const content_cleaned = convertToPlain(content);
 
