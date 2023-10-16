@@ -11,6 +11,7 @@ channel.on(
     event: "*",
     schema: "public",
     table: "leads_jobs",
+    filter: `job_collected=eq.FALSE`,
   },
   // (payload) => handle(payload),
   // (payload) => spawnChild(payload),
