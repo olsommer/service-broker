@@ -1,15 +1,23 @@
 import { log } from "../log";
-import cheerio from "cheerio";
+import { AnyNode, Cheerio, load } from "cheerio";
 
 export async function convertToPlain(html: string) {
-  const $ = cheerio.load(html);
-  const container = $("body");
+  const $ = load(html);
+  let core: Cheerio<AnyNode>;
 
-  if (!container) {
-    throw new Error("Could not parse HTML");
+  /* Check if there is a main */
+  if ($("body").has("main").length > 0) {
+    core = $("body");
+  } else {
+    core = $("main");
   }
+
+  // core = core.find("p, h1, h2, h3, h4, h5, h6, li, span, div, a, b, i, u, s");
+  // core = core.find("p, h1, h2, h3, h4, h5, h6, li, span, div, a, b, i, u, s");
+  core = core.filter("script, style, nav, a, img, svg, video, audio, iframe");
+
   // Extract raw text content from the container element and its children
-  const rawTextContent = container.text();
+  const rawTextContent = core.text();
   await log(
     "OK",
     rawTextContent,
