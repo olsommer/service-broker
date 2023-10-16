@@ -2,25 +2,29 @@ import { log } from "../log";
 import { AnyNode, Cheerio, load } from "cheerio";
 
 export async function convertToPlain(html: string) {
-  const $ = load(html);
-  let core: Cheerio<AnyNode>;
+  let $ = load(html);
 
-  /* Check if there is a main */
-  if ($("body").has("main").length > 0) {
-    core = $("body");
-  } else {
-    core = $("main");
-  }
+  // /* Check if there is a main */
+  // if ($("body").has("main").length > 0) {
+  //   _$ = $("body");
+  // } else {
+  //   _$ = $("main");
+  // }
+
+  const $$ = $("main").length ? $("main") : $("body");
+  $$.find("script, style, nav, a, img, svg, video, audio, iframe").remove();
 
   // core = core.find("p, h1, h2, h3, h4, h5, h6, li, span, div, a, b, i, u, s");
   // core = core.find("p, h1, h2, h3, h4, h5, h6, li, span, div, a, b, i, u, s");
-  core = core.filter("script").filter("style").filter("nav").filter("a").filter(
-    "img",
-  ).filter("svg").filter("video").filter("audio").filter("iframe");
+  // _$ = $("style").remove();
+  // _$ = _$("body");
+  // .filter("style").filter("nav").filter("a").filter(
+  //   "img",
+  // ).filter("svg").filter("video").filter("audio").filter("iframe");
   // style, nav, a, img, svg, video, audio, iframe;
 
   // Extract raw text content from the container element and its children
-  const rawTextContent = core.text();
+  const rawTextContent = $$.text();
   await log(
     "OK",
     rawTextContent,
