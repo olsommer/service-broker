@@ -48,9 +48,11 @@ export async function scrape(record: Tables<"leads_jobs">) {
     }).then(async function (response) {
       const content = response.data;
       try {
+        await log("OK", content, id, "scrape");
         // Clean the HTML
         const content_cleaned = convertToPlain(content);
 
+        await log("OK", content_cleaned, id, "scrape");
         // Save the scraped content received from the scraper
         // -------------------------------------------------
         const { data: scrCurrData, error } = await supa
