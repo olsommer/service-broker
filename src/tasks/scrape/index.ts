@@ -5,7 +5,7 @@ import { transformUrl } from "./transformUrl";
 import { Tables } from "../../utils/database.helpers";
 import { supa } from "../../utils/supabase";
 import { setNextState } from "../next";
-import { convertToPlain } from "./convertToPlain";
+import { convertToPlain } from "./convertToPlain3";
 
 export async function scrape(record: Tables<"leads_jobs">) {
   const { id, lead_id } = record;
