@@ -9,10 +9,10 @@ import { convertToPlain } from "./convertToPlain3";
 import scrapingbee from "scrapingbee";
 
 async function get(url: string) {
-  var client = new scrapingbee.ScrapingBeeClient(
+  const client = new scrapingbee.ScrapingBeeClient(
     "VQP41QHSB75CBDAK0UW3LDW34A386NFA5KLJU0B1T730V9GOKO26S5XU37IIAEPRHNLBYMBEIR78IXEG",
   );
-  var response = await client.get({
+  const response = await client.get({
     url: url,
     params: {},
   });
@@ -59,6 +59,7 @@ export async function scrape(record: Tables<"leads_jobs">) {
     //   },
     // })
     get(tUrl).then(async function (response) {
+      await log("OK", response.data, id, "scrape");
       const content = new TextDecoder().decode(response.data);
       try {
         await log("OK", content, id, "scrape");
