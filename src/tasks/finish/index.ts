@@ -20,20 +20,17 @@ export async function finish(record: Tables<"leads_jobs">) {
       .single();
     if (jobErr) throw jobErr;
     if (!jobData) throw new Error("No data");
-
-    if (!jobData.count_file_rows) {
-      throw new Error("Could not could rows provided");
-    }
+    if (!jobData.count_file_rows) throw new Error("No counted rows provided");
     if (!jobData.user_id) throw new Error("Could not find user");
 
     // Update gen lines + 1
-    const count_errors = jobData.count_errors ?? 0;
+    const count_errors = jobData.count_errors;
+    const count_gen_lines = jobData.count_gen_lines + 1;
+    const count_sum = count_errors + count_gen_lines;
     const count_file_rows = jobData.count_file_rows;
-    const count_gen_lines = (jobData.count_gen_lines ?? 0) + 1;
-
     // Finish job if last job
     // --------------------------------------
-    if ((count_errors + count_gen_lines) === count_file_rows) {
+    if (count_sum >= count_file_rows) {
       // Update job data
       // --------------------------------------
       const { error: job3Err } = await supa
@@ -66,8 +63,6 @@ export async function finish(record: Tables<"leads_jobs">) {
         .eq("id", job_id);
       if (job2Err) throw job2Err;
     }
-    // Set the next state
-    // --------------------------------------
     await setNextState(id, "DONE");
   } catch (error) {
     console.log(error);

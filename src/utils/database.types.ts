@@ -122,9 +122,9 @@ export interface Database {
       jobs: {
         Row: {
           campaign_id: string | null
-          count_errors: number | null
+          count_errors: number
           count_file_rows: number | null
-          count_gen_lines: number | null
+          count_gen_lines: number
           created_at: string
           id: string
           meta: Json
@@ -135,9 +135,9 @@ export interface Database {
         }
         Insert: {
           campaign_id?: string | null
-          count_errors?: number | null
+          count_errors?: number
           count_file_rows?: number | null
-          count_gen_lines?: number | null
+          count_gen_lines?: number
           created_at?: string
           id?: string
           meta?: Json
@@ -148,9 +148,9 @@ export interface Database {
         }
         Update: {
           campaign_id?: string | null
-          count_errors?: number | null
+          count_errors?: number
           count_file_rows?: number | null
-          count_gen_lines?: number | null
+          count_gen_lines?: number
           created_at?: string
           id?: string
           meta?: Json
@@ -218,9 +218,10 @@ export interface Database {
         Row: {
           created_at: string
           id: string
-          job_collected: boolean | null
+          job_collected: boolean
           job_id: string | null
           lead_id: string | null
+          ref_campaign_id: string | null
           status: Database["public"]["Enums"]["job_states"] | null
           status_before: Database["public"]["Enums"]["job_states"] | null
           tries: number
@@ -229,9 +230,10 @@ export interface Database {
         Insert: {
           created_at?: string
           id?: string
-          job_collected?: boolean | null
+          job_collected?: boolean
           job_id?: string | null
           lead_id?: string | null
+          ref_campaign_id?: string | null
           status?: Database["public"]["Enums"]["job_states"] | null
           status_before?: Database["public"]["Enums"]["job_states"] | null
           tries?: number
@@ -240,9 +242,10 @@ export interface Database {
         Update: {
           created_at?: string
           id?: string
-          job_collected?: boolean | null
+          job_collected?: boolean
           job_id?: string | null
           lead_id?: string | null
+          ref_campaign_id?: string | null
           status?: Database["public"]["Enums"]["job_states"] | null
           status_before?: Database["public"]["Enums"]["job_states"] | null
           tries?: number
