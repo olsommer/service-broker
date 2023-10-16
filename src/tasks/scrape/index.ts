@@ -4,7 +4,7 @@ import { transformUrl } from "./transformUrl";
 import { Tables } from "../../utils/database.helpers";
 import { supa } from "../../utils/supabase";
 import { setNextState } from "../next";
-import { convertToPlain } from "./convertToPlain3";
+import { convertToPlain } from "./convertToPlain4";
 import axios from "axios";
 
 export async function scrape(record: Tables<"leads_jobs">) {
