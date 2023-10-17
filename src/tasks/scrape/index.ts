@@ -11,7 +11,6 @@ export async function scrape(record: Tables<"leads_jobs">) {
   const { id, lead_id } = record;
   try {
     if (!lead_id) throw new Error("No lead_id provided");
-    const uuid = crypto.randomUUID();
 
     // Get lead data
     // --------------------------------------
@@ -38,18 +37,12 @@ export async function scrape(record: Tables<"leads_jobs">) {
     const key = process.env.SCRAPER_API_KEY;
     const scUrl =
       `http://api.scraperapi.com/?api_key=${key}&url=${tUrl}&render=true`;
+
     const response = await axios.get(scUrl); // fire
 
     // Check if the response is valid
     if (response.status !== 200) {
-      await log(
-        "ERROR",
-        response.statusText,
-        lead_id,
-        "could not scrape homepage",
-      );
-      await setNextState(id, "FLAG_TO_RETRY");
-      // If it is...
+      throw new Error("Response status is not 200 :" + response.statusText);
     } else {
       const content = response.data;
 
@@ -72,8 +65,15 @@ export async function scrape(record: Tables<"leads_jobs">) {
       if (!scrCurrData) throw new Error("No data");
       await setNextState(id, "FLAG_TO_SUMMARIZE");
     }
+
     /* Error handling */
   } catch (error) {
-    await log("ERROR", (error as Error).message, id, "scrape");
+    await log(
+      "ERROR",
+      (error as Error).message,
+      id,
+      "could not scrape homepage or save scrape",
+    );
+    await setNextState(id, "FLAG_TO_RETRY");
   }
 }
