@@ -35,50 +35,43 @@ export async function scrape(record: Tables<"leads_jobs">) {
 
     // Scraping job
     // -------------------------------------------------
-    // request Axios
     const key = process.env.SCRAPER_API_KEY;
     const scUrl =
       `http://api.scraperapi.com/?api_key=${key}&url=${tUrl}&render=true`;
+    const response = await axios.get(scUrl); // fire
 
-    axios.get(scUrl).then(async (response) => {
-      await log("OK", response.data, id, "scrape");
-      // // If the status is not "finished", return an error
-      // if (response.statusCode !== 200) {
-      //   await log("ERROR", response, scrapeId, "scrape_callback");
-      // // TODO: Better error handling here
-      // }
+    // Check if the response is valid
+    if (response.status !== 200) {
+      await log(
+        "ERROR",
+        response.statusText,
+        lead_id,
+        "could not scrape homepage",
+      );
+      await setNextState(id, "FLAG_TO_RETRY");
+      // If it is...
+    } else {
       const content = response.data;
-      try {
-        await log("OK", content, id, "scrape");
-        // Clean the HTML
-        const content_cleaned = await convertToPlain(content);
 
-        await log("OK", content_cleaned, id, "scrape");
-        // Save the scraped content received from the scraper
-        // -------------------------------------------------
-        const { data: scrCurrData, error } = await supa
-          .from("scrapes")
-          .insert({
-            lead_job_id: id,
-            log_request: tUrl,
-            log_callback_url: "",
-            content,
-            content_cleaned,
-          })
-          .select();
-        if (error) throw error;
-        if (!scrCurrData) throw new Error("No data");
-        await setNextState(id, "FLAG_TO_SUMMARIZE");
-      } catch (err) {
-        // If the status is not "finished", return an error
-        await log("ERROR", err as any, lead_id, "could not scrape url");
-      }
-    }).catch(async (err) => {
-      // If the status is not "finished", return an error
-      await log("ERROR", err, lead_id, "could not scrape url");
-      // TODO: Better error handling here
-    });
-    //
+      // Clean the HTML
+      const content_cleaned = await convertToPlain(content);
+
+      // Save the scraped content received from the scraper
+      // -------------------------------------------------
+      const { data: scrCurrData, error } = await supa
+        .from("scrapes")
+        .insert({
+          lead_job_id: id,
+          log_request: tUrl,
+          log_callback_url: "",
+          content,
+          content_cleaned,
+        })
+        .select();
+      if (error) throw error;
+      if (!scrCurrData) throw new Error("No data");
+      await setNextState(id, "FLAG_TO_SUMMARIZE");
+    }
     /* Error handling */
   } catch (error) {
     await log("ERROR", (error as Error).message, id, "scrape");

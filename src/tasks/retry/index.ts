@@ -12,22 +12,7 @@ export async function retry(
     if (tries < 3) {
       switch (status_before) {
         case ("FLAG_TO_SCRAPE"):
-          {
-            // Get current credits
-            const { data: rlData, error: rlErr } = await supa
-              .from("scrapes")
-              .select("*")
-              .eq("lead_job_id", id)
-              .order("created_at", { ascending: false })
-              .limit(1)
-              .single();
-            if (rlErr) throw rlErr;
-            if (rlData) {
-              await setNextState(id, "FLAG_TO_SUMMARIZE", tries + 1);
-            } else {
-              await setNextState(id, "FLAG_TO_SCRAPE", tries + 1);
-            }
-          }
+          await setNextState(id, "FLAG_TO_SCRAPE", tries + 1);
           break;
         case ("FLAG_TO_SUMMARIZE"):
           await setNextState(id, "FLAG_TO_SUMMARIZE", tries + 1);
