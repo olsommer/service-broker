@@ -12,16 +12,10 @@ export async function convertToPlain(html: string) {
   // }
 
   const $$ = $("main").length ? $("main") : $("body");
-  $$.find("script, style, nav, a, img, svg, video, audio, iframe").remove();
-
+  $$.find(
+    "script, style, nav, button, a, img, svg, video, audio, iframe, table, footer",
+  ).remove();
   // core = core.find("p, h1, h2, h3, h4, h5, h6, li, span, div, a, b, i, u, s");
-  // core = core.find("p, h1, h2, h3, h4, h5, h6, li, span, div, a, b, i, u, s");
-  // _$ = $("style").remove();
-  // _$ = _$("body");
-  // .filter("style").filter("nav").filter("a").filter(
-  //   "img",
-  // ).filter("svg").filter("video").filter("audio").filter("iframe");
-  // style, nav, a, img, svg, video, audio, iframe;
 
   // Extract raw text content from the container element and its children
   const rawTextContent = $$.text();
