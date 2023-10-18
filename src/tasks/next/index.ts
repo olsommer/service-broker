@@ -16,5 +16,4 @@ export async function setNextState(
     })
     .eq("id", id);
   if (error) throw error;
-  await log("OK", status, id, "next state");
 }
