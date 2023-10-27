@@ -49,11 +49,11 @@ async function route(
         summarizeQueue.createJob(payload).save().then(delivered);
       }
       break;
-    case ("FLAG_TO_GENERATE"):
-      if (was(record, "FLAG_TO_SUMMARIZE")) {
-        generateQueue.createJob(payload).save().then(delivered);
-      }
-      break;
+    // case ("FLAG_TO_GENERATE"):
+    //   if (was(record, "FLAG_TO_SUMMARIZE")) {
+    //     generateQueue.createJob(payload).save().then(delivered);
+    //   }
+    //   break;
     // case ("FLAG_TO_FINISH"):
     //   if (was(record, "FLAG_TO_GENERATE")) {
     //     finishQueue.createJob(payload).save().then(delivered);
