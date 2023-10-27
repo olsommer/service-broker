@@ -60,9 +60,9 @@ async function route(
         finishQueue.createJob(payload).save().then(delivered);
       }
       break;
-    case ("FLAG_TO_RETRY"):
-      retryQueue.createJob(payload).save().then(delivered);
-      break;
+    // case ("FLAG_TO_RETRY"):
+    //   retryQueue.createJob(payload).save().then(delivered);
+    //   break;
     case ("DONE"):
       break;
   }
