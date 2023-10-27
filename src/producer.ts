@@ -1,11 +1,6 @@
 import "dotenv/config";
 import { realtime, supa } from "./utils/supabase";
-import {
-  finishQueue,
-  generateQueue,
-  scrapingQueue,
-  summarizeQueue,
-} from "./utils/bee";
+import { scrapingQueue } from "./utils/bee";
 import { Tables } from "./utils/database.helpers";
 import { Payload } from "./worker";
 import { RealtimePostgresChangesPayload } from "@supabase/realtime-js";
@@ -44,11 +39,11 @@ async function route(
         scrapingQueue.createJob(payload).save().then(delivered);
       }
       break;
-    case ("FLAG_TO_SUMMARIZE"):
-      if (was(record, "FLAG_TO_SCRAPE")) {
-        summarizeQueue.createJob(payload).save().then(delivered);
-      }
-      break;
+    // case ("FLAG_TO_SUMMARIZE"):
+    //   if (was(record, "FLAG_TO_SCRAPE")) {
+    //     summarizeQueue.createJob(payload).save().then(delivered);
+    //   }
+    //   break;
     // case ("FLAG_TO_GENERATE"):
     //   if (was(record, "FLAG_TO_SUMMARIZE")) {
     //     generateQueue.createJob(payload).save().then(delivered);
