@@ -1,5 +1,5 @@
 /* utils */
-import { scrapingQueue } from "./utils/bee";
+import { scrapingQueue, summarizeQueue } from "./utils/bee";
 import { Tables } from "./utils/database.helpers";
 /* tasks */
 import { scrape } from "./tasks/scrape";
@@ -104,6 +104,24 @@ async function handle(job: Job<Payload>) {
   }
 }
 
+/* Handle Summarize */
+async function handleSummarize(job: Job<Payload>) {
+  const payload = job.data as Payload;
+  console.log(
+    `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
+  );
+
+  let id: string = "";
+  try {
+    const { new: record } = payload as Payload;
+    id = record.id;
+    await summarize(record);
+  } catch (error) {
+    console.error(error);
+    await log("ERROR", (error as Error).message, id, "task_manager");
+  }
+}
+
 // queue.process(10, function (job: Job<Payload>, done: DoneCallback<any>) {
 //   handle(job).then(() => done(null));
 // });
@@ -112,9 +130,9 @@ scrapingQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
   handle(job).then(() => done(null));
 });
 
-// summarizeQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
-//   handle(job).then(() => done(null));
-// });
+summarizeQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
+  handleSummarize(job).then(() => done(null));
+});
 
 // generateQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
 //   handle(job).then(() => done(null));
