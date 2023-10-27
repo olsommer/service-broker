@@ -3,7 +3,6 @@ import { realtime, supa } from "./utils/supabase";
 import {
   finishQueue,
   generateQueue,
-  queue,
   retryQueue,
   scrapingQueue,
   summarizeQueue,

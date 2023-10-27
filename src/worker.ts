@@ -2,7 +2,6 @@
 import {
   finishQueue,
   generateQueue,
-  queue,
   retryQueue,
   scrapingQueue,
   summarizeQueue,
@@ -27,54 +26,54 @@ export type Payload = {
   errors: any[];
 };
 
-const was = (
-  record: Payload["new"],
-  before: Tables<"leads_jobs">["status"],
-) => {
-  return record.status_before === before ||
-    record.status_before === "FLAG_TO_RETRY";
-};
+// const was = (
+//   record: Payload["new"],
+//   before: Tables<"leads_jobs">["status"],
+// ) => {
+//   return record.status_before === before ||
+//     record.status_before === "FLAG_TO_RETRY";
+// };
 
-async function ___old_handle(job: Job<Payload>) {
-  const payload = job.data as Payload;
-  console.log(
-    `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
-  );
+// async function ___old_handle(job: Job<Payload>) {
+//   const payload = job.data as Payload;
+//   console.log(
+//     `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
+//   );
 
-  let id: string = "";
-  try {
-    const { new: record } = payload as Payload;
-    id = record.id;
+//   let id: string = "";
+//   try {
+//     const { new: record } = payload as Payload;
+//     id = record.id;
 
-    // const was = (before: Tables<"leads_jobs">["status"]) => {
-    //   return record.status_before === before ||
-    //     record.status_before === "FLAG_TO_RETRY";
-    // };
+//     // const was = (before: Tables<"leads_jobs">["status"]) => {
+//     //   return record.status_before === before ||
+//     //     record.status_before === "FLAG_TO_RETRY";
+//     // };
 
-    switch (record.status) {
-      // case ("FLAG_TO_SCRAPE"):
-      //   if (was(record, null)) await scrape(record);
-      //   break;
-      case ("FLAG_TO_SUMMARIZE"):
-        if (was(record, "FLAG_TO_SCRAPE")) await summarize(record);
-        break;
-      case ("FLAG_TO_GENERATE"):
-        if (was(record, "FLAG_TO_SUMMARIZE")) await generate(record);
-        break;
-      case ("FLAG_TO_FINISH"):
-        if (was(record, "FLAG_TO_GENERATE")) await finish(record);
-        break;
-      case ("DONE"):
-        break;
-      case ("FLAG_TO_RETRY"):
-        await retry(record);
-        break;
-    }
-  } catch (error) {
-    console.error(error);
-    await log("ERROR", (error as Error).message, id, "task_manager");
-  }
-}
+//     switch (record.status) {
+//       // case ("FLAG_TO_SCRAPE"):
+//       //   if (was(record, null)) await scrape(record);
+//       //   break;
+//       case ("FLAG_TO_SUMMARIZE"):
+//         if (was(record, "FLAG_TO_SCRAPE")) await summarize(record);
+//         break;
+//       case ("FLAG_TO_GENERATE"):
+//         if (was(record, "FLAG_TO_SUMMARIZE")) await generate(record);
+//         break;
+//       case ("FLAG_TO_FINISH"):
+//         if (was(record, "FLAG_TO_GENERATE")) await finish(record);
+//         break;
+//       case ("DONE"):
+//         break;
+//       case ("FLAG_TO_RETRY"):
+//         await retry(record);
+//         break;
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     await log("ERROR", (error as Error).message, id, "task_manager");
+//   }
+// }
 
 /* Handle Scraping */
 async function handle(job: Job<Payload>) {
