@@ -100,8 +100,6 @@ async function handle(job: Job<Payload>) {
       case ("finish"):
         await finish(record);
         break;
-      case ("DONE"):
-        break;
       case ("retry"):
         await retry(record);
         break;
@@ -120,18 +118,18 @@ scrapingQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
   handle(job).then(() => done(null));
 });
 
-summarizeQueue.process(2, (job: Job<Payload>, done: DoneCallback<any>) => {
+summarizeQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
   handle(job).then(() => done(null));
 });
 
-generateQueue.process(2, (job: Job<Payload>, done: DoneCallback<any>) => {
+generateQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
   handle(job).then(() => done(null));
 });
 
-finishQueue.process(2, (job: Job<Payload>, done: DoneCallback<any>) => {
+finishQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
   handle(job).then(() => done(null));
 });
 
-retryQueue.process(2, (job: Job<Payload>, done: DoneCallback<any>) => {
+retryQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
   handle(job).then(() => done(null));
 });
