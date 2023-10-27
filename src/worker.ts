@@ -1,5 +1,10 @@
 /* utils */
-import { generateQueue, scrapingQueue, summarizeQueue } from "./utils/bee";
+import {
+  generateQueue,
+  retryQueue,
+  scrapingQueue,
+  summarizeQueue,
+} from "./utils/bee";
 import { Tables } from "./utils/database.helpers";
 /* tasks */
 import { scrape } from "./tasks/scrape";
@@ -141,7 +146,7 @@ async function handleGenerate(job: Job<Payload>) {
 }
 
 /* Handle Finish */
-async function handleFinish(job: Job<Payload>) {
+async function handleRetry(job: Job<Payload>) {
   const payload = job.data as Payload;
   console.log(
     `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
@@ -151,7 +156,7 @@ async function handleFinish(job: Job<Payload>) {
   try {
     const { new: record } = payload as Payload;
     id = record.id;
-    await finish(record);
+    await retry(record);
   } catch (error) {
     console.error(error);
     await log("ERROR", (error as Error).message, id, "task_manager");
@@ -178,6 +183,6 @@ generateQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
 //   handleFinish(job).then(() => done(null));
 // });
 
-// retryQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
-//   handle(job).then(() => done(null));
-// });
+retryQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
+  handleRetry(job).then(() => done(null));
+});
