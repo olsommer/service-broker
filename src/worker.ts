@@ -120,18 +120,18 @@ scrapingQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
   handle(job).then(() => done(null));
 });
 
-summarizeQueue.process(3, (job: Job<Payload>, done: DoneCallback<any>) => {
-  handle(job).then(() => done(null));
-});
+// summarizeQueue.process(2, (job: Job<Payload>, done: DoneCallback<any>) => {
+//   handle(job).then(() => done(null));
+// });
 
-generateQueue.process(3, (job: Job<Payload>, done: DoneCallback<any>) => {
-  handle(job).then(() => done(null));
-});
+// generateQueue.process(2, (job: Job<Payload>, done: DoneCallback<any>) => {
+//   handle(job).then(() => done(null));
+// });
 
-finishQueue.process(3, (job: Job<Payload>, done: DoneCallback<any>) => {
-  handle(job).then(() => done(null));
-});
+// finishQueue.process(2, (job: Job<Payload>, done: DoneCallback<any>) => {
+//   handle(job).then(() => done(null));
+// });
 
-retryQueue.process(3, (job: Job<Payload>, done: DoneCallback<any>) => {
-  handle(job).then(() => done(null));
-});
+// retryQueue.process(2, (job: Job<Payload>, done: DoneCallback<any>) => {
+//   handle(job).then(() => done(null));
+// });
