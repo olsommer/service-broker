@@ -145,6 +145,24 @@ async function handleGenerate(job: Job<Payload>) {
   }
 }
 
+/* Handle Finish */
+async function handleFinish(job: Job<Payload>) {
+  const payload = job.data as Payload;
+  console.log(
+    `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
+  );
+
+  let id: string = "";
+  try {
+    const { new: record } = payload as Payload;
+    id = record.id;
+    await finish(record);
+  } catch (error) {
+    console.error(error);
+    await log("ERROR", (error as Error).message, id, "task_manager");
+  }
+}
+
 // queue.process(10, function (job: Job<Payload>, done: DoneCallback<any>) {
 //   handle(job).then(() => done(null));
 // });
@@ -162,7 +180,7 @@ generateQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
 });
 
 finishQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
-  handle(job).then(() => done(null));
+  handleFinish(job).then(() => done(null));
 });
 
 // retryQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
