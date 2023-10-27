@@ -42,22 +42,22 @@ async function route(
   switch (record.status) {
     case ("FLAG_TO_SCRAPE"):
       if (was(record, null)) {
-        await scrapingQueue.createJob(payload).save().then(delivered);
+        scrapingQueue.createJob(payload).save().then(delivered);
       }
       break;
     case ("FLAG_TO_SUMMARIZE"):
       if (was(record, "FLAG_TO_SCRAPE")) {
-        await summarizeQueue.createJob(payload).save().then(delivered);
+        summarizeQueue.createJob(payload).save().then(delivered);
       }
       break;
     case ("FLAG_TO_GENERATE"):
       if (was(record, "FLAG_TO_SUMMARIZE")) {
-        await generateQueue.createJob(payload).save().then(delivered);
+        generateQueue.createJob(payload).save().then(delivered);
       }
       break;
     case ("FLAG_TO_FINISH"):
       if (was(record, "FLAG_TO_GENERATE")) {
-        await finishQueue.createJob(payload).save().then(delivered);
+        finishQueue.createJob(payload).save().then(delivered);
       }
       break;
     case ("FLAG_TO_RETRY"):
@@ -79,7 +79,7 @@ channel.on(
     table: "leads_jobs",
     filter: `job_collected=eq.FALSE`,
   },
-  async (payload) => route(payload),
+  async (payload) => await route(payload),
 );
 
 channel.subscribe((status, err) => {
