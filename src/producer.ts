@@ -61,7 +61,7 @@ async function route(
       }
       break;
     case ("FLAG_TO_RETRY"):
-      await retryQueue.createJob(payload).save().then(delivered);
+      retryQueue.createJob(payload).save().then(delivered);
       break;
     case ("DONE"):
       break;
