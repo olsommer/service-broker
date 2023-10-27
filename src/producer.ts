@@ -1,6 +1,12 @@
 import "dotenv/config";
 import { realtime, supa } from "./utils/supabase";
-import { scrapingQueue, summarizeQueue } from "./utils/bee";
+import {
+  finishQueue,
+  generateQueue,
+  retryQueue,
+  scrapingQueue,
+  summarizeQueue,
+} from "./utils/bee";
 import { Tables } from "./utils/database.helpers";
 import { Payload } from "./worker";
 import { RealtimePostgresChangesPayload } from "@supabase/realtime-js";
@@ -44,19 +50,19 @@ async function route(
         summarizeQueue.createJob(payload).save().then(delivered);
       }
       break;
-    // case ("FLAG_TO_GENERATE"):
-    //   if (was(record, "FLAG_TO_SUMMARIZE")) {
-    //     generateQueue.createJob(payload).save().then(delivered);
-    //   }
-    //   break;
-    // case ("FLAG_TO_FINISH"):
-    //   if (was(record, "FLAG_TO_GENERATE")) {
-    //     finishQueue.createJob(payload).save().then(delivered);
-    //   }
-    //   break;
-    // case ("FLAG_TO_RETRY"):
-    //   await retryQueue.createJob(payload).save().then(delivered);
-    //   break;
+    case ("FLAG_TO_GENERATE"):
+      if (was(record, "FLAG_TO_SUMMARIZE")) {
+        generateQueue.createJob(payload).save().then(delivered);
+      }
+      break;
+    case ("FLAG_TO_FINISH"):
+      if (was(record, "FLAG_TO_GENERATE")) {
+        finishQueue.createJob(payload).save().then(delivered);
+      }
+      break;
+    case ("FLAG_TO_RETRY"):
+      await retryQueue.createJob(payload).save().then(delivered);
+      break;
     case ("DONE"):
       break;
   }
