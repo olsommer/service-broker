@@ -125,9 +125,9 @@ generateQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
   handle(job).then(() => done(null));
 });
 
-finishQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
-  handle(job).then(() => done(null));
-});
+// finishQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
+//   handle(job).then(() => done(null));
+// });
 
 // retryQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
 //   handle(job).then(() => done(null));

@@ -54,11 +54,11 @@ async function route(
         generateQueue.createJob(payload).save().then(delivered);
       }
       break;
-    case ("FLAG_TO_FINISH"):
-      if (was(record, "FLAG_TO_GENERATE")) {
-        finishQueue.createJob(payload).save().then(delivered);
-      }
-      break;
+    // case ("FLAG_TO_FINISH"):
+    //   if (was(record, "FLAG_TO_GENERATE")) {
+    //     finishQueue.createJob(payload).save().then(delivered);
+    //   }
+    //   break;
     // case ("FLAG_TO_RETRY"):
     //   retryQueue.createJob(payload).save().then(delivered);
     //   break;
