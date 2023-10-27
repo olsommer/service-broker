@@ -11,3 +11,10 @@ export const queue = new Queue("introlines", {
   removeOnSuccess: true,
   removeOnFailure: true,
 });
+
+export const scrapingQueue = new Queue("introlinesScraper", {
+  isWorker: true,
+  redis: process.env.REDIS_URL,
+  removeOnSuccess: true,
+  removeOnFailure: true,
+});

@@ -1,5 +1,5 @@
 /* utils */
-import { queue } from "./utils/bee";
+import { queue, scrapingQueue } from "./utils/bee";
 import { Tables } from "./utils/database.helpers";
 /* tasks */
 import { scrape } from "./tasks/scrape";
@@ -19,6 +19,15 @@ export type Payload = {
   old: Tables<"leads_jobs"> | null;
   errors: any[];
 };
+
+const was = (
+  record: Payload["new"],
+  before: Tables<"leads_jobs">["status"],
+) => {
+  return record.status_before === before ||
+    record.status_before === "FLAG_TO_RETRY";
+};
+
 async function handle(job: Job<Payload>) {
   const payload = job.data as Payload;
   console.log(
@@ -30,23 +39,23 @@ async function handle(job: Job<Payload>) {
     const { new: record } = payload as Payload;
     id = record.id;
 
-    const was = (before: Tables<"leads_jobs">["status"]) => {
-      return record.status_before === before ||
-        record.status_before === "FLAG_TO_RETRY";
-    };
+    // const was = (before: Tables<"leads_jobs">["status"]) => {
+    //   return record.status_before === before ||
+    //     record.status_before === "FLAG_TO_RETRY";
+    // };
 
     switch (record.status) {
-      case ("FLAG_TO_SCRAPE"):
-        if (was(null)) await scrape(record);
-        break;
+      // case ("FLAG_TO_SCRAPE"):
+      //   if (was(record, null)) await scrape(record);
+      //   break;
       case ("FLAG_TO_SUMMARIZE"):
-        if (was("FLAG_TO_SCRAPE")) await summarize(record);
+        if (was(record, "FLAG_TO_SCRAPE")) await summarize(record);
         break;
       case ("FLAG_TO_GENERATE"):
-        if (was("FLAG_TO_SUMMARIZE")) await generate(record);
+        if (was(record, "FLAG_TO_SUMMARIZE")) await generate(record);
         break;
       case ("FLAG_TO_FINISH"):
-        if (was("FLAG_TO_GENERATE")) await finish(record);
+        if (was(record, "FLAG_TO_GENERATE")) await finish(record);
         break;
       case ("DONE"):
         break;
@@ -60,6 +69,30 @@ async function handle(job: Job<Payload>) {
   }
 }
 
-queue.process(1, function (job: Job<Payload>, done: DoneCallback<any>) {
+async function handleScraping(job: Job<Payload>) {
+  const payload = job.data as Payload;
+  console.log(
+    `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
+  );
+
+  let id: string = "";
+  try {
+    const { new: record } = payload as Payload;
+    id = record.id;
+
+    if (record.status == "FLAG_TO_SCRAPE") {
+      if (was(record, null)) await scrape(record);
+    }
+  } catch (error) {
+    console.error(error);
+    await log("ERROR", (error as Error).message, id, "task_manager");
+  }
+}
+
+queue.process(10, function (job: Job<Payload>, done: DoneCallback<any>) {
   handle(job).then(() => done(null));
+});
+
+scrapingQueue.process(1, function (job: Job<Payload>, done: DoneCallback<any>) {
+  handleScraping(job).then(() => done(null));
 });
