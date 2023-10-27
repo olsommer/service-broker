@@ -22,5 +22,5 @@ const sharedConfig = {
 export const scrapingQueue = new Queue("scraper", sharedConfig);
 export const summarizeQueue = new Queue("summarizer", sharedConfig);
 export const generateQueue = new Queue("generate", sharedConfig);
-// export const finishQueue = new Queue("finish", sharedConfig);
+export const finishQueue = new Queue("finish", sharedConfig);
 //export const retryQueue = new Queue("retry", sharedConfig);

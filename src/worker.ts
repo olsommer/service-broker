@@ -1,5 +1,10 @@
 /* utils */
-import { generateQueue, scrapingQueue, summarizeQueue } from "./utils/bee";
+import {
+  finishQueue,
+  generateQueue,
+  scrapingQueue,
+  summarizeQueue,
+} from "./utils/bee";
 import { Tables } from "./utils/database.helpers";
 /* tasks */
 import { scrape } from "./tasks/scrape";
@@ -156,9 +161,9 @@ generateQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
   handleGenerate(job).then(() => done(null));
 });
 
-// finishQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
-//   handle(job).then(() => done(null));
-// });
+finishQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
+  handle(job).then(() => done(null));
+});
 
 // retryQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
 //   handle(job).then(() => done(null));
