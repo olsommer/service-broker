@@ -1,5 +1,12 @@
 /* utils */
-import { queue, scrapingQueue } from "./utils/bee";
+import {
+  finishQueue,
+  generateQueue,
+  queue,
+  retryQueue,
+  scrapingQueue,
+  summarizeQueue,
+} from "./utils/bee";
 import { Tables } from "./utils/database.helpers";
 /* tasks */
 import { scrape } from "./tasks/scrape";
@@ -28,7 +35,7 @@ const was = (
     record.status_before === "FLAG_TO_RETRY";
 };
 
-async function handle(job: Job<Payload>) {
+async function ___old_handle(job: Job<Payload>) {
   const payload = job.data as Payload;
   console.log(
     `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
@@ -69,7 +76,8 @@ async function handle(job: Job<Payload>) {
   }
 }
 
-async function handleScraping(job: Job<Payload>) {
+/* Handle Scraping */
+async function handle(job: Job<Payload>) {
   const payload = job.data as Payload;
   console.log(
     `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
@@ -80,8 +88,24 @@ async function handleScraping(job: Job<Payload>) {
     const { new: record } = payload as Payload;
     id = record.id;
 
-    if (record.status == "FLAG_TO_SCRAPE") {
-      if (was(record, null)) await scrape(record);
+    switch (job.queue.name) {
+      case ("scraper"):
+        await scrape(record);
+        break;
+      case ("summarizer"):
+        await summarize(record);
+        break;
+      case ("generate"):
+        await generate(record);
+        break;
+      case ("finish"):
+        await finish(record);
+        break;
+      case ("DONE"):
+        break;
+      case ("retry"):
+        await retry(record);
+        break;
     }
   } catch (error) {
     console.error(error);
@@ -89,10 +113,26 @@ async function handleScraping(job: Job<Payload>) {
   }
 }
 
-queue.process(10, function (job: Job<Payload>, done: DoneCallback<any>) {
+// queue.process(10, function (job: Job<Payload>, done: DoneCallback<any>) {
+//   handle(job).then(() => done(null));
+// });
+
+scrapingQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
   handle(job).then(() => done(null));
 });
 
-scrapingQueue.process(1, function (job: Job<Payload>, done: DoneCallback<any>) {
-  handleScraping(job).then(() => done(null));
+summarizeQueue.process(10, (job: Job<Payload>, done: DoneCallback<any>) => {
+  handle(job).then(() => done(null));
+});
+
+generateQueue.process(10, (job: Job<Payload>, done: DoneCallback<any>) => {
+  handle(job).then(() => done(null));
+});
+
+finishQueue.process(10, (job: Job<Payload>, done: DoneCallback<any>) => {
+  handle(job).then(() => done(null));
+});
+
+retryQueue.process(10, (job: Job<Payload>, done: DoneCallback<any>) => {
+  handle(job).then(() => done(null));
 });
