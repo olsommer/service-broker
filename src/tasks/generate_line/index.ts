@@ -1,3 +1,4 @@
+import { ChatCompletionMessageParam } from "openai/resources";
 import { Tables } from "../../utils/database.helpers";
 import { openai } from "../../utils/openai";
 import { supa } from "../../utils/supabase";
@@ -32,60 +33,42 @@ export async function generate(record: Tables<"leads_jobs">) {
 
     if (sumErr) throw sumErr;
     if (!sumData || !sumData.content) throw new Error("No data");
+
+    /* summary */
     const content = sumData.content;
 
-    // --------------------------------------
+    /* focus */
     const focus = form.focus ??
       "Compliments about the company";
 
-    const industryPrompt = form.industry
-      ? `The prospects industry is ${form.industry}.`
-      : "";
-
-    const templates = () => {
-      const _focus = form.focus;
-      switch (form.focus) {
-        case "Mock referral":
-          return `Please use one of the following templates: 
-          """{top connection name} referred me to you so I thought I'd reach out.""" \n 
-          """I got your contact info from {top connection name}."""`;
-
-        case "Compliments about company":
-          return `Please use one of the following templates: 
-          """I really like the {service/product} you guys are doing/selling at {company}."""\n 
-          """It's really impressive to see all the {products/services} you guys are offering at {company}."""`;
-
-        case "Trends and challenges of industry":
-          return `Please use one of the following templates: 
-          """I've been tracking the {industry} industry closely, and it's evident that companies are grappling with the challenge of {specific challenge}."""\n 
-          """The {industry} sector has always fascinated me, and the current trend of {specific trend} has piqued my interest."""`;
-
-        case "Things in common":
-          return `Please use one of the following templates: 
-          """I saw that we have {common interest} thing in common."""\n
-          """I couldn't help but notice our shared interest in {common interest}."""`;
-
-        case "Looking for their service mock":
-          return `Please use one of the following templates: 
-          """I was looking for {service/product} and I came across {company}."""
-          """Earlier, I was searching for {service/product} and I stumbled across your company, {company}."""`;
-      }
-    };
+    /* industry */
+    const industryPrompt = form.industry ? form.industry : "";
 
     // Sending the cleaned version to OPEN-AI
     // Prompts
     // Neither generate questions nor exclamation marks.
     // Make it as personal as possible by using the summary of the scraped homepage.
-    const prompt = `Summary of the scraped homepage: ${content}. 
+    const prompt =
+      `I want you to craft you an engaging first line of an email using the below provided information. Keep the wording and tone casual. Avoid generic AI-content, make the content original and unique. Avoid repetitions. Only use the examples as reference points.  The brackets are only for your information, dont provide them in the final output. 
     \n\n
-    Instruction: Above is a summary of the scraped homepage. 
-    Write a personalized icebreaker (only the first two lines of a cold email) based on the scraped homepage. ${industryPrompt}
-    The goal is to act like a genuine person writing this personalized icebreaker so that there is a higher response from the cold email.
-    Write in a authentic, realistic, less flattering, down to earth and casual tone. 
-    Write a maximum of two shorter sentences.
-    Only output raw trimmed text.
-    ${templates()}
+    Industry: ${industryPrompt}\n
+    Focus/Challenge: ${focus}\n
+    Company Bio: ${content}\n
     \n\n
+    Format:
+    {Syntax}+ [[Industry]]+((Focus/Challenge))
+    Syntax= Parts of the sentence that should have variable but similar wording. Keep changing the syntax in the output
+    Industry= Provided above
+    Focus/Challenge= Provided above
+    \n\n
+    Examples:  
+    I've been delving into the world of [[Edtech]], and it's apparent that tackling the {user adoption} puzzle is an ongoing challenge for many in the industry.\n
+    {I've been tracking the} [[cold outreach industry]] {closely, and it's evident that companies are struggling with} ((generating effective icebreakers)).\n
+    {I've been monitoring} [[graphic design service industry]], {and it's clear to me that many are struggling with} ((increasing their design margins)).\n 
+    {I've noticed that} ((posting on social media and social media management)) {is a constant challenge for} [[small businesses]].\n 
+    {I've been part of the} [[game boosting industry]] {for a while now and have noticed that} ((hiring pro gamers)) {has always been a challenge when expanding a boosting business to other games}.\n
+    {I have been doing a lot of research in the} [[eldercare marketspace]] {and noticed that there is currently a big issue with} ((recording people's stories)) {easily}.\n 
+    {I've been exploring the} [[Ecommerce]] {world lately, and it's clear that} ((age verification)) {is posing a significant challenge for many} [[Online Wine and Spirits Stores]].\n
     `;
 
     // --------------------------------------
@@ -94,8 +77,8 @@ export async function generate(record: Tables<"leads_jobs">) {
       model: "gpt-3.5-turbo",
       stream: false,
     });
-    const generated_line = chatCompletion.choices[0].message.content;
-    const meta = {
+    const gen1 = chatCompletion.choices[0].message.content;
+    const meta1 = {
       model: chatCompletion.model,
       prompt_tokens: chatCompletion.usage?.prompt_tokens,
       completion_tokens: chatCompletion.usage?.completion_tokens,
@@ -103,13 +86,47 @@ export async function generate(record: Tables<"leads_jobs">) {
     };
     // --------------------------------------
 
+    /* Follow up */
+
+    const followUpPrompt =
+      `Please refine the output according to the below instructions:
+      1. The output is too wordy. Keep the content concise and relevant
+      2. Use a 9th grader English level
+      3. Ensure the output is not generic
+      4. Remove all fillers from the output
+      5. The syntax and sentence should not start with "I've been". Make it unique
+      6. The output should be in the past tense      
+    `;
+
+    const messages: ChatCompletionMessageParam[] = [
+      { role: "user", content: prompt },
+      { role: "assistant", content: gen1 },
+      { role: "user", content: followUpPrompt },
+    ];
+    // --------------------------------------
+    const chat2 = await openai.chat.completions.create({
+      messages,
+      model: "gpt-3.5-turbo",
+      stream: false,
+    });
+    const generated_line = chat2.choices[0].message.content;
+    const meta2 = {
+      model: chatCompletion.model,
+      prompt_tokens: chatCompletion.usage?.prompt_tokens,
+      completion_tokens: chatCompletion.usage?.completion_tokens,
+      total_tokens: chatCompletion.usage?.total_tokens,
+    };
+
+    // --------------------------------------
+    await log("OK", chat2.choices as any, id, "generate");
+
     // Save to the database
     // --------------------------------------
     const { error } = await supa
       .from("lines")
       .insert({
         content: generated_line,
-        meta: meta,
+        meta: [meta1, meta2],
         active: true,
         lead_id,
         lead_job_id: id,
