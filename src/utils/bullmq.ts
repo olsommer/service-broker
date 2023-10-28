@@ -10,8 +10,15 @@ export const connection = new Redis(process.env.REDIS_URL ?? "", {
   sentinelMaxConnections: 20,
 });
 
+export const sumConnection = new Redis(process.env.REDIS_URL ?? "", {
+  maxRetriesPerRequest: 0,
+  sentinelMaxConnections: 20,
+});
+
 export const scrapingQueue = new Queue("scraper", { connection });
-export const summarizeQueue = new Queue("summarizer", { connection });
+export const summarizeQueue = new Queue("summarizer", {
+  connection: sumConnection,
+});
 export const generateQueue = new Queue("generate", { connection });
 export const finishQueue = new Queue("finish", { connection });
 export const retryQueue = new Queue("retry", { connection });
