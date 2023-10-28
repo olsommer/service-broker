@@ -3,10 +3,10 @@ import { supa } from "../../utils/supabase";
 import { openai } from "../../utils/openai";
 import { Tables } from "../../utils/database.helpers";
 import { setNextState } from "../next";
-import { Job } from "bullmq";
+import { Job, SandboxedJob } from "bullmq";
 import { Payload } from "../../worker";
 
-export async function summarize(job: Job<Payload, any, string>) {
+export async function summarize(job: SandboxedJob<Payload, any>) {
   const { new: record } = job.data;
   const { id, job_id } = record;
   try {

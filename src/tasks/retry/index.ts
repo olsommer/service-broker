@@ -3,10 +3,10 @@ import { Tables } from "../../utils/database.helpers";
 import { closeJob } from "./closeJob";
 import { setNextState } from "../next";
 import { supa } from "../../utils/supabase";
-import { Job } from "bullmq";
+import { Job, SandboxedJob } from "bullmq";
 import { Payload } from "../../worker";
 
-export async function retry(job: Job<Payload, any, string>) {
+export async function retry(job: SandboxedJob<Payload, any>) {
   const { new: record } = job.data;
   const { id, tries, status_before } = record;
   try {

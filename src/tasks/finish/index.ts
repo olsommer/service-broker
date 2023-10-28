@@ -3,10 +3,10 @@ import { Tables } from "../../utils/database.helpers";
 import { supa } from "../../utils/supabase";
 import { setNextState } from "../next";
 import { billing } from "../billing";
-import { Job } from "bullmq";
+import { Job, SandboxedJob } from "bullmq";
 import { Payload } from "../../worker";
 
-export async function finish(job: Job<Payload, any, string>) {
+export async function finish(job: SandboxedJob<Payload, any>) {
   const { new: record } = job.data;
   const { id, lead_id, job_id } = record;
   try {

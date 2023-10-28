@@ -187,10 +187,14 @@ export type Payload = {
 // });
 
 /* scraping */
-// const scraperWorker = new Worker("scraper", scraperFile, { connection });
-const scraperWorker = new Worker("scraper", async (job) => {
-  await scrape(job);
-}, { connection });
+const scraperFile = path.join(__dirname, "./worker_scrape_thread.js");
+const scraperWorker = new Worker("scraper", scraperFile, {
+  connection,
+  useWorkerThreads: true,
+});
+// const scraperWorker = new Worker("scraper", async (job) => {
+//   await scrape(job);
+// }, { connection });
 
 scraperWorker.on("ready", () => console.log(`Scraper is ready`));
 
@@ -203,9 +207,14 @@ scraperWorker.on("failed", (job, err) => {
 });
 
 /* summarize */
-const sumWorker = new Worker("summarizer", async (job) => {
-  await summarize(job);
-}, { connection });
+const sumFile = path.join(__dirname, "./worker_summarize_thread.js");
+const sumWorker = new Worker("summarizer", sumFile, {
+  connection,
+  useWorkerThreads: true,
+});
+// const sumWorker = new Worker("summarizer", async (job) => {
+//   await summarize(job);
+// }, { connection });
 
 sumWorker.on("ready", () => console.log(`Summarizer is ready`));
 
@@ -219,7 +228,10 @@ sumWorker.on("failed", (job, err) => {
 
 /* generate */
 const genFile = path.join(__dirname, "./worker_generate_thread.js");
-const genWorker = new Worker("scraper", genFile, { connection });
+const genWorker = new Worker("scraper", genFile, {
+  connection,
+  useWorkerThreads: true,
+});
 // const genWorker = new Worker("generate", async (job) => {
 //   await generate(job);
 // }, { connection });
@@ -235,9 +247,14 @@ genWorker.on("failed", (job, err) => {
 });
 
 /* finish */
-const finWorker = new Worker("finish", async (job) => {
-  await finish(job);
-}, { connection });
+const finFile = path.join(__dirname, "./worker_finish_thread.js");
+const finWorker = new Worker("finish", finFile, {
+  connection,
+  useWorkerThreads: true,
+});
+// const finWorker = new Worker("finish", async (job) => {
+//   await finish(job);
+// }, { connection });
 
 finWorker.on("ready", () => console.log(`Finisher is ready`));
 
@@ -250,9 +267,14 @@ finWorker.on("failed", (job, err) => {
 });
 
 /* retry */
-const retWorker = new Worker("retry", async (job) => {
-  await retry(job);
-}, { connection });
+const retFile = path.join(__dirname, "./worker_retry_thread.js");
+const retWorker = new Worker("retry", retFile, {
+  connection,
+  useWorkerThreads: true,
+});
+// const retWorker = new Worker("retry", async (job) => {
+//   await retry(job);
+// }, { connection });
 
 retWorker.on("ready", () => console.log(`Finisher is ready`));
 

@@ -6,7 +6,7 @@ import { Tables } from "../../utils/database.helpers";
 import { supa } from "../../utils/supabase";
 import { setNextState } from "../next";
 import { convertToPlain } from "./convertToPlain4";
-import { Job } from "bullmq";
+import { Job, SandboxedJob } from "bullmq";
 import { Payload } from "../../worker";
 
 let tries = 0;
@@ -44,7 +44,7 @@ async function scraperAnt(tUrl: string) {
 }
 
 /* Main */
-export async function scrape(job: Job<Payload, any, string>) {
+export async function scrape(job: SandboxedJob<Payload, any>) {
   const { new: record } = job.data;
   const { id, lead_id } = record;
   try {
