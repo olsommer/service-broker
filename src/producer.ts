@@ -26,6 +26,7 @@ const delivered = async (
   job: Job<Payload, any, string>,
 ) => {
   const i = job.data.new as Tables<"leads_jobs">;
+  console.log(i);
   await supa
     .from("leads_jobs")
     .update({

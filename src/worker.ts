@@ -2,15 +2,9 @@
 
 import { Tables } from "./utils/database.helpers";
 /* tasks */
-import { scrape } from "./tasks/scrape";
-import { summarize } from "./tasks/summarize";
-import { generate } from "./tasks/generate_line";
-import { finish } from "./tasks/finish";
-import { retry } from "./tasks/retry";
-import { log } from "./tasks/log";
 // import { DoneCallback, Job } from "bee-queue";
 
-import { Job, Worker } from "bullmq";
+import { Worker } from "bullmq";
 import { connection } from "./utils/bullmq";
 import path from "path";
 
