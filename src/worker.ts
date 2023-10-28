@@ -186,6 +186,8 @@ const scraperWorker = new Worker("scraper", async (job) => {
   await handle(job);
 }, { connection });
 
+scraperWorker.on("ready", () => console.log(`Summarizer is ready`));
+
 scraperWorker.on("completed", (job) => {
   console.log(`${job.id} has completed!`);
 });
@@ -197,6 +199,8 @@ scraperWorker.on("failed", (job, err) => {
 const sumWorker = new Worker("summarizer", async (job) => {
   await handle(job);
 }, { connection });
+
+sumWorker.on("ready", () => console.log(`Summarizer is ready`));
 
 sumWorker.on("completed", (job) => {
   console.log(`${job.id} has completed!`);
