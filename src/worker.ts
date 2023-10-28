@@ -218,7 +218,7 @@ sumWorker.on("failed", (job, err) => {
 });
 
 /* generate */
-const genFile = path.join(__dirname, "./dist/worker_generate_thread.js");
+const genFile = path.join(__dirname, "./worker_generate_thread.js");
 const genWorker = new Worker("scraper", genFile, { connection });
 // const genWorker = new Worker("generate", async (job) => {
 //   await generate(job);
