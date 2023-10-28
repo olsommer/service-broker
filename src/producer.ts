@@ -4,7 +4,13 @@ import { Tables } from "./utils/database.helpers";
 import { Payload } from "./worker";
 import { RealtimePostgresChangesPayload } from "@supabase/realtime-js";
 import { Job } from "bullmq";
-import { scrapingQueue, summarizeQueue } from "./utils/bullmq";
+import {
+  finishQueue,
+  generateQueue,
+  retryQueue,
+  scrapingQueue,
+  summarizeQueue,
+} from "./utils/bullmq";
 
 /* check the status before */
 const was = (
@@ -51,19 +57,28 @@ async function route(
         }).then(delivered);
       }
       break;
-    // case ("FLAG_TO_GENERATE"):
-    //   if (was(record, "FLAG_TO_SUMMARIZE")) {
-    //     generateQueue.createJob(payload).save().then(delivered);
-    //   }
-    //   break;
-    // case ("FLAG_TO_FINISH"):
-    //   if (was(record, "FLAG_TO_GENERATE")) {
-    //     finishQueue.createJob(payload).save().then(delivered);
-    //   }
-    //   break;
-    // case ("FLAG_TO_RETRY"):
-    //   retryQueue.createJob(payload).save().then(delivered);
-    //   break;
+    case ("FLAG_TO_GENERATE"):
+      if (was(record, "FLAG_TO_SUMMARIZE")) {
+        generateQueue.add("summarizeJob", payload, {
+          removeOnComplete: true,
+          removeOnFail: true,
+        }).then(delivered);
+      }
+      break;
+    case ("FLAG_TO_FINISH"):
+      if (was(record, "FLAG_TO_GENERATE")) {
+        finishQueue.add("summarizeJob", payload, {
+          removeOnComplete: true,
+          removeOnFail: true,
+        }).then(delivered);
+      }
+      break;
+    case ("FLAG_TO_RETRY"):
+      retryQueue.add("summarizeJob", payload, {
+        removeOnComplete: true,
+        removeOnFail: true,
+      }).then(delivered);
+      break;
     case ("DONE"):
       break;
   }

@@ -182,6 +182,7 @@ async function handle(job: Job<Payload, any, string>) {
 //   handleRetry(job).then(() => done(null));
 // });
 
+/* scraping */
 const scraperWorker = new Worker("scraper", async (job) => {
   await handle(job);
 }, { connection });
@@ -196,6 +197,7 @@ scraperWorker.on("failed", (job, err) => {
   console.log(`${job?.id} has failed with ${err.message}`);
 });
 
+/* summarize */
 const sumWorker = new Worker("summarizer", async (job) => {
   await handle(job);
 }, { connection });
@@ -207,5 +209,50 @@ sumWorker.on("completed", (job) => {
 });
 
 sumWorker.on("failed", (job, err) => {
+  console.log(`${job?.id} has failed with ${err.message}`);
+});
+
+/* generate */
+const genWorker = new Worker("generate", async (job) => {
+  await handle(job);
+}, { connection });
+
+genWorker.on("ready", () => console.log(`Line Generator is ready`));
+
+genWorker.on("completed", (job) => {
+  console.log(`${job.id} has completed!`);
+});
+
+genWorker.on("failed", (job, err) => {
+  console.log(`${job?.id} has failed with ${err.message}`);
+});
+
+/* finish */
+const finWorker = new Worker("finish", async (job) => {
+  await handle(job);
+}, { connection });
+
+finWorker.on("ready", () => console.log(`Finisher is ready`));
+
+finWorker.on("completed", (job) => {
+  console.log(`${job.id} has completed!`);
+});
+
+finWorker.on("failed", (job, err) => {
+  console.log(`${job?.id} has failed with ${err.message}`);
+});
+
+/* retry */
+const retWorker = new Worker("retry", async (job) => {
+  await handle(job);
+}, { connection });
+
+retWorker.on("ready", () => console.log(`Finisher is ready`));
+
+retWorker.on("completed", (job) => {
+  console.log(`${job.id} has completed!`);
+});
+
+retWorker.on("failed", (job, err) => {
   console.log(`${job?.id} has failed with ${err.message}`);
 });
