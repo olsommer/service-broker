@@ -1,10 +1,5 @@
 /* utils */
-import {
-  generateQueue,
-  retryQueue,
-  scrapingQueue,
-  summarizeQueue,
-} from "./utils/bee";
+
 import { Tables } from "./utils/database.helpers";
 /* tasks */
 import { scrape } from "./tasks/scrape";
@@ -13,7 +8,10 @@ import { generate } from "./tasks/generate_line";
 import { log } from "./tasks/log";
 import { finish } from "./tasks/finish";
 import { retry } from "./tasks/retry";
-import { DoneCallback, Job } from "bee-queue";
+// import { DoneCallback, Job } from "bee-queue";
+
+import { Job, Worker } from "bullmq";
+import { connection } from "./utils/bullmq";
 
 export type Payload = {
   schema: string;
@@ -75,7 +73,7 @@ export type Payload = {
 // }
 
 /* Handle Scraping */
-async function handle(job: Job<Payload>) {
+async function handle(job: Job<Payload, any, string>) {
   const payload = job.data as Payload;
   console.log(
     `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
@@ -86,22 +84,22 @@ async function handle(job: Job<Payload>) {
     const { new: record } = payload as Payload;
     id = record.id;
 
-    switch (job.queue.name) {
+    switch (job.queueName) {
       case ("scraper"):
         await scrape(record);
         break;
-      case ("summarizer"):
-        await summarize(record);
-        break;
-      case ("generate"):
-        await generate(record);
-        break;
-      case ("finish"):
-        await finish(record);
-        break;
-      case ("retry"):
-        await retry(record);
-        break;
+        // case ("summarizer"):
+        //   await summarize(record);
+        //   break;
+        // case ("generate"):
+        //   await generate(record);
+        //   break;
+        // case ("finish"):
+        //   await finish(record);
+        //   break;
+        // case ("retry"):
+        //   await retry(record);
+        //   break;
     }
   } catch (error) {
     console.error(error);
@@ -110,79 +108,94 @@ async function handle(job: Job<Payload>) {
 }
 
 /* Handle Summarize */
-async function handleSummarize(job: Job<Payload>) {
-  const payload = job.data as Payload;
-  console.log(
-    `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
-  );
+// async function handleSummarize(job: Job<Payload>) {
+//   const payload = job.data as Payload;
+//   console.log(
+//     `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
+//   );
 
-  let id: string = "";
-  try {
-    const { new: record } = payload as Payload;
-    id = record.id;
-    await summarize(record);
-  } catch (error) {
-    console.error(error);
-    await log("ERROR", (error as Error).message, id, "task_manager");
-  }
-}
+//   let id: string = "";
+//   try {
+//     const { new: record } = payload as Payload;
+//     id = record.id;
+//     await summarize(record);
+//   } catch (error) {
+//     console.error(error);
+//     await log("ERROR", (error as Error).message, id, "task_manager");
+//   }
+// }
 
 /* Handle Generate */
-async function handleGenerate(job: Job<Payload>) {
-  const payload = job.data as Payload;
-  console.log(
-    `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
-  );
+// async function handleGenerate(job: Job<Payload>) {
+//   const payload = job.data as Payload;
+//   console.log(
+//     `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
+//   );
 
-  let id: string = "";
-  try {
-    const { new: record } = payload as Payload;
-    id = record.id;
-    await generate(record);
-  } catch (error) {
-    console.error(error);
-    await log("ERROR", (error as Error).message, id, "task_manager");
-  }
-}
+//   let id: string = "";
+//   try {
+//     const { new: record } = payload as Payload;
+//     id = record.id;
+//     await generate(record);
+//   } catch (error) {
+//     console.error(error);
+//     await log("ERROR", (error as Error).message, id, "task_manager");
+//   }
+// }
 
 /* Handle Finish */
-async function handleRetry(job: Job<Payload>) {
-  const payload = job.data as Payload;
-  console.log(
-    `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
-  );
+// async function handleRetry(job: Job<Payload>) {
+//   const payload = job.data as Payload;
+//   console.log(
+//     `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
+//   );
 
-  let id: string = "";
-  try {
-    const { new: record } = payload as Payload;
-    id = record.id;
-    await retry(record);
-  } catch (error) {
-    console.error(error);
-    await log("ERROR", (error as Error).message, id, "task_manager");
-  }
-}
+//   let id: string = "";
+//   try {
+//     const { new: record } = payload as Payload;
+//     id = record.id;
+//     await retry(record);
+//   } catch (error) {
+//     console.error(error);
+//     await log("ERROR", (error as Error).message, id, "task_manager");
+//   }
+// }
 
 // queue.process(10, function (job: Job<Payload>, done: DoneCallback<any>) {
 //   handle(job).then(() => done(null));
 // });
 
-scrapingQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
-  handle(job).then(() => done(null));
-});
+// scrapingQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
+//   handle(job).then(() => done(null));
+// });
 
-summarizeQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
-  handleSummarize(job).then(() => done(null));
-});
+// summarizeQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
+//   handleSummarize(job).then(() => done(null));
+// });
 
-generateQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
-  handleGenerate(job).then(() => done(null));
-});
+// generateQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
+//   handleGenerate(job).then(() => done(null));
+// });
 
 // finishQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
 //   handleFinish(job).then(() => done(null));
 // });
 
-retryQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
-  handleRetry(job).then(() => done(null));
+// retryQueue.process(1, (job: Job<Payload>, done: DoneCallback<any>) => {
+//   handleRetry(job).then(() => done(null));
+// });
+
+const worker = new Worker("scraper", async (job) => {
+  await handle(job);
+  // Will print { foo: 'bar'} for the first job
+  // and { qux: 'baz' } for the second.
+  console.log(job.data);
+}, { connection });
+
+worker.on("completed", (job) => {
+  console.log(`${job.id} has completed!`);
+});
+
+worker.on("failed", (job, err) => {
+  console.log(`${job?.id} has failed with ${err.message}`);
 });

@@ -1,15 +1,10 @@
 import "dotenv/config";
 import { realtime, supa } from "./utils/supabase";
-import {
-  generateQueue,
-  retryQueue,
-  scrapingQueue,
-  summarizeQueue,
-} from "./utils/bee";
 import { Tables } from "./utils/database.helpers";
 import { Payload } from "./worker";
 import { RealtimePostgresChangesPayload } from "@supabase/realtime-js";
-import { Job } from "bee-queue";
+import { Job } from "bullmq";
+import { scrapingQueue } from "./utils/bullmq";
 
 /* check the status before */
 const was = (
@@ -22,7 +17,7 @@ const was = (
 
 /* confirm delivery */
 const delivered = async (
-  job: Job<RealtimePostgresChangesPayload<{ [key: string]: any }>>,
+  job: Job<Payload, any, string>,
 ) => {
   const i = job.data.new as Tables<"leads_jobs">;
   await supa
@@ -41,27 +36,31 @@ async function route(
   switch (record.status) {
     case ("FLAG_TO_SCRAPE"):
       if (was(record, null)) {
-        scrapingQueue.createJob(payload).save().then(delivered);
+        // scrapingQueue.createJob(payload).save().then(delivered);
+        scrapingQueue.add("scrapingJob", payload, {
+          removeOnComplete: true,
+          removeOnFail: true,
+        }).then(delivered);
       }
       break;
-    case ("FLAG_TO_SUMMARIZE"):
-      if (was(record, "FLAG_TO_SCRAPE")) {
-        summarizeQueue.createJob(payload).save().then(delivered);
-      }
-      break;
-    case ("FLAG_TO_GENERATE"):
-      if (was(record, "FLAG_TO_SUMMARIZE")) {
-        generateQueue.createJob(payload).save().then(delivered);
-      }
-      break;
+    // case ("FLAG_TO_SUMMARIZE"):
+    //   if (was(record, "FLAG_TO_SCRAPE")) {
+    //     summarizeQueue.createJob(payload).save().then(delivered);
+    //   }
+    //   break;
+    // case ("FLAG_TO_GENERATE"):
+    //   if (was(record, "FLAG_TO_SUMMARIZE")) {
+    //     generateQueue.createJob(payload).save().then(delivered);
+    //   }
+    //   break;
     // case ("FLAG_TO_FINISH"):
     //   if (was(record, "FLAG_TO_GENERATE")) {
     //     finishQueue.createJob(payload).save().then(delivered);
     //   }
     //   break;
-    case ("FLAG_TO_RETRY"):
-      retryQueue.createJob(payload).save().then(delivered);
-      break;
+    // case ("FLAG_TO_RETRY"):
+    //   retryQueue.createJob(payload).save().then(delivered);
+    //   break;
     case ("DONE"):
       break;
   }
