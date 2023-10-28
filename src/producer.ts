@@ -26,7 +26,6 @@ const delivered = async (
   job: Job<Payload, any, string>,
 ) => {
   const i = job.data.new as Tables<"leads_jobs">;
-  console.log(i);
   await supa
     .from("leads_jobs")
     .update({
@@ -39,7 +38,6 @@ async function route(
   payload: RealtimePostgresChangesPayload<{ [key: string]: any }>,
 ) {
   const { new: record } = payload as Payload;
-  console.log(payload);
   switch (record.status) {
     case ("FLAG_TO_SCRAPE"):
       if (was(record, null)) {

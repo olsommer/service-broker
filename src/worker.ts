@@ -224,7 +224,7 @@ sumWorker.on("failed", (job, err) => {
 
 /* generate */
 const genFile = path.join(__dirname, "./worker_generate_thread.js");
-const genWorker = new Worker("scraper", genFile, {
+const genWorker = new Worker("generate", genFile, {
   connection,
   useWorkerThreads: true,
   concurrency: 3,
