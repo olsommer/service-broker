@@ -4,7 +4,7 @@ import { Tables } from "./utils/database.helpers";
 import { Payload } from "./worker";
 import { RealtimePostgresChangesPayload } from "@supabase/realtime-js";
 import { Job } from "bullmq";
-import { scrapingQueue } from "./utils/bullmq";
+import { scrapingQueue, summarizeQueue } from "./utils/bullmq";
 
 /* check the status before */
 const was = (
@@ -43,11 +43,14 @@ async function route(
         }).then(delivered);
       }
       break;
-    // case ("FLAG_TO_SUMMARIZE"):
-    //   if (was(record, "FLAG_TO_SCRAPE")) {
-    //     summarizeQueue.createJob(payload).save().then(delivered);
-    //   }
-    //   break;
+    case ("FLAG_TO_SUMMARIZE"):
+      if (was(record, "FLAG_TO_SCRAPE")) {
+        summarizeQueue.add("summarizeJob", payload, {
+          removeOnComplete: true,
+          removeOnFail: true,
+        }).then(delivered);
+      }
+      break;
     // case ("FLAG_TO_GENERATE"):
     //   if (was(record, "FLAG_TO_SUMMARIZE")) {
     //     generateQueue.createJob(payload).save().then(delivered);

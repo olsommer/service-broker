@@ -185,17 +185,26 @@ async function handle(job: Job<Payload, any, string>) {
 //   handleRetry(job).then(() => done(null));
 // });
 
-const worker = new Worker("scraper", async (job) => {
+const scraperWorker = new Worker("scraper", async (job) => {
   await handle(job);
-  // Will print { foo: 'bar'} for the first job
-  // and { qux: 'baz' } for the second.
-  console.log(job.data);
 }, { connection });
 
-worker.on("completed", (job) => {
+scraperWorker.on("completed", (job) => {
   console.log(`${job.id} has completed!`);
 });
 
-worker.on("failed", (job, err) => {
+scraperWorker.on("failed", (job, err) => {
+  console.log(`${job?.id} has failed with ${err.message}`);
+});
+
+const sumWorker = new Worker("summarizer", async (job) => {
+  await handle(job);
+}, { connection });
+
+sumWorker.on("completed", (job) => {
+  console.log(`${job.id} has completed!`);
+});
+
+sumWorker.on("failed", (job, err) => {
   console.log(`${job?.id} has failed with ${err.message}`);
 });
