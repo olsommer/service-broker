@@ -7,6 +7,7 @@ import { Redis } from "ioredis";
 
 export const connection = new Redis(process.env.REDIS_URL ?? "", {
   maxRetriesPerRequest: 0,
+  sentinelMaxConnections: 20,
 });
 
 export const scrapingQueue = new Queue("scraper", { connection });

@@ -4,10 +4,7 @@ import { Tables } from "./utils/database.helpers";
 /* tasks */
 import { scrape } from "./tasks/scrape";
 import { summarize } from "./tasks/summarize";
-import { generate } from "./tasks/generate_line";
 import { log } from "./tasks/log";
-import { finish } from "./tasks/finish";
-import { retry } from "./tasks/retry";
 // import { DoneCallback, Job } from "bee-queue";
 
 import { Job, Worker } from "bullmq";
@@ -88,9 +85,9 @@ async function handle(job: Job<Payload, any, string>) {
       case ("scraper"):
         await scrape(record);
         break;
-        // case ("summarizer"):
-        //   await summarize(record);
-        //   break;
+      case ("summarizer"):
+        await summarize(record);
+        break;
         // case ("generate"):
         //   await generate(record);
         //   break;

@@ -29,6 +29,11 @@ const worker = spawn("node", ["./dist/worker.js"], {
 });
 
 // Handle process events
+worker.on("message", (m) => {
+  console.error(`Message from worker: ${m}`);
+});
+
+// Handle process events
 worker.on("spawn", () => {
   console.error(`Worker spawned!`);
 });
