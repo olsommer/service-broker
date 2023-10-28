@@ -196,7 +196,7 @@ const scraperWorker = new Worker("scraper", scraperFile, {
 //   await scrape(job);
 // }, { connection });
 
-scraperWorker.on("ready", () => console.log(`Scraper is ready`));
+scraperWorker.on("ready", () => console.log(`Scrape Worker is ready`));
 
 scraperWorker.on("completed", (job) => {
   console.log(`${job.id} has completed!`);
@@ -216,7 +216,7 @@ const sumWorker = new Worker("summarizer", sumFile, {
 //   await summarize(job);
 // }, { connection });
 
-sumWorker.on("ready", () => console.log(`Summarizer is ready`));
+sumWorker.on("ready", () => console.log(`Summarize Worker is ready`));
 
 sumWorker.on("completed", (job) => {
   console.log(`${job.id} has completed!`);
@@ -236,7 +236,7 @@ const genWorker = new Worker("scraper", genFile, {
 //   await generate(job);
 // }, { connection });
 
-genWorker.on("ready", () => console.log(`Line Generator is ready`));
+genWorker.on("ready", () => console.log(`Line Generator Worker is ready`));
 
 genWorker.on("completed", (job) => {
   console.log(`${job.id} has completed!`);
@@ -256,7 +256,7 @@ const finWorker = new Worker("finish", finFile, {
 //   await finish(job);
 // }, { connection });
 
-finWorker.on("ready", () => console.log(`Finisher is ready`));
+finWorker.on("ready", () => console.log(`Finish Worker is ready`));
 
 finWorker.on("completed", (job) => {
   console.log(`${job.id} has completed!`);
@@ -276,7 +276,7 @@ const retWorker = new Worker("retry", retFile, {
 //   await retry(job);
 // }, { connection });
 
-retWorker.on("ready", () => console.log(`Finisher is ready`));
+retWorker.on("ready", () => console.log(`Retry Worker is ready`));
 
 retWorker.on("completed", (job) => {
   console.log(`${job.id} has completed!`);
