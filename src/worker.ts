@@ -194,7 +194,7 @@ const scraperWorker = new Worker("scraper", scraperFile, {
 scraperWorker.on("ready", () => console.log(`Scrape Worker is ready`));
 
 scraperWorker.on("completed", (job) => {
-  console.log(`${job.id} has completed!`);
+  console.log(`${job.name}:${job.queueName}:${job.id} has completed!`);
 });
 
 scraperWorker.on("failed", (job, err) => {
@@ -215,7 +215,7 @@ const sumWorker = new Worker("summarizer", sumFile, {
 sumWorker.on("ready", () => console.log(`Summarize Worker is ready`));
 
 sumWorker.on("completed", (job) => {
-  console.log(`${job.id} has completed!`);
+  console.log(`${job.name}:${job.queueName}:${job.id} has completed!`);
 });
 
 sumWorker.on("failed", (job, err) => {
@@ -236,7 +236,7 @@ const genWorker = new Worker("scraper", genFile, {
 genWorker.on("ready", () => console.log(`Line Generator Worker is ready`));
 
 genWorker.on("completed", (job) => {
-  console.log(`${job.id} has completed!`);
+  console.log(`${job.name}:${job.queueName}:${job.id} has completed!`);
 });
 
 genWorker.on("failed", (job, err) => {
@@ -257,7 +257,7 @@ const finWorker = new Worker("finish", finFile, {
 finWorker.on("ready", () => console.log(`Finish Worker is ready`));
 
 finWorker.on("completed", (job) => {
-  console.log(`${job.id} has completed!`);
+  console.log(`${job.name}:${job.queueName}:${job.id} has completed!`);
 });
 
 finWorker.on("failed", (job, err) => {
@@ -278,7 +278,7 @@ const retWorker = new Worker("retry", retFile, {
 retWorker.on("ready", () => console.log(`Retry Worker is ready`));
 
 retWorker.on("completed", (job) => {
-  console.log(`${job.id} has completed!`);
+  console.log(`${job.name}:${job.queueName}:${job.id} has completed!`);
 });
 
 retWorker.on("failed", (job, err) => {

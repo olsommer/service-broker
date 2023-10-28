@@ -39,11 +39,10 @@ async function route(
   payload: RealtimePostgresChangesPayload<{ [key: string]: any }>,
 ) {
   const { new: record } = payload as Payload;
-
+  console.log(payload);
   switch (record.status) {
     case ("FLAG_TO_SCRAPE"):
       if (was(record, null)) {
-        // scrapingQueue.createJob(payload).save().then(delivered);
         scrapingQueue.add("scrapingJob", payload, {
           removeOnComplete: true,
           removeOnFail: true,
@@ -60,7 +59,7 @@ async function route(
       break;
     case ("FLAG_TO_GENERATE"):
       if (was(record, "FLAG_TO_SUMMARIZE")) {
-        generateQueue.add("summarizeJob", payload, {
+        generateQueue.add("generateJob", payload, {
           removeOnComplete: true,
           removeOnFail: true,
         }).then(delivered);
@@ -68,14 +67,14 @@ async function route(
       break;
     case ("FLAG_TO_FINISH"):
       if (was(record, "FLAG_TO_GENERATE")) {
-        finishQueue.add("summarizeJob", payload, {
+        finishQueue.add("finishJob", payload, {
           removeOnComplete: true,
           removeOnFail: true,
         }).then(delivered);
       }
       break;
     case ("FLAG_TO_RETRY"):
-      retryQueue.add("summarizeJob", payload, {
+      retryQueue.add("retryJob", payload, {
         removeOnComplete: true,
         removeOnFail: true,
       }).then(delivered);
@@ -101,7 +100,7 @@ channel.on(
 
 channel.subscribe((status, err) => {
   if (status === "SUBSCRIBED") {
-    console.log("Connected!");
+    console.log("Realtime is connected!");
   }
 
   if (status === "CHANNEL_ERROR") {
