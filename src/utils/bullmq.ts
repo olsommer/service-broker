@@ -19,6 +19,6 @@ export const scrapingQueue = new Queue("scraper", { connection });
 export const summarizeQueue = new Queue("summarizer", {
   connection: sumConnection,
 });
-export const generateQueue = new Queue("generate", { connection });
-export const finishQueue = new Queue("finish", { connection });
-export const retryQueue = new Queue("retry", { connection });
+// export const generateQueue = new Queue("generate", { connection });
+// export const finishQueue = new Queue("finish", { connection });
+// export const retryQueue = new Queue("retry", { connection });
