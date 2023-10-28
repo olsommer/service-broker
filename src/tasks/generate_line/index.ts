@@ -4,8 +4,11 @@ import { openai } from "../../utils/openai";
 import { supa } from "../../utils/supabase";
 import { log } from "../log";
 import { setNextState } from "../next";
+import { Job } from "bullmq";
+import { Payload } from "../../worker";
 
-export async function generate(record: Tables<"leads_jobs">) {
+export async function generate(job: Job<Payload, any, string>) {
+  const { new: record } = job.data;
   const { id, lead_id, job_id } = record;
   try {
     if (!job_id) throw new Error("No job id");

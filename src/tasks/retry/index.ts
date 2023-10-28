@@ -3,10 +3,11 @@ import { Tables } from "../../utils/database.helpers";
 import { closeJob } from "./closeJob";
 import { setNextState } from "../next";
 import { supa } from "../../utils/supabase";
+import { Job } from "bullmq";
+import { Payload } from "../../worker";
 
-export async function retry(
-  record: Tables<"leads_jobs">,
-) {
+export async function retry(job: Job<Payload, any, string>) {
+  const { new: record } = job.data;
   const { id, tries, status_before } = record;
   try {
     if (tries < 3) {

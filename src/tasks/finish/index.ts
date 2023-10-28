@@ -3,8 +3,11 @@ import { Tables } from "../../utils/database.helpers";
 import { supa } from "../../utils/supabase";
 import { setNextState } from "../next";
 import { billing } from "../billing";
+import { Job } from "bullmq";
+import { Payload } from "../../worker";
 
-export async function finish(record: Tables<"leads_jobs">) {
+export async function finish(job: Job<Payload, any, string>) {
+  const { new: record } = job.data;
   const { id, lead_id, job_id } = record;
   try {
     if (!lead_id) throw new Error("No lead provided");

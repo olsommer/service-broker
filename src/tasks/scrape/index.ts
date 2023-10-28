@@ -6,6 +6,8 @@ import { Tables } from "../../utils/database.helpers";
 import { supa } from "../../utils/supabase";
 import { setNextState } from "../next";
 import { convertToPlain } from "./convertToPlain4";
+import { Job } from "bullmq";
+import { Payload } from "../../worker";
 
 let tries = 0;
 
@@ -42,7 +44,8 @@ async function scraperAnt(tUrl: string) {
 }
 
 /* Main */
-export async function scrape(record: Tables<"leads_jobs">) {
+export async function scrape(job: Job<Payload, any, string>) {
+  const { new: record } = job.data;
   const { id, lead_id } = record;
   try {
     if (!lead_id) throw new Error("No lead_id provided");
@@ -113,7 +116,7 @@ export async function scrape(record: Tables<"leads_jobs">) {
         "Scraping Error - Retries: " + tries + "",
       );
       tries += 1;
-      await scrape(record);
+      await scrape(job);
     } else {
       await log(
         "ERROR",

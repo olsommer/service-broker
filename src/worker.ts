@@ -4,6 +4,9 @@ import { Tables } from "./utils/database.helpers";
 /* tasks */
 import { scrape } from "./tasks/scrape";
 import { summarize } from "./tasks/summarize";
+import { generate } from "./tasks/generate_line";
+import { finish } from "./tasks/finish";
+import { retry } from "./tasks/retry";
 import { log } from "./tasks/log";
 // import { DoneCallback, Job } from "bee-queue";
 
@@ -70,39 +73,39 @@ export type Payload = {
 // }
 
 /* Handle Scraping */
-async function handle(job: Job<Payload, any, string>) {
-  const payload = job.data as Payload;
-  console.log(
-    `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
-  );
+// async function handle(job: Job<Payload, any, string>) {
+//   const payload = job.data as Payload;
+//   console.log(
+//     `${payload.eventType} - ${payload.new.status} - ${payload.new.id}`,
+//   );
 
-  let id: string = "";
-  try {
-    const { new: record } = payload as Payload;
-    id = record.id;
+//   let id: string = "";
+//   try {
+//     const { new: record } = payload as Payload;
+//     id = record.id;
 
-    switch (job.queueName) {
-      case ("scraper"):
-        await scrape(record);
-        break;
-      case ("summarizer"):
-        await summarize(record);
-        break;
-        // case ("generate"):
-        //   await generate(record);
-        //   break;
-        // case ("finish"):
-        //   await finish(record);
-        //   break;
-        // case ("retry"):
-        //   await retry(record);
-        //   break;
-    }
-  } catch (error) {
-    console.error(error);
-    await log("ERROR", (error as Error).message, id, "task_manager");
-  }
-}
+//     switch (job.queueName) {
+//       case ("scraper"):
+//         await scrape(record);
+//         break;
+//       case ("summarizer"):
+//         await summarize(record);
+//         break;
+//       case ("generate"):
+//         await generate(record);
+//         break;
+//       case ("finish"):
+//         await finish(record);
+//         break;
+//       case ("retry"):
+//         await retry(record);
+//         break;
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     await log("ERROR", (error as Error).message, id, "task_manager");
+//   }
+// }
 
 /* Handle Summarize */
 // async function handleSummarize(job: Job<Payload>) {
@@ -184,7 +187,7 @@ async function handle(job: Job<Payload, any, string>) {
 
 /* scraping */
 const scraperWorker = new Worker("scraper", async (job) => {
-  await handle(job);
+  await scrape(job);
 }, { connection });
 
 scraperWorker.on("ready", () => console.log(`Scraper is ready`));
@@ -199,7 +202,7 @@ scraperWorker.on("failed", (job, err) => {
 
 /* summarize */
 const sumWorker = new Worker("summarizer", async (job) => {
-  await handle(job);
+  await summarize(job);
 }, { connection });
 
 sumWorker.on("ready", () => console.log(`Summarizer is ready`));
@@ -214,7 +217,7 @@ sumWorker.on("failed", (job, err) => {
 
 /* generate */
 const genWorker = new Worker("generate", async (job) => {
-  await handle(job);
+  await generate(job);
 }, { connection });
 
 genWorker.on("ready", () => console.log(`Line Generator is ready`));
@@ -229,7 +232,7 @@ genWorker.on("failed", (job, err) => {
 
 /* finish */
 const finWorker = new Worker("finish", async (job) => {
-  await handle(job);
+  await finish(job);
 }, { connection });
 
 finWorker.on("ready", () => console.log(`Finisher is ready`));
@@ -244,7 +247,7 @@ finWorker.on("failed", (job, err) => {
 
 /* retry */
 const retWorker = new Worker("retry", async (job) => {
-  await handle(job);
+  await retry(job);
 }, { connection });
 
 retWorker.on("ready", () => console.log(`Finisher is ready`));

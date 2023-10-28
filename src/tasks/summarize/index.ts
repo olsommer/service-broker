@@ -3,8 +3,11 @@ import { supa } from "../../utils/supabase";
 import { openai } from "../../utils/openai";
 import { Tables } from "../../utils/database.helpers";
 import { setNextState } from "../next";
+import { Job } from "bullmq";
+import { Payload } from "../../worker";
 
-export async function summarize(record: Tables<"leads_jobs">) {
+export async function summarize(job: Job<Payload, any, string>) {
+  const { new: record } = job.data;
   const { id, job_id } = record;
   try {
     if (!job_id) throw new Error("No job id");
