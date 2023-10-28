@@ -4,10 +4,10 @@ import { openai } from "../../utils/openai";
 import { supa } from "../../utils/supabase";
 import { log } from "../log";
 import { setNextState } from "../next";
-import { Job } from "bullmq";
+import { Job, SandboxedJob } from "bullmq";
 import { Payload } from "../../worker";
 
-export async function generate(job: Job<Payload, any, string>) {
+export async function generate(job: SandboxedJob<Payload, any>) {
   const { new: record } = job.data;
   const { id, lead_id, job_id } = record;
   try {

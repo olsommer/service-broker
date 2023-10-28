@@ -12,6 +12,7 @@ import { log } from "./tasks/log";
 
 import { Job, Worker } from "bullmq";
 import { connection } from "./utils/bullmq";
+import path from "path";
 
 export type Payload = {
   schema: string;
@@ -186,6 +187,7 @@ export type Payload = {
 // });
 
 /* scraping */
+// const scraperWorker = new Worker("scraper", scraperFile, { connection });
 const scraperWorker = new Worker("scraper", async (job) => {
   await scrape(job);
 }, { connection });
@@ -216,9 +218,11 @@ sumWorker.on("failed", (job, err) => {
 });
 
 /* generate */
-const genWorker = new Worker("generate", async (job) => {
-  await generate(job);
-}, { connection });
+const genFile = path.join(__dirname, "./dist/worker_generate_thread.js");
+const genWorker = new Worker("scraper", genFile, { connection });
+// const genWorker = new Worker("generate", async (job) => {
+//   await generate(job);
+// }, { connection });
 
 genWorker.on("ready", () => console.log(`Line Generator is ready`));
 
