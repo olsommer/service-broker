@@ -8,7 +8,7 @@ import { log } from "./tasks/log";
 // import { DoneCallback, Job } from "bee-queue";
 
 import { Job, Worker } from "bullmq";
-import { connection, sumConnection } from "./utils/bullmq";
+import { connection } from "./utils/bullmq";
 
 export type Payload = {
   schema: string;
@@ -198,7 +198,7 @@ scraperWorker.on("failed", (job, err) => {
 
 const sumWorker = new Worker("summarizer", async (job) => {
   await handle(job);
-}, { connection: sumConnection });
+}, { connection });
 
 sumWorker.on("ready", () => console.log(`Summarizer is ready`));
 
