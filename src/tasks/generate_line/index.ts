@@ -75,8 +75,12 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     `;
 
     // --------------------------------------
+    const m1: ChatCompletionMessageParam[] = [{
+      role: "system",
+      content: "You are a helpful assistant",
+    }, { role: "user", content: prompt }];
     const chatCompletion = await openai.chat.completions.create({
-      messages: [{ role: "user", content: prompt }],
+      messages: m1,
       model: "gpt-3.5-turbo",
       stream: false,
     });
