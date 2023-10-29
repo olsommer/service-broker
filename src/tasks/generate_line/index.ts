@@ -7,6 +7,8 @@ import { setNextState } from "../next";
 import { Job, SandboxedJob } from "bullmq";
 import { Payload } from "../../worker";
 
+import { cot } from "./chain_of_thought";
+
 export async function generate(job: SandboxedJob<Payload, any>) {
   const { new: record } = job.data;
   const { id, lead_id, job_id } = record;
@@ -44,54 +46,38 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     const industryPrompt = form.industry ? form.industry : "";
 
     /* system prompt */
-    const __systemPrompt = `
-    I want you to craft you an engaging first line of an email using the below provided information. 
-    Keep the wording and tone casual. 
-    Avoid generic AI-content, make the content original and unique. Avoid repetitions. 
-    Only use the examples as reference points.  
-    The brackets are only for your information, dont provide them in the final output.`;
-
     const systemPrompt = `
     You will be provided with an industry, a focus/challenge and a company bio. 
-    Your task is to generate an engaging first line of an email.`;
+    Your task is to generate an engaging first line (after greeting, 
+      before call-to-action) of an email using a 9th grader English level. Write in past tense.`;
 
     // Sending the cleaned version to OPEN-AI
-    const prompt =
-      `I want you to craft you an engaging first line of an email using the below provided information. Keep the wording and tone casual. Avoid generic AI-content, make the content original and unique. Avoid repetitions. Only use the examples as reference points.  The brackets are only for your information, dont provide them in the final output. 
-    \n\n
+    const prompt1 = `
     Industry: ${industryPrompt}\n
     Focus/Challenge: ${focus}\n
-    Company Bio: ${content}\n
-    \n\n
-    Format:
-    {Syntax}+ [[Industry]]+((Focus/Challenge))
-    Syntax= Parts of the sentence that should have variable but similar wording. Keep changing the syntax in the output
-    Industry= Provided above
-    Focus/Challenge= Provided above
-    \n\n
-    Examples:  
-    I've been delving into the world of [[Edtech]], and it's apparent that tackling the {user adoption} puzzle is an ongoing challenge for many in the industry.\n
-    {I've been tracking the} [[cold outreach industry]] {closely, and it's evident that companies are struggling with} ((generating effective icebreakers)).\n
-    {I've been monitoring} [[graphic design service industry]], {and it's clear to me that many are struggling with} ((increasing their design margins)).\n 
-    {I've noticed that} ((posting on social media and social media management)) {is a constant challenge for} [[small businesses]].\n 
-    {I've been part of the} [[game boosting industry]] {for a while now and have noticed that} ((hiring pro gamers)) {has always been a challenge when expanding a boosting business to other games}.\n
-    {I have been doing a lot of research in the} [[eldercare marketspace]] {and noticed that there is currently a big issue with} ((recording people's stories)) {easily}.\n 
-    {I've been exploring the} [[Ecommerce]] {world lately, and it's clear that} ((age verification)) {is posing a significant challenge for many} [[Online Wine and Spirits Stores]].\n
-    `;
+    Company Bio: ${content}\n\n
+    AI:`;
 
     // --------------------------------------
     const m1: ChatCompletionMessageParam[] = [
       {
-        role: "system",
-        content: "You are a helpful assistent",
+        "role": "system",
+        "content": systemPrompt,
       },
-      { role: "user", content: prompt },
+      ...cot,
+      { role: "user", content: prompt1 },
     ];
     const chatCompletion = await openai.chat.completions.create({
       messages: m1,
       model: "gpt-3.5-turbo",
       stream: false,
+      temperature: 1,
+      max_tokens: 64,
+      top_p: 0,
+      frequency_penalty: 0,
+      presence_penalty: 1,
     });
+
     const gen1 = chatCompletion.choices[0].message.content;
     const meta1 = {
       model: chatCompletion.model,
@@ -99,30 +85,50 @@ export async function generate(job: SandboxedJob<Payload, any>) {
       completion_tokens: chatCompletion.usage?.completion_tokens,
       total_tokens: chatCompletion.usage?.total_tokens,
     };
+
     // --------------------------------------
 
+    const systemPrompt2 = `
+    Improve a engaging first line of an email by applying the following instructions:
+    \n1. Keep the content concise and relevant.
+    \n2. Use a 9th grader English level.
+    \n3. Ensure the output is not generic.
+    \n4. Remove all fillers from the output.
+    \n5. The syntax and sentence must not start with "I've been". Make it unique.
+    \n6. The output should be in the past tense.`;
+    const fuCot: ChatCompletionMessageParam[] = [
+      {
+        "role": "user",
+        "content":
+          "Line: I've been part of the game boosting industry for a while now and have noticed that hiring pro gamers has always been a challenge when expanding a boosting business to other games.\n\nAI:",
+      },
+      {
+        "role": "assistant",
+        "content":
+          "Recently, I discovered that hiring professional gamers posed a significant challenge when expanding my boosting business to new games.",
+      },
+    ];
     /* Follow up */
-
-    const followUpPrompt =
-      `Please refine the output according to the below instructions:
-      1. The output is too wordy. Keep the content concise and relevant
-      2. Use a 9th grader English level
-      3. Ensure the output is not generic
-      4. Remove all fillers from the output
-      5. The syntax and sentence should not start with "I've been". Make it unique
-      6. The output should be in the past tense      
+    const prompt2 = `
+    Line:${gen1}\n\n
+    AI:
     `;
 
     const messages: ChatCompletionMessageParam[] = [
-      { role: "user", content: prompt },
-      { role: "assistant", content: gen1 },
-      { role: "user", content: followUpPrompt },
+      { role: "system", content: systemPrompt2 },
+      ...fuCot,
+      { role: "user", content: prompt2 },
     ];
     // --------------------------------------
     const chat2 = await openai.chat.completions.create({
       messages,
       model: "gpt-3.5-turbo",
       stream: false,
+      temperature: 0,
+      max_tokens: 64,
+      top_p: 0.5,
+      frequency_penalty: 0,
+      presence_penalty: 1.5,
     });
     const generated_line = chat2.choices[0].message.content;
     const meta2 = {

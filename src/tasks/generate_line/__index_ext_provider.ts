@@ -57,7 +57,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     Industry: ${industryPrompt}\n
     Focus/Challenge: ${focus}\n
     Company Bio: ${content}\n
-    \n\n
+    \n
     Format:
     {Syntax}+ [[Industry]]+((Focus/Challenge))
     Syntax= Parts of the sentence that should have variable but similar wording. Keep changing the syntax in the output
