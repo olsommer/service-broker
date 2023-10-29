@@ -153,7 +153,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     //     \n2. Use a 9th grader English level
     // Sentence must not start with "I've been<<<
     const sysPrompt2 = `
-    Improve a provided sentence by applying the following instructions:
+    Improve a provided sentence by applying strictly following rules:
     \n1. Keep the content concise and relevant
     \n2. Ensure the output is not generic
     \n3. Remove fillers
