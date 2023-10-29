@@ -90,13 +90,14 @@ export async function generate(job: SandboxedJob<Payload, any>) {
 
     const systemPrompt2 = `
     Improve a engaging first line of an email by applying the following instructions:
-    \n1. Keep the content concise and relevant.
-    \n2. Use a 9th grader English level.
-    \n3. Ensure the output is not generic.
-    \n4. Remove all fillers from the output.
-    \n5. The syntax and sentence must not start with "I've been". Make it unique.
-    \n6. The output should be in the past tense.`;
-    const fuCot: ChatCompletionMessageParam[] = [
+    \n1. Keep the content concise and relevant
+    \n2. Use a 9th grader English level
+    \n3. Ensure the output is not generic
+    \n4. Remove all fillers from the output
+    \n5. The syntax and sentence must not start with "I've been". Make it unique
+    \n6. The output should be in the past tense
+    \n7. Write only 1 sentence.`;
+    const cot2: ChatCompletionMessageParam[] = [
       {
         "role": "user",
         "content":
@@ -114,14 +115,16 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     AI:
     `;
 
-    const messages: ChatCompletionMessageParam[] = [
+    const m2: ChatCompletionMessageParam[] = [
       { role: "system", content: systemPrompt2 },
-      ...fuCot,
+      ...cot2,
       { role: "user", content: prompt2 },
     ];
+    console.log(m1);
+    console.log(m2);
     // --------------------------------------
     const chat2 = await openai.chat.completions.create({
-      messages,
+      messages: m2,
       model: "gpt-3.5-turbo",
       stream: false,
       temperature: 0,
