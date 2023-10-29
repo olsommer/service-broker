@@ -131,19 +131,19 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     // --------------------------------------
 
     const sysPrompt2 = `
-    Improve a engaging first line of an email by applying the following instructions:
+    Improve a provided sentence by applying the following instructions:
     \n1. Keep the content concise and relevant
     \n2. Use a 9th grader English level
     \n3. Ensure the output is not generic
-    \n4. Remove all fillers from the output
-    \n5. The syntax and sentence must not start with "I've been". Make it unique
-    \n6. The output should be in the past tense
-    \n7. Write only 1 sentence.`;
+    \n4. Remove fillers
+    \n5. Syntax and sentence must not start with "I've been"
+    \n6. Use past tense
+    \n7. Write only 1 sentence and only 20-25 words.`;
     const cot2: ChatCompletionMessageParam[] = [
       {
         "role": "user",
         "content":
-          "Line: I've been part of the game boosting industry for a while now and have noticed that hiring pro gamers has always been a challenge when expanding a boosting business to other games.\n\nAI:",
+          "I've been part of the game boosting industry for a while now and have noticed that hiring pro gamers has always been a challenge when expanding a boosting business to other games.\n\nAI:",
       },
       {
         "role": "assistant",
