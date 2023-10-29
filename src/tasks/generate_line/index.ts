@@ -43,17 +43,59 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     const content = sumData.content;
     const focus = form.focus ??
       "Compliments about the company";
-    const industryPrompt = form.industry ? form.industry : "";
+    let industry = form.industry;
+
+    /* Get Industry */
+    if (!industry || industry === "") {
+      const sysPrompt0 = `
+      You will be provided with an company bio. Your task is to tell me the industry of the company. Use 2-5 words.\n`;
+      const prompt0 = `
+      Company Bio: Guardian Boost is a professional gaming service that specializes in helping players achieve their goals in the popular video game Destiny 2. They offer a wide range of boosting services, including guaranteed exotic item acquisition, completion of difficult raid challenges, and flawless runs in the competitive Trials of Osiris game mode. With a team of experienced boosters, Guardian Boost strives to provide fast and efficient service, starting most orders within an hour of purchase. They also prioritize customer satisfaction, offering a 7-day money-back guarantee and aiming to complete orders within 16-24 hours. Their boosters use VPN protection to ensure the safety and privacy of their clients' accounts. If customers have any questions or need assistance, they can reach out to Guardian Boost's live chat support.\n
+      You: game boosting & coaching\n
+      Company Bio: Lalo aims to provide a safe and secure space for users to preserve their memories and connect with loved ones, while giving them full control over their privacy and content.\n
+      You: private family media\n
+      Company Bio: Fulkerson Winery is a family-owned business with a rich history spanning seven generations of family farming. They offer a variety of products and services, including seated tastings, sales, U-Pick crops, and supplies for beer and winemaking. They are known for their fresh, unpasteurized, 100% whole grape juice, which is perfect for home winemaking. Fulkerson Winery has been recognized as the New York Sauvignon Blanc Winery of the Year for 2021, a testament to their commitment to quality and excellence. Customers can sign up for their newsletter to stay updated on the latest news and events from the winery.\n
+      You: Online Wine and Spirits\n
+      Company Bio: Forrest seems to be a promising tool for businesses seeking automated social media content to boost their online presence and engagement.\n
+      You: social media automation software
+      Company Bio: Based on the scraped website, the company is called AnimoX Animo and they specialize in helping businesses grow their brand through various marketing strategies. They pride themselves on being the tools for their clients, who are the artists, and emphasize the importance of content in storytelling. Their services include graphic design, video marketing, social media marketing, branding and design, and web design development. They also offer a free consultation and audit of clients' marketing efforts to ensure they are effective and not wasting money. The website showcases testimonials from satisfied clients and highlights their successful projects, such as running ads for DSR and growing the YouTube personality Javi Enrique. Overall, AnimoX Animo presents itself as a reliable and innovative marketing agency that can help businesses achieve success.\n
+      You: graphic design service
+      Company Bio: ${content}\n
+      You:\n
+      `;
+      const m0: ChatCompletionMessageParam[] = [
+        {
+          "role": "system",
+          "content": sysPrompt0,
+        },
+        {
+          "role": "user",
+          "content": prompt0,
+        },
+      ];
+      const chat0 = await openai.chat.completions.create({
+        messages: m0,
+        model: "gpt-3.5-turbo",
+        stream: false,
+        temperature: 0,
+        max_tokens: 64,
+        top_p: 0,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+      });
+      industry = chat0.choices[0].message.content ??
+        "Service industry";
+    }
 
     /* system prompt */
-    const systemPrompt = `
+    const sysPrompt1 = `
     You will be provided with an industry, a focus/challenge and a company bio. 
     Your task is to generate an engaging first line (after greeting, 
       before call-to-action) of an email using a 9th grader English level. Write in past tense.`;
 
     // Sending the cleaned version to OPEN-AI
     const prompt1 = `
-    Industry: ${industryPrompt}\n
+    Industry: ${industry}\n
     Focus/Challenge: ${focus}\n
     Company Bio: ${content}\n\n
     AI:`;
@@ -62,33 +104,33 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     const m1: ChatCompletionMessageParam[] = [
       {
         "role": "system",
-        "content": systemPrompt,
+        "content": sysPrompt1,
       },
       ...cot,
       { role: "user", content: prompt1 },
     ];
-    const chatCompletion = await openai.chat.completions.create({
+    const chat1 = await openai.chat.completions.create({
       messages: m1,
       model: "gpt-3.5-turbo",
       stream: false,
-      temperature: 1,
+      temperature: 0,
       max_tokens: 64,
       top_p: 0,
       frequency_penalty: 0,
-      presence_penalty: 1,
+      presence_penalty: 0,
     });
 
-    const gen1 = chatCompletion.choices[0].message.content;
+    const gen1 = chat1.choices[0].message.content;
     const meta1 = {
-      model: chatCompletion.model,
-      prompt_tokens: chatCompletion.usage?.prompt_tokens,
-      completion_tokens: chatCompletion.usage?.completion_tokens,
-      total_tokens: chatCompletion.usage?.total_tokens,
+      model: chat1.model,
+      prompt_tokens: chat1.usage?.prompt_tokens,
+      completion_tokens: chat1.usage?.completion_tokens,
+      total_tokens: chat1.usage?.total_tokens,
     };
 
     // --------------------------------------
 
-    const systemPrompt2 = `
+    const sysPrompt2 = `
     Improve a engaging first line of an email by applying the following instructions:
     \n1. Keep the content concise and relevant
     \n2. Use a 9th grader English level
@@ -110,13 +152,10 @@ export async function generate(job: SandboxedJob<Payload, any>) {
       },
     ];
     /* Follow up */
-    const prompt2 = `
-    Line:${gen1}\n\n
-    AI:
-    `;
+    const prompt2 = `Line:${gen1}\nAI:`;
 
     const m2: ChatCompletionMessageParam[] = [
-      { role: "system", content: systemPrompt2 },
+      { role: "system", content: sysPrompt2 },
       ...cot2,
       { role: "user", content: prompt2 },
     ];
@@ -129,16 +168,16 @@ export async function generate(job: SandboxedJob<Payload, any>) {
       stream: false,
       temperature: 0,
       max_tokens: 64,
-      top_p: 0.5,
+      top_p: 0,
       frequency_penalty: 0,
-      presence_penalty: 1.5,
+      presence_penalty: 0,
     });
     const generated_line = chat2.choices[0].message.content;
     const meta2 = {
-      model: chatCompletion.model,
-      prompt_tokens: chatCompletion.usage?.prompt_tokens,
-      completion_tokens: chatCompletion.usage?.completion_tokens,
-      total_tokens: chatCompletion.usage?.total_tokens,
+      model: chat2.model,
+      prompt_tokens: chat2.usage?.prompt_tokens,
+      completion_tokens: chat2.usage?.completion_tokens,
+      total_tokens: chat2.usage?.total_tokens,
     };
 
     // --------------------------------------
