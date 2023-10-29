@@ -11,7 +11,7 @@ export const cotRefinedCompliments: ChatCompletionMessageParam[] = [{
 }, {
   "role": "user",
   "content":
-    "I really like that Remento has a voice recording feature for when I want to record my relatives stories. ",
+    "That was a very good sentence. Here is another one:\nI really like that Remento has a voice recording feature for when I want to record my relatives stories. ",
 }, {
   "role": "assistant",
   "content":
@@ -19,7 +19,7 @@ export const cotRefinedCompliments: ChatCompletionMessageParam[] = [{
 }, {
   "role": "user",
   "content":
-    "I really like that Fulkerson Winery has a rich tradition of seven generations in wine production. ",
+    "That was a very good sentence again. Here is another one:\n I really like that Fulkerson Winery has a rich tradition of seven generations in wine production. ",
 }, {
   "role": "assistant",
   "content":
@@ -27,7 +27,7 @@ export const cotRefinedCompliments: ChatCompletionMessageParam[] = [{
 }, {
   "role": "user",
   "content":
-    "I really like that Forrest enables me get time back by automating my social media creation and posting process. ",
+    "That was a very good sentence again. Here is another one:\n I really like that Forrest enables me get time back by automating my social media creation and posting process. ",
 }, {
   "role": "assistant",
   "content":
@@ -35,7 +35,7 @@ export const cotRefinedCompliments: ChatCompletionMessageParam[] = [{
 }, {
   "role": "user",
   "content":
-    "I really like that Rocket Mortgage has a community for preventing displacement, and building wealth through homeownership.",
+    "That was a very good sentence again. Here is another one:\n I really like that Rocket Mortgage has a community for preventing displacement, and building wealth through homeownership.",
 }, {
   "role": "assistant",
   "content":

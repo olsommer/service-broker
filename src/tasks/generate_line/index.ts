@@ -158,7 +158,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     \n2. Ensure the output is not generic
     \n3. Remove fillers
     \n4. Write from the first person but be creative
-    \n5. Write only 1 sentence and only 20-25 words
+    \n5. Write only 1 sentence and only 15-20 words
     \n6. Keep the context and the company connection.`;
 
     /* Refine cot */
@@ -191,9 +191,9 @@ export async function generate(job: SandboxedJob<Payload, any>) {
       stream: false,
       temperature: 0,
       max_tokens: 64,
-      top_p: 0,
+      top_p: 0.01,
       frequency_penalty: 0,
-      presence_penalty: 0,
+      presence_penalty: -1,
     });
     const generated_line = chat2.choices[0].message.content;
     const meta2 = {
