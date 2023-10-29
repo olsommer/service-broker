@@ -159,8 +159,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
       ...cot2,
       { role: "user", content: prompt2 },
     ];
-    console.log(m1);
-    console.log(m2);
+
     // --------------------------------------
     const chat2 = await openai.chat.completions.create({
       messages: m2,
