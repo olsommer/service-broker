@@ -7,7 +7,12 @@ import { setNextState } from "../next";
 import { Job, SandboxedJob } from "bullmq";
 import { Payload } from "../../worker";
 
-import { cot } from "./chain_of_thought";
+import { cotIndustryChallenge } from "./cot_industry_challenge";
+import { cotReferral } from "./cot_mock_referral";
+import { cotCompliments } from "./cot_compliments_about_company";
+import { cotRefinedIndustryChallenge } from "./cot_refined_industry_challenge";
+import { cotRefinedReferral } from "./cot_refined_mock_referral";
+import { cotRefinedCompliments } from "./cot_refined_compliments_about_company";
 
 export async function generate(job: SandboxedJob<Payload, any>) {
   const { new: record } = job.data;
@@ -89,16 +94,31 @@ export async function generate(job: SandboxedJob<Payload, any>) {
 
     /* system prompt */
     const sysPrompt1 = `
-    You will be provided with an industry, a focus/challenge and a company bio. 
-    Your task is to generate an engaging first line (after greeting, 
-      before call-to-action) of an email using a 9th grader English level. Write in past tense.`;
+    You will be provided with an industry, a focus and a company bio. 
+    Your task is to generate an engaging first line of an email using a 9th grader English level. Write in past tense.`;
 
     // Sending the cleaned version to OPEN-AI
     const prompt1 = `
     Industry: ${industry}\n
-    Focus/Challenge: ${focus}\n
-    Company Bio: ${content}\n\n
-    AI:`;
+    Focus: ${focus}\n
+    Company Bio: ${content}`;
+
+    /* select cot */
+    let cot;
+    switch (focus) {
+      case "Trends and challenges of industry":
+        cot = cotIndustryChallenge;
+        break;
+      case "Compliments about company":
+        cot = cotCompliments;
+        break;
+      case "Mock referral":
+        cot = cotReferral;
+        break;
+      default:
+        cot = cotIndustryChallenge;
+        break;
+    }
 
     // --------------------------------------
     const m1: ChatCompletionMessageParam[] = [
@@ -129,35 +149,37 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     };
 
     // --------------------------------------
-
+    //     \n6. Use past tense
+    //     \n2. Use a 9th grader English level
     const sysPrompt2 = `
     Improve a provided sentence by applying the following instructions:
     \n1. Keep the content concise and relevant
-    \n2. Use a 9th grader English level
-    \n3. Ensure the output is not generic
-    \n4. Remove fillers
-    \n5. Syntax and sentence must not start with "I've been"
-    \n6. Use past tense
-    \n7. Write only 1 sentence and only 20-25 words.`;
-    const cot2: ChatCompletionMessageParam[] = [
-      {
-        "role": "user",
-        "content":
-          "I've been part of the game boosting industry for a while now and have noticed that hiring pro gamers has always been a challenge when expanding a boosting business to other games.\n\nAI:",
-      },
-      {
-        "role": "assistant",
-        "content":
-          "Recently, I discovered that hiring professional gamers posed a significant challenge when expanding my boosting business to new games.",
-      },
-    ];
-    /* Follow up */
-    const prompt2 = `Line:${gen1}\nAI:`;
+    \n2. Ensure the output is not generic
+    \n3. Remove fillers
+    \n4. Sentence must not start with "I've been"
+    \n5. Write only 1 sentence and only 20-25 words.`;
+
+    /* Refine cot */
+    let cotRefined;
+    switch (focus) {
+      case "Trends and challenges of industry":
+        cotRefined = cotRefinedIndustryChallenge;
+        break;
+      case "Compliments about company":
+        cotRefined = cotRefinedCompliments;
+        break;
+      case "Mock referral":
+        cotRefined = cotRefinedReferral;
+        break;
+      default:
+        cotRefined = cotRefinedIndustryChallenge;
+        break;
+    }
 
     const m2: ChatCompletionMessageParam[] = [
       { role: "system", content: sysPrompt2 },
-      ...cot2,
-      { role: "user", content: prompt2 },
+      ...cotRefined,
+      { role: "user", content: gen1 },
     ];
 
     // --------------------------------------
