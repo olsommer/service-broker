@@ -151,13 +151,15 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     // --------------------------------------
     //     \n6. Use past tense
     //     \n2. Use a 9th grader English level
+    // Sentence must not start with "I've been<<<
     const sysPrompt2 = `
     Improve a provided sentence by applying the following instructions:
     \n1. Keep the content concise and relevant
     \n2. Ensure the output is not generic
     \n3. Remove fillers
-    \n4. Sentence must not start with "I've been"
-    \n5. Write only 1 sentence and only 20-25 words.`;
+    \n4. Write from the first person but be creative
+    \n5. Write only 1 sentence and only 20-25 words
+    \n6. Keep the context and the company connection.`;
 
     /* Refine cot */
     let cotRefined;
