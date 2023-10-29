@@ -44,17 +44,18 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     const industryPrompt = form.industry ? form.industry : "";
 
     /* system prompt */
-    const systemPrompt = `
+    const __systemPrompt = `
     I want you to craft you an engaging first line of an email using the below provided information. 
     Keep the wording and tone casual. 
     Avoid generic AI-content, make the content original and unique. Avoid repetitions. 
     Only use the examples as reference points.  
     The brackets are only for your information, dont provide them in the final output.`;
 
+    const systemPrompt = `
+    You will be provided with an industry, a focus/challenge and a company bio. 
+    Your task is to generate an engaging first line of an email.`;
+
     // Sending the cleaned version to OPEN-AI
-    // Prompts
-    // Neither generate questions nor exclamation marks.
-    // Make it as personal as possible by using the summary of the scraped homepage.
     const prompt =
       `I want you to craft you an engaging first line of an email using the below provided information. Keep the wording and tone casual. Avoid generic AI-content, make the content original and unique. Avoid repetitions. Only use the examples as reference points.  The brackets are only for your information, dont provide them in the final output. 
     \n\n
@@ -79,10 +80,13 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     `;
 
     // --------------------------------------
-    const m1: ChatCompletionMessageParam[] = [{
-      role: "system",
-      content: "You are a helpful assistant",
-    }, { role: "user", content: prompt }];
+    const m1: ChatCompletionMessageParam[] = [
+      {
+        role: "system",
+        content: "You are a helpful assistent",
+      },
+      { role: "user", content: prompt },
+    ];
     const chatCompletion = await openai.chat.completions.create({
       messages: m1,
       model: "gpt-3.5-turbo",
