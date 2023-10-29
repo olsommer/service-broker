@@ -14,7 +14,7 @@ export const cotRefinedReferral: ChatCompletionMessageParam[] = [
   {
     "role": "user",
     "content":
-      "I was searching for wine online from Upstate New York and I came across Fulkerson Winery.",
+      "That was a very good sentence.\n Here is another one: I was searching for wine online from Upstate New York and I came across Fulkerson Winery.",
   },
   {
     "role": "assistant",
@@ -24,7 +24,7 @@ export const cotRefinedReferral: ChatCompletionMessageParam[] = [
   {
     "role": "user",
     "content":
-      "I was searching for ways to automate my social media outreach and then I found Forrest.",
+      "That was a very good sentence again.\n Here is another one: I was searching for ways to automate my social media outreach and then I found Forrest.",
   },
   {
     "role": "assistant",
@@ -34,7 +34,7 @@ export const cotRefinedReferral: ChatCompletionMessageParam[] = [
   {
     "role": "user",
     "content":
-      "I was searching for equipment financing and then I came across QuickinCapital.",
+      "That was a very good sentence again.\n Here is another one: I was searching for equipment financing and then I came across QuickinCapital.",
   },
   {
     "role": "assistant",
@@ -44,7 +44,7 @@ export const cotRefinedReferral: ChatCompletionMessageParam[] = [
   {
     "role": "user",
     "content":
-      "I was searching for marketing communities to gain insights and that's when I found Furlough. ",
+      "That was a very good sentence again.\n Here is another one: I was searching for marketing communities to gain insights and that's when I found Furlough. ",
   },
   {
     "role": "assistant",

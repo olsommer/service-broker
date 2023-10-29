@@ -153,11 +153,11 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     //     \n2. Use a 9th grader English level
     // Sentence must not start with "I've been<<<
     const sysPrompt2 = `
-    Improve a provided sentence by applying strictly following rules:
+    Improve a provided sentence by applying STRICTLY following rules:
     \n1. Keep the content concise and relevant
     \n2. Ensure the output is not generic
     \n3. Remove fillers
-    \n4. Write from the first person but be creative
+    \n4. Write from the first person
     \n5. Write only 1 sentence and only 15-20 words
     \n6. Keep the context and the company connection.`;
 
@@ -191,9 +191,9 @@ export async function generate(job: SandboxedJob<Payload, any>) {
       stream: false,
       temperature: 0,
       max_tokens: 64,
-      top_p: 0.01,
+      top_p: 0.05,
       frequency_penalty: 0,
-      presence_penalty: -1,
+      presence_penalty: -0.5,
     });
     const generated_line = chat2.choices[0].message.content;
     const meta2 = {

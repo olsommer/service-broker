@@ -11,7 +11,7 @@ export const cotRefinedIndustryChallenge: ChatCompletionMessageParam[] = [{
 }, {
   "role": "user",
   "content":
-    "I've been researching the private family media space for a little while now, and recording memories effectively is a constant issue. ",
+    "That was a very good sentence.\n Here is another one: I've been researching the private family media space for a little while now, and recording memories effectively is a constant issue. ",
 }, {
   "role": "assistant",
   "content":
@@ -19,7 +19,7 @@ export const cotRefinedIndustryChallenge: ChatCompletionMessageParam[] = [{
 }, {
   "role": "user",
   "content":
-    "I've been exploring the online wine and spirits world lately, and it's clear that age verification is posing a significant challenge for many ecommerce stores.",
+    "That was a very good sentence again.\n Here is another one: I've been exploring the online wine and spirits world lately, and it's clear that age verification is posing a significant challenge for many ecommerce stores.",
 }, {
   "role": "assistant",
   "content":
@@ -27,7 +27,7 @@ export const cotRefinedIndustryChallenge: ChatCompletionMessageParam[] = [{
 }, {
   "role": "user",
   "content":
-    "I've been researching social media automation industry and it seems that creating relevant media is a recurring challenge.",
+    "That was a very good sentence again.\n Here is another one: I've been researching social media automation industry and it seems that creating relevant media is a recurring challenge.",
 }, {
   "role": "assistant",
   "content":
@@ -35,7 +35,7 @@ export const cotRefinedIndustryChallenge: ChatCompletionMessageParam[] = [{
 }, {
   "role": "user",
   "content":
-    "I've been gathering feedback from construction contractors and I noticed that regulatory compliance is a constant challenge",
+    "That was a very good sentence again.\n Here is another one: I've been gathering feedback from construction contractors and I noticed that regulatory compliance is a constant challenge",
 }, {
   "role": "assistant",
   "content":
