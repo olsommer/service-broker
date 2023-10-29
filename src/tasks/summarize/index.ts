@@ -55,7 +55,7 @@ export async function summarize(job: SandboxedJob<Payload, any>) {
     //    `;
     //
     const systemPrompt =
-      `Summarize a scraped website you are provided with for a second-grade student in 3-5 sentences with focus on ${focus}`;
+      `Summarize a scraped website you are provided with for a second-grade student in 1 paragraph with focus on ${focus}`;
 
     const messages: ChatCompletionMessageParam[] = [
       {

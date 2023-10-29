@@ -39,17 +39,13 @@ export async function generate(job: SandboxedJob<Payload, any>) {
 
     /* summary */
     const content = sumData.content;
+
+    /* focus */
     const focus = form.focus ??
       "Compliments about the company";
-    const industryPrompt = form.industry ? form.industry : "";
 
-    /* system prompt */
-    const systemPrompt = `
-    I want you to craft you an engaging first line of an email using the below provided information. 
-    Keep the wording and tone casual. 
-    Avoid generic AI-content, make the content original and unique. Avoid repetitions. 
-    Only use the examples as reference points.  
-    The brackets are only for your information, dont provide them in the final output.`;
+    /* industry */
+    const industryPrompt = form.industry ? form.industry : "";
 
     // Sending the cleaned version to OPEN-AI
     // Prompts
