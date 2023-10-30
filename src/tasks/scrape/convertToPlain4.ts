@@ -1,5 +1,6 @@
 import { log } from "../log";
 import { AnyNode, Cheerio, load } from "cheerio";
+import { DOMParser } from "@xmldom/xmldom";
 
 export async function convertToPlain(html: string) {
   let $ = load(html);
@@ -18,13 +19,21 @@ export async function convertToPlain(html: string) {
   // core = core.find("p, h1, h2, h3, h4, h5, h6, li, span, div, a, b, i, u, s");
 
   // Extract raw text content from the container element and its children
-  const rawTextContent = $$.text();
+  let rawTextContent = $$.text();
   await log(
     "OK",
     rawTextContent,
-    "35b9c23b-6d90-4359-ac2b-662d0efc6186",
+    "00000000-0000-0000-0000-000000000000",
     "scrape",
   );
+
+  const htmlTags =
+    /<script|<style|<nav|<button|<a|<img|<svg|<video|<audio|<iframe|<table|<footer/g;
+  const hasTags = htmlTags.test(rawTextContent);
+
+  if (hasTags) {
+    rawTextContent = convertToPlainBackup(html);
+  }
 
   // const cleanedText = rawTextContent.replace(/\s+/g, " ");
   // The regular expression [\n\r\t]+ matches one or more line breaks
@@ -44,3 +53,56 @@ export async function convertToPlain(html: string) {
   const trimmedText = cleanedText.trim();
   return trimmedText;
 }
+
+// Convert again if the first conversion fails
+const convertToPlainBackup = (html: string) => {
+  // Parse the HTML string into a DOM document
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+
+  if (!doc) {
+    throw new Error("Could not parse HTML");
+  }
+
+  // Find the container element (e.g., <div>) to start the extraction
+  const container = doc.getElementsByTagName("body")[0];
+
+  if (!container) {
+    throw new Error("Could not parse HTML");
+  }
+  // Extract raw text content from the container element and its children
+  const rawTextContent = extractRawText(container);
+  return rawTextContent;
+};
+
+// Convert again if the first conversion fails
+const extractRawText = (node: Node) => {
+  let result = "";
+
+  // If the node is a text node, concatenate its text
+  if (node.nodeType === 3) { // 3 corresponds to TEXT_NODE
+    result += node.nodeValue || "";
+  } else if (node.nodeType === 1) { // 1 corresponds to ELEMENT_NODE
+    const nodeName = node.nodeName.toLowerCase();
+
+    // Exclude script and style elements and their content
+    // "script, style, nav, button, a, img, svg, video, audio, iframe, table, footer",
+    if (
+      nodeName === "script" || nodeName === "style" || nodeName === "nav" ||
+      nodeName === "button" || nodeName === "a" || nodeName === "img" ||
+      nodeName === "svg" || nodeName === "audio" || nodeName === "iframe" ||
+      nodeName === "table" || nodeName === "footer"
+    ) {
+      return result;
+    }
+    // If the node is an element node, recursively extract text from its child nodes
+    // for (const childNode of node.childNodes) {
+    //   result = " " + result + " " + extractRawText(childNode) + " ";
+    // }
+    for (let i = 0; i < node.childNodes.length; i++) {
+      result += " " + extractRawText(node.childNodes[i]) + " ";
+    }
+  }
+
+  return result;
+};

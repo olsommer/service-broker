@@ -150,18 +150,19 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     };
 
     // --------------------------------------
-    //     \n6. Use past tense
-    //     \n2. Use a 9th grader English level
+    // \n6. Use past tense
+    // \n2. Use a 9th grader English level
     // Sentence must not start with "I've been<<<
+    // \n-> Keep the content concise and relevant
     const sysPrompt2 = `
-    Improve a provided sentence by applying STRICTLY following rules:
-    \n1. Keep the content concise and relevant
-    \n2. Ensure the output is not generic
-    \n3. Remove fillers
-    \n4. Write from the first person
-    \n5. Write only 1 sentence and only 15-20 words
-    \n6. Keep the context and the company connection.
-    \n7. Start the sentences with "${pickSentenceBeginning()}"`;
+    Paraphrase the provided sentence by applying STRICTLY following rules:
+    \n-> Rewrite the sentence so that it begins with "${pickSentenceBeginning()}"
+    \n-> Rewrite the sentence without losing context, relevance and reference to the company.
+    \n-> Make sure the output is not generic
+    \n-> Rewrite the sentence and remove fillers
+    \n-> Write from the first person
+    \n-> Write only 1 sentence and only 10-15 words
+    `;
 
     /* Refine cot */
     let cotRefined;
@@ -191,7 +192,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
       messages: m2,
       model: "gpt-3.5-turbo",
       stream: false,
-      temperature: 0.9, // 0
+      temperature: 1, // 0
       max_tokens: 64,
       top_p: 0, // 0.05
       frequency_penalty: 0,
