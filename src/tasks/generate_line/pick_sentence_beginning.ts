@@ -18,7 +18,6 @@ export const pickSentenceBeginning = () => {
     "I've closely examined",
     "I've discerned that",
     "While tracking",
-    "As I've immersed myself",
   ];
 
   const index = crypto.getRandomValues(new Uint32Array(1))[0] %

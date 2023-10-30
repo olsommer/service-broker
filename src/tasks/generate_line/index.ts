@@ -159,7 +159,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     \n-> Rewrite the sentence so that it begins with "${pickSentenceBeginning()}"
     \n-> Rewrite the sentence without losing context, relevance and reference to the company.
     \n-> Make sure the output is not generic
-    \n-> Rewrite the sentence and remove fillers
+    \n-> Remove fillers
     \n-> Write from the first person
     \n-> Write only 1 sentence and only 10-15 words
     `;
