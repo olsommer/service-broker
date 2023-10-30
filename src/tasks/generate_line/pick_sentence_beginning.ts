@@ -22,6 +22,8 @@ export const pickSentenceBeginning = () => {
     "As I've immersed myself",
   ];
 
-  const index = Math.floor(Math.random() * beginningsForChallenge.length);
+  const index = crypto.getRandomValues(new Uint32Array(1))[0] %
+    beginningsForChallenge.length;
+  // const index = Math.floor(Math.random() * beginningsForChallenge.length);
   return beginningsForChallenge[index];
 };
