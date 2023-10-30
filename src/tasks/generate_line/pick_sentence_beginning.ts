@@ -18,7 +18,6 @@ export const pickSentenceBeginning = () => {
     "I've closely examined",
     "I've discerned that",
     "While tracking",
-    "In my persuit",
     "As I've immersed myself",
   ];
 
