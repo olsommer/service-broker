@@ -13,6 +13,7 @@ import { cotCompliments } from "./cot_compliments_about_company";
 import { cotRefinedIndustryChallenge } from "./cot_refined_industry_challenge";
 import { cotRefinedReferral } from "./cot_refined_mock_referral";
 import { cotRefinedCompliments } from "./cot_refined_compliments_about_company";
+import { pickSentenceBeginning } from "./pick_sentence_beginning";
 
 export async function generate(job: SandboxedJob<Payload, any>) {
   const { new: record } = job.data;
@@ -133,11 +134,11 @@ export async function generate(job: SandboxedJob<Payload, any>) {
       messages: m1,
       model: "gpt-3.5-turbo",
       stream: false,
-      temperature: 0,
+      temperature: 0.9,
       max_tokens: 64,
       top_p: 0,
       frequency_penalty: 0,
-      presence_penalty: 0,
+      presence_penalty: -0.5,
     });
 
     const gen1 = chat1.choices[0].message.content;
@@ -159,7 +160,8 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     \n3. Remove fillers
     \n4. Write from the first person
     \n5. Write only 1 sentence and only 15-20 words
-    \n6. Keep the context and the company connection.`;
+    \n6. Keep the context and the company connection.
+    \n7. Start the sentences with "${pickSentenceBeginning()}"`;
 
     /* Refine cot */
     let cotRefined;
@@ -189,9 +191,9 @@ export async function generate(job: SandboxedJob<Payload, any>) {
       messages: m2,
       model: "gpt-3.5-turbo",
       stream: false,
-      temperature: 0,
+      temperature: 0.9, // 0
       max_tokens: 64,
-      top_p: 0.05,
+      top_p: 0, // 0.05
       frequency_penalty: 0,
       presence_penalty: -0.5,
     });
