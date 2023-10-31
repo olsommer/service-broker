@@ -12,7 +12,7 @@ export async function gptGetChallenge(
   Your task is to give me one specific challenge that Bobs company faces which my business solves.\n`;
   const prompt = `
   Alex gives Alice feedback for the previously generated line: This was again very good!\n
-  Alex tells Alice what his business does: ${companyUSP}.\n
+  Alex tells Alice what his business does: I help customers ${companyUSP}.\n
   Bob tells Alice his industry: ${industry}.\n
   Alice:\n`;
 
@@ -22,12 +22,16 @@ export async function gptGetChallenge(
       "content": sysPrompt,
     },
     ...cotRefinedIndustryChallenge,
+    {
+      "role": "user",
+      "content": prompt,
+    },
   ];
   const chat = await openai.chat.completions.create({
     messages,
     model: "gpt-3.5-turbo",
     stream: false,
-    temperature: 1,
+    temperature: 0.9,
     max_tokens: 256,
     top_p: 0,
     frequency_penalty: 0,
