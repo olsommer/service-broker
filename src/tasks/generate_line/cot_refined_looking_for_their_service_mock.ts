@@ -1,6 +1,6 @@
 import { ChatCompletionMessageParam } from "openai/resources";
 
-export const cotRefinedReferral: ChatCompletionMessageParam[] = [
+export const cotRefinedLookingForService: ChatCompletionMessageParam[] = [
   {
     "role": "user",
     "content":

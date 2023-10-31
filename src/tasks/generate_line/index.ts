@@ -8,10 +8,10 @@ import { Job, SandboxedJob } from "bullmq";
 import { Payload } from "../../worker";
 
 import { cotIndustryChallenge } from "./cot_industry_challenge";
-import { cotReferral } from "./cot_mock_referral";
+import { cotLookingForService } from "./cot_looking_for_their_service_mock";
 import { cotCompliments } from "./cot_compliments_about_company";
 import { cotRefinedIndustryChallenge } from "./cot_refined_industry_challenge";
-import { cotRefinedReferral } from "./cot_refined_mock_referral";
+import { cotRefinedLookingForService } from "./cot_refined_looking_for_their_service_mock";
 import { cotRefinedCompliments } from "./cot_refined_compliments_about_company";
 import { pickSentenceBeginning } from "./pick_sentence_beginning";
 
@@ -114,7 +114,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
         cot = cotCompliments;
         break;
       case "Mock referral":
-        cot = cotReferral;
+        cot = cotLookingForService;
         break;
       default:
         cot = cotIndustryChallenge;
@@ -173,8 +173,8 @@ export async function generate(job: SandboxedJob<Payload, any>) {
       case "Compliments about company":
         cotRefined = cotRefinedCompliments;
         break;
-      case "Mock referral":
-        cotRefined = cotRefinedReferral;
+      case "Looking for their service mock":
+        cotRefined = cotRefinedLookingForService;
         break;
       default:
         cotRefined = cotRefinedIndustryChallenge;
