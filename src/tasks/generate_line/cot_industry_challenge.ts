@@ -24,20 +24,21 @@ export const cotIndustryChallenge: ChatCompletionMessageParam[] = [{
   "role": "assistant",
   "content":
     "I've been researching social media automation industry and it seems that creating relevant media is a recurring challenge.",
-}, {
-  "role": "user",
-  "content":
-    "Industry: Business funder\nFocus: Trends and challenges of industry\nCompany Bio: QuickInCapital is a company that helps businesses get money to grow and succeed. They offer different types of loans, like term loans and working capital loans, to give businesses the money they need. They also have lines of credit, which means businesses can borrow money whenever they need it. QuickInCapital has low interest rates, which means businesses don't have to pay a lot of extra money back. They have a team of people who can help businesses figure out the best loan for them. QuickInCapital is a trusted company that many businesses use to get the money they need.",
-}, {
-  "role": "assistant",
-  "content":
-    "I've been researching the business financing space and I noticed that one big challenge is finding quality lenders.",
-}, {
-  "role": "user",
-  "content":
-    "Industry: Construction and contracting\nFocus: Trends and challenges of industry\nCompany Bio: Schamel Brothers Contractors is a company that has been building docks, doing excavation work, and more for 50 years on Seneca Lake. They have a lot of experience and can design and build docks, boat lifts, and sea walls. They also do excavation and sitework. The company was started by two brothers, Guy and Mike Schamel, who grew up spending their summers on Seneca Lake. They started building docks during their summers off from college and eventually decided to run the business full time. They can also design and install custom sea walls and water barriers. If you need any of these services, you can call them at 607-546-6877 for a quote.",
-}, {
-  "role": "assistant",
-  "content":
-    "I've been gathering feedback from construction contractors and I noticed that regulatory compliance is a constant challenge.",
-}];
+}// ,{
+  //   "role": "user",
+  //   "content":
+  //     "Industry: Business funder\nFocus: Trends and challenges of industry\nCompany Bio: QuickInCapital is a company that helps businesses get money to grow and succeed. They offer different types of loans, like term loans and working capital loans, to give businesses the money they need. They also have lines of credit, which means businesses can borrow money whenever they need it. QuickInCapital has low interest rates, which means businesses don't have to pay a lot of extra money back. They have a team of people who can help businesses figure out the best loan for them. QuickInCapital is a trusted company that many businesses use to get the money they need.",
+  // }, {
+  //   "role": "assistant",
+  //   "content":
+  //     "I've been researching the business financing space and I noticed that one big challenge is finding quality lenders.",
+  // }, {
+  //   "role": "user",
+  //   "content":
+  //     "Industry: Construction and contracting\nFocus: Trends and challenges of industry\nCompany Bio: Schamel Brothers Contractors is a company that has been building docks, doing excavation work, and more for 50 years on Seneca Lake. They have a lot of experience and can design and build docks, boat lifts, and sea walls. They also do excavation and sitework. The company was started by two brothers, Guy and Mike Schamel, who grew up spending their summers on Seneca Lake. They started building docks during their summers off from college and eventually decided to run the business full time. They can also design and install custom sea walls and water barriers. If you need any of these services, you can call them at 607-546-6877 for a quote.",
+  // }, {
+  //   "role": "assistant",
+  //   "content":
+  //     "I've been gathering feedback from construction contractors and I noticed that regulatory compliance is a constant challenge.",
+  // }
+];
