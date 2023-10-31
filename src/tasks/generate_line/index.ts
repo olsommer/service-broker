@@ -113,7 +113,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
       case "Compliments about company":
         cot = cotCompliments;
         break;
-      case "Mock referral":
+      case "Looking for their service mock":
         cot = cotLookingForService;
         break;
       default:
