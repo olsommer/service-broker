@@ -1,6 +1,6 @@
 import { ChatCompletionMessageParam } from "openai/resources";
 import { openai } from "../../utils/openai";
-import { cotRefinedIndustryChallenge } from "./cot_refined_industry_challenge_2";
+import { cotIndustryChallenge } from "./cot_industry_challenge_2";
 
 export async function gptGetChallenge(
   companyUSP: string,
@@ -8,8 +8,8 @@ export async function gptGetChallenge(
 ) {
   const sysPrompt = `
   Your name is Alice, my name is Alex and my customer is Bob. 
-  Bob will tell you his industry and I tell you what my business does. 
-  Your task is to give me one specific challenge that Bobs company faces which my business solves.\n`;
+  Bob will tell you his industry and I will tell you what my business does. 
+  Your task is to give me one specific challenge that Bob's company faces which my business solves.\n;`;
   const prompt = `
   Alex gives Alice feedback for the previously generated line: This was again very good!\n
   Alex tells Alice what his business does: I help customers ${companyUSP}.\n
@@ -21,7 +21,7 @@ export async function gptGetChallenge(
       "role": "system",
       "content": sysPrompt,
     },
-    ...cotRefinedIndustryChallenge,
+    ...cotIndustryChallenge,
     {
       "role": "user",
       "content": prompt,

@@ -1,6 +1,6 @@
 import { ChatCompletionMessageParam } from "openai/resources";
 
-export const cotRefinedIndustryChallenge: ChatCompletionMessageParam[] = [
+export const cotIndustryChallenge: ChatCompletionMessageParam[] = [
   {
     "role": "system",
     "content":
