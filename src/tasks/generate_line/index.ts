@@ -84,7 +84,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
         preLineMeta = challengeMeta;
 
         break;
-      case "Compliments about company" || "Looking for their service mock":
+      case "Compliments about company":
         if (!industry || industry === "") {
           const { data: industryData, meta: indMeta } = await gptGetIndustry(
             content,
@@ -101,8 +101,40 @@ export async function generate(job: SandboxedJob<Payload, any>) {
         preLine = lineData;
         preLineMeta = lineMeta;
         break;
+      case "Looking for their service mock":
+        if (!industry || industry === "") {
+          const { data: industryData, meta: indMeta } = await gptGetIndustry(
+            content,
+          );
+          industry = industryData;
+          industryMeta = indMeta;
+        }
+
+        const { data: line2Data, meta: line2Meta } = await gptGetLine(
+          content,
+          industry,
+          focus,
+        );
+        preLine = line2Data;
+        preLineMeta = line2Meta;
+        break;
       default:
-        throw new Error("No focus");
+        if (!industry || industry === "") {
+          const { data: industryData, meta: indMeta } = await gptGetIndustry(
+            content,
+          );
+          industry = industryData;
+          industryMeta = indMeta;
+        }
+
+        const { data: line3Data, meta: line3Meta } = await gptGetLine(
+          content,
+          industry,
+          focus,
+        );
+        preLine = line3Data;
+        preLineMeta = line3Meta;
+        break;
     }
 
     if (!preLine) throw new Error("Nothing was generated");
