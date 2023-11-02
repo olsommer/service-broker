@@ -8,7 +8,6 @@ import { setNextState } from "../next";
 import { convertToPlain } from "./convertToPlain4";
 import { Job, SandboxedJob } from "bullmq";
 import { Payload } from "../../worker";
-import { pptr } from "./pptr";
 
 let tries = 0;
 
@@ -34,6 +33,21 @@ async function scraperAnt(tUrl: string) {
   const key = process.env.SCRAPER_ANT_KEY;
   const scUrl =
     `https://api.scrapingant.com/v2/general?url=${tUrl}&x-api-key=${key}`;
+
+  const response = await axios.get(scUrl); // fire
+
+  // Check if the response is valid
+  if (response.status !== 200) {
+    throw new Error("Response status is not 200 :" + response.statusText);
+  }
+  return response.data;
+}
+
+// Scraping job with ScraperService
+// -------------------------------------------------
+async function scraperService(tUrl: string) {
+  const scUrl =
+    `https://scraper-service-127d759d0c0e.herokuapp.com/scrape?url=${tUrl}`;
 
   const response = await axios.get(scUrl); // fire
 
@@ -74,8 +88,7 @@ export async function scrape(job: SandboxedJob<Payload, any>) {
 
     if (tries < 3) {
       //content = await scraperAPI(tUrl);
-      content = await pptr(tUrl);
-      console.log(content);
+      content = await scraperService(tUrl);
     }
 
     if (tries >= 3 && tries <= 6) {
