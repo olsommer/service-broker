@@ -12,47 +12,64 @@ export interface Database {
       billings: {
         Row: {
           amount: number
+          campaign_id: string | null
           carryover: number | null
           created_at: string
           id: string
           job_id: string | null
           payment_intent: Json | null
+          payment_intent_id: string | null
+          payment_intent_status: string | null
           profiles_id: string
           quantity: number | null
           quantity_generated: number | null
+          report_usage_error: Json | null
+          report_usage_idempotency_key: string | null
         }
         Insert: {
           amount?: number
+          campaign_id?: string | null
           carryover?: number | null
           created_at?: string
           id?: string
           job_id?: string | null
           payment_intent?: Json | null
+          payment_intent_id?: string | null
+          payment_intent_status?: string | null
           profiles_id: string
           quantity?: number | null
           quantity_generated?: number | null
+          report_usage_error?: Json | null
+          report_usage_idempotency_key?: string | null
         }
         Update: {
           amount?: number
+          campaign_id?: string | null
           carryover?: number | null
           created_at?: string
           id?: string
           job_id?: string | null
           payment_intent?: Json | null
+          payment_intent_id?: string | null
+          payment_intent_status?: string | null
           profiles_id?: string
           quantity?: number | null
           quantity_generated?: number | null
+          report_usage_error?: Json | null
+          report_usage_idempotency_key?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "billings_job_id_fkey"
             columns: ["job_id"]
+            isOneToOne: false
             referencedRelation: "jobs"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "billings_profiles_id_fkey"
             columns: ["profiles_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           }
@@ -114,6 +131,7 @@ export interface Database {
           {
             foreignKeyName: "campaigns_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           }
@@ -163,12 +181,14 @@ export interface Database {
           {
             foreignKeyName: "jobs_campaign_id_fkey"
             columns: ["campaign_id"]
+            isOneToOne: false
             referencedRelation: "campaigns"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "jobs_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           }
@@ -203,12 +223,14 @@ export interface Database {
           {
             foreignKeyName: "leads_campaign_id_fkey"
             columns: ["campaign_id"]
+            isOneToOne: false
             referencedRelation: "campaigns"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "leads_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           }
@@ -255,12 +277,14 @@ export interface Database {
           {
             foreignKeyName: "leads_jobs_job_id_fkey"
             columns: ["job_id"]
+            isOneToOne: false
             referencedRelation: "jobs"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "leads_jobs_lead_id_fkey"
             columns: ["lead_id"]
+            isOneToOne: false
             referencedRelation: "leads"
             referencedColumns: ["id"]
           }
@@ -328,12 +352,14 @@ export interface Database {
           {
             foreignKeyName: "lines_lead_id_fkey"
             columns: ["lead_id"]
+            isOneToOne: false
             referencedRelation: "leads"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "lines_lead_job_id_fkey"
             columns: ["lead_job_id"]
+            isOneToOne: false
             referencedRelation: "leads_jobs"
             referencedColumns: ["id"]
           }
@@ -350,6 +376,9 @@ export interface Database {
           payment_method_last4: string | null
           status: string | null
           stripe_customer_id: string | null
+          subscription_id: string | null
+          subscription_item_id: string | null
+          subscription_valid_to: number | null
           updated_at: string
         }
         Insert: {
@@ -362,6 +391,9 @@ export interface Database {
           payment_method_last4?: string | null
           status?: string | null
           stripe_customer_id?: string | null
+          subscription_id?: string | null
+          subscription_item_id?: string | null
+          subscription_valid_to?: number | null
           updated_at?: string
         }
         Update: {
@@ -374,12 +406,16 @@ export interface Database {
           payment_method_last4?: string | null
           status?: string | null
           stripe_customer_id?: string | null
+          subscription_id?: string | null
+          subscription_item_id?: string | null
+          subscription_valid_to?: number | null
           updated_at?: string
         }
         Relationships: [
           {
             foreignKeyName: "profiles_id_fkey"
             columns: ["id"]
+            isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
           }
@@ -388,16 +424,22 @@ export interface Database {
       ratelimits: {
         Row: {
           credits: number
+          credits_free_tier: number | null
+          credits_free_tier_updated_at: string
           id: string
           last_generation: string | null
         }
         Insert: {
           credits: number
+          credits_free_tier?: number | null
+          credits_free_tier_updated_at?: string
           id: string
           last_generation?: string | null
         }
         Update: {
           credits?: number
+          credits_free_tier?: number | null
+          credits_free_tier_updated_at?: string
           id?: string
           last_generation?: string | null
         }
@@ -435,6 +477,7 @@ export interface Database {
           {
             foreignKeyName: "scrapes_lead_job_id_fkey"
             columns: ["lead_job_id"]
+            isOneToOne: false
             referencedRelation: "leads_jobs"
             referencedColumns: ["id"]
           }
@@ -469,6 +512,7 @@ export interface Database {
           {
             foreignKeyName: "summaries_lead_job_id_fkey"
             columns: ["lead_job_id"]
+            isOneToOne: false
             referencedRelation: "leads_jobs"
             referencedColumns: ["id"]
           }
@@ -482,7 +526,10 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
+      campaign_states: "PAID_JOB_CREATED" | "DRAFT_PARSED" | "DRAFT"
+      job_product: "MIX" | "PRO" | "FREE"
       job_states:
+        | "OPEN"
         | "FLAG_TO_SCRAPE"
         | "FLAG_TO_SUMMARIZE"
         | "FLAG_TO_GENERATE"
@@ -490,6 +537,7 @@ export interface Database {
         | "DONE"
         | "FLAG_TO_RETRY"
         | "ERROR_TIMEOUT"
+        | "ERROR_SCHEDULE_NOT_ALLOWED"
     }
     CompositeTypes: {
       [_ in never]: never

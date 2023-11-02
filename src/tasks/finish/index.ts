@@ -5,6 +5,7 @@ import { setNextState } from "../next";
 import { billing } from "../billing";
 import { Job, SandboxedJob } from "bullmq";
 import { Payload } from "../../worker";
+import { rebalanceCredits } from "../billing/rebalanceCredits";
 
 export async function finish(job: SandboxedJob<Payload, any>) {
   const { new: record } = job.data;
@@ -31,6 +32,9 @@ export async function finish(job: SandboxedJob<Payload, any>) {
     const count_gen_lines = jobData.count_gen_lines + 1;
     const count_sum = count_errors + count_gen_lines;
     const count_file_rows = jobData.count_file_rows;
+
+    //
+    //
     // Finish job if last job
     // --------------------------------------
     if (count_sum >= count_file_rows) {
@@ -55,6 +59,14 @@ export async function finish(job: SandboxedJob<Payload, any>) {
           leads_job_id: id,
         });
       }
+
+      // Rebalance credits
+      await rebalanceCredits(
+        count_gen_lines,
+        count_file_rows,
+        jobData.user_id,
+        id,
+      );
     } else {
       // Update job data
       // --------------------------------------
@@ -66,6 +78,8 @@ export async function finish(job: SandboxedJob<Payload, any>) {
         .eq("id", job_id);
       if (job2Err) throw job2Err;
     }
+
+    // Update leads_job data
     await setNextState(id, "DONE");
   } catch (error) {
     console.log(error);

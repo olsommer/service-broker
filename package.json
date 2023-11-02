@@ -26,7 +26,8 @@
     "node-html-parser": "^6.1.10",
     "openai": "^4.12.1",
     "redis": "^4.6.10",
-    "scrapingbee": "^1.7.4"
+    "scrapingbee": "^1.7.4",
+    "stripe": "^14.3.0"
   },
   "engines": {
     "node": "20.x",
