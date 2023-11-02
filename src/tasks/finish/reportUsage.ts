@@ -15,25 +15,25 @@ const subscriptionItemID = "";
 const usageQuantity = 100;
 
 // The idempotency key allows you to retry this usage record call if it fails.
-const idempotencyKey = crypto.randomUUID();
-const timestamp = parseInt(Date.now() / 1000);
+// const idempotencyKey = crypto.randomUUID();
+// const timestamp = parseInt(Date.now() / 1000);
 
-(async function reportUsage() {
-  try {
-    await stripe.subscriptionItems.createUsageRecord(
-      subscriptionItemID,
-      {
-        quantity: usageQuantity,
-        timestamp: timestamp,
-        action: "set",
-      },
-      {
-        idempotencyKey,
-      },
-    );
-  } catch (error) {
-    console.error(
-      `Usage report failed for item ID ${subscriptionItemID} with idempotency key ${idempotencyKey}: ${error.toString()}`,
-    );
-  }
-})();
+// (async function reportUsage() {
+//   try {
+//     await stripe.subscriptionItems.createUsageRecord(
+//       subscriptionItemID,
+//       {
+//         quantity: usageQuantity,
+//         timestamp: timestamp,
+//         action: "set",
+//       },
+//       {
+//         idempotencyKey,
+//       },
+//     );
+//   } catch (error) {
+//     console.error(
+//       `Usage report failed for item ID ${subscriptionItemID} with idempotency key ${idempotencyKey}: ${error.toString()}`,
+//     );
+//   }
+// })();
