@@ -75,6 +75,7 @@ export async function scrape(job: SandboxedJob<Payload, any>) {
     if (tries < 3) {
       // content = await scraperAPI(tUrl);
       content = await pptr(tUrl);
+      console.log(content);
     }
 
     if (tries >= 3 && tries <= 6) {
