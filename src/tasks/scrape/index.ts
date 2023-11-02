@@ -104,6 +104,13 @@ export async function scrape(job: SandboxedJob<Payload, any>) {
       throw new Error("Content is empty");
     }
 
+    await log(
+      "OK",
+      content,
+      id,
+      "New Scraper test",
+    );
+
     /* Clean */
     const content_cleaned = await convertToPlain(content);
 
