@@ -50,49 +50,29 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     const focus = form.focus ??
       "Compliments about the company";
 
-    /* industry */
-    let industry = form.industry;
-    let industryMeta = {};
-
     /* Get Company USP */
     let companyUSP = form.companyUSP;
     console.log(companyUSP);
 
     /* Get Industry */
-    if (!industry || industry === "") {
-      const { data: indData, meta: indMeta } = await gptGetIndustry(content);
-      industry = indData;
-      industryMeta = indMeta;
-    }
+    const { data: industry, meta: industryMeta } = await gptGetIndustry(
+      content,
+    );
 
     let preLine;
     let preLineMeta;
 
     switch (focus) {
       case "Trends and challenges of industry":
-        const { data: industryData, meta: indMeta } = await gptGetIndustry(
-          content,
-        );
         const { data: challengeData, meta: challengeMeta } =
           await gptGetChallenge(
             companyUSP,
-            industryData,
+            industry,
           );
-        industry = industryData;
-        industryMeta = indMeta;
         preLine = challengeData;
         preLineMeta = challengeMeta;
-
         break;
       case "Compliments about company":
-        if (!industry || industry === "") {
-          const { data: industryData, meta: indMeta } = await gptGetIndustry(
-            content,
-          );
-          industry = industryData;
-          industryMeta = indMeta;
-        }
-
         const { data: lineData, meta: lineMeta } = await gptGetLine(
           content,
           industry,
@@ -102,14 +82,6 @@ export async function generate(job: SandboxedJob<Payload, any>) {
         preLineMeta = lineMeta;
         break;
       case "Looking for their service mock":
-        if (!industry || industry === "") {
-          const { data: industryData, meta: indMeta } = await gptGetIndustry(
-            content,
-          );
-          industry = industryData;
-          industryMeta = indMeta;
-        }
-
         const { data: line2Data, meta: line2Meta } = await gptGetLine(
           content,
           industry,
@@ -119,14 +91,6 @@ export async function generate(job: SandboxedJob<Payload, any>) {
         preLineMeta = line2Meta;
         break;
       default:
-        if (!industry || industry === "") {
-          const { data: industryData, meta: indMeta } = await gptGetIndustry(
-            content,
-          );
-          industry = industryData;
-          industryMeta = indMeta;
-        }
-
         const { data: line3Data, meta: line3Meta } = await gptGetLine(
           content,
           industry,
