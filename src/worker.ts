@@ -185,7 +185,7 @@ const scraperFile = path.join(__dirname, "./worker_scrape_thread.js");
 const scraperWorker = new Worker("scraper", scraperFile, {
   connection,
   useWorkerThreads: true,
-  concurrency: 1,
+  concurrency: 10,
 });
 // const scraperWorker = new Worker("scraper", async (job) => {
 //   await scrape(job);
