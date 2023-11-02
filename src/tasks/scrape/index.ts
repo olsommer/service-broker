@@ -8,6 +8,7 @@ import { setNextState } from "../next";
 import { convertToPlain } from "./convertToPlain4";
 import { Job, SandboxedJob } from "bullmq";
 import { Payload } from "../../worker";
+import { pptr } from "./pptr";
 
 let tries = 0;
 
@@ -72,8 +73,8 @@ export async function scrape(job: SandboxedJob<Payload, any>) {
     let content: string | undefined = undefined;
 
     if (tries < 3) {
-      content = await scraperAPI(tUrl);
-      // content = await pptr(tUrl);
+      //content = await scraperAPI(tUrl);
+      content = await pptr(tUrl);
       console.log(content);
     }
 
