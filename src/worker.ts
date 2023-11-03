@@ -248,7 +248,7 @@ const finFile = path.join(__dirname, "./worker_finish_thread.js");
 const finWorker = new Worker("finish", finFile, {
   connection,
   useWorkerThreads: true,
-  concurrency: 3,
+  concurrency: 1,
 });
 // const finWorker = new Worker("finish", async (job) => {
 //   await finish(job);
@@ -269,7 +269,7 @@ const retFile = path.join(__dirname, "./worker_retry_thread.js");
 const retWorker = new Worker("retry", retFile, {
   connection,
   useWorkerThreads: true,
-  concurrency: 2,
+  concurrency: 1,
 });
 // const retWorker = new Worker("retry", async (job) => {
 //   await retry(job);
