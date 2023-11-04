@@ -79,6 +79,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
           industry,
           focus,
         );
+
         preLine = lineData;
         preLineMeta = lineMeta;
         break;
@@ -114,7 +115,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     const { error } = await supa
       .from("lines")
       .insert({
-        content: finalLine,
+        content: preLine,
         meta: [industryMeta, preLineMeta, finalLineMeta],
         active: true,
         lead_id,

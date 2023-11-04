@@ -1,9 +1,7 @@
 import { log } from "../log";
-import { Tables } from "../../utils/database.helpers";
 import { closeJob } from "./closeJob";
 import { setNextState } from "../next";
-import { supa } from "../../utils/supabase";
-import { Job, SandboxedJob } from "bullmq";
+import { SandboxedJob } from "bullmq";
 import { Payload } from "../../worker";
 
 export async function retry(job: SandboxedJob<Payload, any>) {

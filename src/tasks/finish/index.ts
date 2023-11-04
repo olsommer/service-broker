@@ -1,9 +1,8 @@
 import { log } from "../log";
-import { Tables } from "../../utils/database.helpers";
 import { supa } from "../../utils/supabase";
 import { setNextState } from "../next";
 import { billing } from "../billing";
-import { Job, SandboxedJob } from "bullmq";
+import { SandboxedJob } from "bullmq";
 import { Payload } from "../../worker";
 import { rebalanceCredits } from "../billing/rebalanceCredits";
 
