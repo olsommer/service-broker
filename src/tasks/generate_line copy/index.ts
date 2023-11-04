@@ -9,7 +9,6 @@ import { gptGetLine } from "./gptGetLine";
 import { gptGetLineRefined } from "./gptGetLineRefined";
 import { gptGetChallenge } from "./gptGetChallenge";
 import { gptGetCompliment } from "./gptGetCompliment";
-import { gptGetRefinedWithCoT } from "./gptGetCotRefined";
 
 export async function generate(job: SandboxedJob<Payload, any>) {
   const { new: record } = job.data;
@@ -54,6 +53,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
 
     /* Get Company USP */
     let companyUSP = form.companyUSP;
+    console.log(companyUSP);
 
     /* Get Industry */
     const { data: industry, meta: industryMeta } = await gptGetIndustry(
@@ -79,6 +79,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
           industry,
           focus,
         );
+
         preLine = lineData;
         preLineMeta = lineMeta;
         break;
@@ -104,15 +105,8 @@ export async function generate(job: SandboxedJob<Payload, any>) {
 
     if (!preLine) throw new Error("Nothing was generated");
 
-    // const { data: finalLine, meta: finalLineMeta } = await gptGetLineRefined(
-    //   preLine,
-    //   focus,
-    // );
-
-    const { data: finalLine, meta: finalLineMeta } = await gptGetRefinedWithCoT(
+    const { data: finalLine, meta: finalLineMeta } = await gptGetLineRefined(
       preLine,
-      content,
-      industry,
       focus,
     );
 
@@ -121,8 +115,8 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     const { error } = await supa
       .from("lines")
       .insert({
-        content: finalLine,
-        meta: [industryMeta, preLineMeta, ...finalLineMeta],
+        content: preLine,
+        meta: [industryMeta, preLineMeta, finalLineMeta],
         active: true,
         lead_id,
         lead_job_id: id,
