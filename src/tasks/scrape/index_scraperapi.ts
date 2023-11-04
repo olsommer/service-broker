@@ -50,7 +50,7 @@ export async function scrape(record: Tables<"leads_jobs">) {
     axios.post(reqURL, body, {
       headers: { "Content-Type": "application/json" },
     }).then(async (res) => {
-      await log("OK", res.data as any, id, "scrape");
+      // await log("OK", res.data as any, id, "scrape");
       //
       //
       // Add dummy scrape but without any content

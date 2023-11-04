@@ -8,6 +8,7 @@ import { gptGetIndustry } from "./gptGetIndustry";
 import { gptGetLine } from "./gptGetLine";
 import { gptGetLineRefined } from "./gptGetLineRefined";
 import { gptGetChallenge } from "./gptGetChallenge";
+import { gptGetCompliment } from "./gptGetCompliment";
 
 export async function generate(job: SandboxedJob<Payload, any>) {
   const { new: record } = job.data;
@@ -73,7 +74,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
         preLineMeta = challengeMeta;
         break;
       case "Compliments about company":
-        const { data: lineData, meta: lineMeta } = await gptGetLine(
+        const { data: lineData, meta: lineMeta } = await gptGetCompliment(
           content,
           industry,
           focus,
