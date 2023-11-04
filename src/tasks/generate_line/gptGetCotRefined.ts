@@ -32,15 +32,9 @@ export async function gptGetRefinedWithCoT(
 
   const cot1 = `
     Alice, here is your first task but do not break the previous rules:
-    \n- Rewrite the sentence so it starts with ${
-    pickSentenceBeginning(focus)
-  } (make sure you keep the context, relevance and reference to the company).
-    \n- Make sure that my potential customer is addressed in the second person (you, your).      
+    \n- Rewrite the sentence so does not start "I really like..." (make sure you keep the context, relevance and reference to the company).
+    \n- Make sure that my potential client is addressed in the second person (you, your).      
     \n\n
-    Sentence: I really like that they have reasonable prices compared to other game boosting competitors.\n
-    Alice: When I was searching for destiny boosting services, I was impressed that you had such low costs compared to competitors.\n
-    Sentence: I really like that Fulkerson Winery has a rich tradition of seven generations in wine production.\n
-    Alice: I'm truly impressed by Fulkerson Winery's rich tradition of seven generations in the wine production industry.\n
     Sentence: ${line}\n
     Alice:
     `;
@@ -49,13 +43,25 @@ export async function gptGetRefinedWithCoT(
     Alice, that was really good! Here is next task but do not break the previous rules:
     \n- Rewrite so that the sentence has only 12-17 words and remove fillers.
     \n\n
+    Sentence: ${line}\n
+    Alice:
+    `;
+
+  /*
+      Sentence: I really like that they have reasonable prices compared to other game boosting competitors.\n
+    Alice: When I was searching for destiny boosting services, I was impressed that you had such low costs compared to competitors.\n
+    Sentence: I really like that Fulkerson Winery has a rich tradition of seven generations in wine production.\n
+    Alice: I'm truly impressed by Fulkerson Winery's rich tradition of seven generations in the wine production industry.\n
+    Sentence: ${line}\n
+  */
+
+  /*
     Sentence: I really like that they have a great and super voice recording feature for when I want to record my relatives stories.\n
     Alice: ${
     pickSentenceBeginning(focus)
   } your voice recording feature, which allows me to capture the stories of my relatives.\n
     Sentence: ${line}\n
-    Alice:
-    `;
+  */
 
   const m1: ChatCompletionMessageParam[] = [
     { role: "system", content: system },
