@@ -1,8 +1,5 @@
 import { ChatCompletionMessageParam } from "openai/resources";
 import { openai } from "../../utils/openai";
-import { cotRefinedIndustryChallenge } from "./cot_refined_industry_challenge";
-import { cotRefinedCompliments } from "./cot_refined_compliments_about_company";
-import { cotRefinedLookingForService } from "./cot_refined_looking_for_their_service_mock";
 import { pickSentenceBeginning } from "./pick_sentence_beginning";
 
 export async function gptGetRefinedWithCoT(
@@ -53,7 +50,9 @@ export async function gptGetRefinedWithCoT(
     \n- Rewrite so that the sentence has only 12-17 words and remove fillers.
     \n\n
     Sentence: I really like that they have a great and super voice recording feature for when I want to record my relatives stories.\n
-    Alice: I appreciate your voice recording feature, which allows me to capture the stories of my relatives.\n
+    Alice: ${
+    pickSentenceBeginning(focus)
+  } your voice recording feature, which allows me to capture the stories of my relatives.\n
     Sentence: ${line}\n
     Alice:
     `;
