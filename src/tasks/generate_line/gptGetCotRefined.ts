@@ -32,7 +32,7 @@ export async function gptGetRefinedWithCoT(
 
   const cot1 = `
     Alice, here is your first task but do not break the previous rules:
-    \n- Rewrite the sentence so does not start "I really like..." (make sure you keep the context, relevance and reference to the company).
+    \n- Rewrite the sentence so does not start "I really like..." but with "I..." (make sure you keep the context, relevance and reference to the company).
     \n- Make sure that my potential client is addressed in the second person (you, your).      
     \n\n
     Sentence: ${line}\n
