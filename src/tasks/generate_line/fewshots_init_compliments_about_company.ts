@@ -1,6 +1,6 @@
 import { ChatCompletionMessageParam } from "openai/resources";
 
-export const cotCompliments: ChatCompletionMessageParam[] = [{
+export const fewShotsCompliments: ChatCompletionMessageParam[] = [{
   "role": "user",
   "content":
     "Industry: Game boosting & coaching\nFocus: Compliments about company\nCompany Bio: Guardian Boost is a company that helps players in a game called Destiny 2. They offer services like getting rare items, completing difficult missions, and winning in competitive modes. They have a team of skilled players who can help other players achieve their goals in the game. Guardian Boost guarantees customer satisfaction and they start working on orders quickly. They also have a money-back guarantee and use VPN protection to keep everything safe. They offer different types of services and have received positive reviews from customers. Overall, Guardian Boost is a reliable and helpful service for players who need assistance in the game.",

@@ -1,6 +1,7 @@
 import { ChatCompletionMessageParam } from "openai/resources";
 import { openai } from "../../utils/openai";
 import { cotIndustryChallenge } from "./cot_industry_challenge_2";
+import { fewShots } from "./fewshots";
 
 export async function gptGetChallenge(
   companyUSP: string,
@@ -21,7 +22,7 @@ export async function gptGetChallenge(
       "role": "system",
       "content": sysPrompt,
     },
-    ...cotIndustryChallenge,
+    ...fewShots["Trends and challenges of industry"],
     {
       "role": "user",
       "content": prompt,
@@ -31,11 +32,11 @@ export async function gptGetChallenge(
     messages,
     model: "gpt-3.5-turbo",
     stream: false,
-    temperature: 0.9,
+    temperature: 1.5,
     max_tokens: 256,
     top_p: 0,
     frequency_penalty: 0,
-    presence_penalty: 0,
+    presence_penalty: -1,
   });
 
   const meta = {

@@ -64,13 +64,11 @@ export async function gptGetCompliment(
     messages,
     model: "gpt-3.5-turbo",
     stream: false,
-    temperature: 0.2,
+    temperature: 1.5,
     top_p: 0,
     frequency_penalty: 0,
-    presence_penalty: 0,
+    presence_penalty: -1,
   });
-
-  const gen = chat.choices[0].message.content;
 
   const meta = {
     model: chat.model,
@@ -80,7 +78,7 @@ export async function gptGetCompliment(
   };
 
   return {
-    data: gen,
+    data: chat.choices[0].message.content,
     meta: meta,
   };
 }

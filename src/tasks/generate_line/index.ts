@@ -6,10 +6,9 @@ import { Payload } from "../../worker";
 
 import { gptGetIndustry } from "./gptGetIndustry";
 import { gptGetLine } from "./gptGetLine";
-import { gptGetLineRefined } from "./gptGetLineRefined";
 import { gptGetChallenge } from "./gptGetChallenge";
 import { gptGetCompliment } from "./gptGetCompliment";
-import { gptGetRefinedWithCoT } from "./gptGetCotRefined";
+import { gptGetRefinedLine } from "./gptGetRefinedLine";
 
 export async function generate(job: SandboxedJob<Payload, any>) {
   const { new: record } = job.data;
@@ -27,7 +26,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     if (jobsErr) throw jobsErr;
     if (!jobsData) throw new Error("No data");
     const form = jobsData.meta as {
-      focus: string;
+      focus: Focus;
       industry: string;
       companyUSP: string;
     };
@@ -104,12 +103,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
 
     if (!preLine) throw new Error("Nothing was generated");
 
-    // const { data: finalLine, meta: finalLineMeta } = await gptGetLineRefined(
-    //   preLine,
-    //   focus,
-    // );
-
-    const { data: finalLine, meta: finalLineMeta } = await gptGetRefinedWithCoT(
+    const { data: finalLine, meta: finalLineMeta } = await gptGetRefinedLine(
       preLine,
       content,
       industry,
@@ -122,7 +116,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
       .from("lines")
       .insert({
         content: finalLine,
-        meta: [industryMeta, preLineMeta, ...finalLineMeta],
+        meta: [industryMeta, preLineMeta, finalLineMeta],
         active: true,
         lead_id,
         lead_job_id: id,

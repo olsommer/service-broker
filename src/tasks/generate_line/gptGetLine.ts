@@ -3,11 +3,12 @@ import { openai } from "../../utils/openai";
 import { cotIndustryChallenge } from "./cot_industry_challenge";
 import { cotCompliments } from "./cot_compliments_about_company";
 import { cotLookingForService } from "./cot_looking_for_their_service_mock";
+import { fewShots } from "./fewshots";
 
 export async function gptGetLine(
   content: string,
   industry: string,
-  focus: string,
+  focus: Focus,
 ) {
   /* system prompt */
   const sysPrompt = `
@@ -16,26 +17,12 @@ export async function gptGetLine(
 
   // Sending the cleaned version to OPEN-AI
   const prompt = `
- Industry: ${industry}\n
- Focus: ${focus}\n
- Company Bio: ${content}`;
+  Industry: ${industry}\n
+  Focus: ${focus}\n
+  Company Bio: ${content}`;
 
   /* select cot */
-  let cot;
-  switch (focus) {
-    case "Trends and challenges of industry":
-      cot = cotIndustryChallenge;
-      break;
-    case "Compliments about company":
-      cot = cotCompliments;
-      break;
-    case "Looking for their service mock":
-      cot = cotLookingForService;
-      break;
-    default:
-      cot = cotCompliments;
-      break;
-  }
+  const cot = fewShots[focus];
 
   // --------------------------------------
   const messages: ChatCompletionMessageParam[] = [
@@ -50,14 +37,12 @@ export async function gptGetLine(
     messages,
     model: "gpt-3.5-turbo",
     stream: false,
-    temperature: 0.5,
+    temperature: 1.5,
     max_tokens: 64,
     top_p: 0,
     frequency_penalty: 0,
-    presence_penalty: -0.5,
+    presence_penalty: -2,
   });
-
-  const gen = chat.choices[0].message.content;
 
   const meta = {
     model: chat.model,
@@ -67,7 +52,7 @@ export async function gptGetLine(
   };
 
   return {
-    data: gen,
+    data: chat.choices[0].message.content,
     meta: meta,
   };
 }

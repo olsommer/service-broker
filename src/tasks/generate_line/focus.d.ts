@@ -1,0 +1,1 @@
+type Focus =  "Trends and challenges of industry" | "Compliments about company" | "Looking for their service mock";
