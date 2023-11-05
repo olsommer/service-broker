@@ -74,7 +74,7 @@ export async function scrape(job: SandboxedJob<Payload, any>) {
       .single();
     if (leadErr) throw leadErr;
     if (!leadData) throw new Error("No data");
-    const url = (leadData.lead as { Website?: string }).Website;
+    const url = (leadData.lead as { website?: string }).website;
     if (!url) throw new Error("Website URL is empty or null");
 
     // Transform url
