@@ -15,10 +15,10 @@ const beginningsForChallenge = [
 
 const beginningsForCompliments = [
   "I really like",
-  "I was impressed",
-  "I'm truly impressed",
-  "I genuinely appreciate",
-  "I'm really fond",
+  "I was impressed that",
+  "I'm truly impressed that",
+  "I genuinely appreciate that",
+  "I'm really fond that",
   "I really value",
   "I truly like",
   "I greatly appreciate",
