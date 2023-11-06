@@ -11,7 +11,7 @@ export async function gptGetRefinedLine(
   company_name: string | undefined,
 ) {
   const settings = {
-    model: "gpt-3.5-turbo",
+    model: "gpt-3.5-turbo-1106",
     stream: false,
     temperature: 0.2,
     top_p: 0, // 0.05

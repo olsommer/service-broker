@@ -62,7 +62,7 @@ export async function gptGetCompliment(
   ];
   const chat = await openai.chat.completions.create({
     messages,
-    model: "gpt-3.5-turbo",
+    model: "gpt-3.5-turbo-1106",
     stream: false,
     temperature: 1.5,
     top_p: 0,
