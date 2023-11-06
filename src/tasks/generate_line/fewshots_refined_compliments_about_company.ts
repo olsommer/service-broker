@@ -24,7 +24,7 @@ export const fewShotsComplimentsAboutCompany: FewShotsBeginnings = {
   "I'm truly impressed": {
     1: {
       bad:  "I really like that Remento is in a interesting industry and has an awesome and fast voice recording feature for when I want to record my relatives stories.",
-      good:  "I'm truly impressed Guardian Boost has a zero ban risk policy and never uses cheats.",
+      good:  "I'm truly impressed that Guardian Boost has a zero ban risk policy and never uses cheats.",
   },
   2: {
       bad:  "I really like that their Guardian Boost website has reasonable and low prices compared to other also great game boosting competitors.",
