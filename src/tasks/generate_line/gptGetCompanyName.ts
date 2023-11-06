@@ -3,7 +3,7 @@ import { openai } from "../../utils/openai";
 
 export async function gptGetCompanyName(companyNameRaw: string) {
   const sysPrompt = `
-  You will receive a complete company name. Your task is to give me a cleaned-up version of the company name without the legal form.\n`;
+  You will receive a full company name. Your task is to give me a cleaned-up version of the company name without the legal form.\n`;
   const prompt = `
     Full company name: GuardianBoost LLC\n
     Cleaned version: GuardianBoost\n
@@ -30,7 +30,7 @@ export async function gptGetCompanyName(companyNameRaw: string) {
     max_tokens: 64,
     top_p: 0,
     frequency_penalty: 0,
-    presence_penalty: 0,
+    presence_penalty: -2,
   });
 
   const meta = {

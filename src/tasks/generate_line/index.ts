@@ -72,12 +72,12 @@ export async function generate(job: SandboxedJob<Payload, any>) {
 
     /* Get Industry */
     const { data: industry, meta: industryMeta } = await gptGetIndustry(
-      lead.company_name,
+      content
     );
 
     /* Get Company name */
     const { data: companyName, meta: companyNameMeta } = await gptGetCompanyName(
-      content,
+      lead.company_name
     );
 
     let preLine;
