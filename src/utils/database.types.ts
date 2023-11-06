@@ -197,6 +197,7 @@ export interface Database {
       leads: {
         Row: {
           campaign_id: string
+          company_name_cleaned: string | null
           created_at: string
           id: string
           lead: Json
@@ -205,6 +206,7 @@ export interface Database {
         }
         Insert: {
           campaign_id: string
+          company_name_cleaned?: string | null
           created_at?: string
           id?: string
           lead: Json
@@ -213,6 +215,7 @@ export interface Database {
         }
         Update: {
           campaign_id?: string
+          company_name_cleaned?: string | null
           created_at?: string
           id?: string
           lead?: Json

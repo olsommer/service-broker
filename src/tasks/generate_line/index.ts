@@ -32,6 +32,21 @@ export async function generate(job: SandboxedJob<Payload, any>) {
       companyUSP: string;
     };
 
+    // Get company name 
+    // --------------------------------------
+    if (!lead_id) throw new Error("No lead provided");
+    const { data: leadsData, error: leadsErr } = await supa
+      .from("leads")
+      .select("*")
+      .eq("id", lead_id)
+      .limit(1)
+      .single();
+    if (leadsErr) throw leadsErr;
+    if (!leadsData) throw new Error("No data");
+    const lead = leadsData.lead as {
+      company_name: string;
+    };
+
     // Get summary data
     // --------------------------------------
     const { data: sumData, error: sumErr } = await supa
@@ -57,7 +72,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
 
     /* Get Industry */
     const { data: industry, meta: industryMeta } = await gptGetIndustry(
-      content,
+      lead.company_name,
     );
 
     /* Get Company name */
@@ -130,6 +145,18 @@ export async function generate(job: SandboxedJob<Payload, any>) {
       })
       .order("created_at", { ascending: false });
     if (error) throw error;
+
+
+    /* Save cleand company name to db */
+        // Get company name 
+    // --------------------------------------
+    const { error: companyNameUpdateError } = await supa
+    .from("leads")
+    .update({
+      company_name_cleaned: companyName,
+    })
+    if (companyNameUpdateError) throw companyNameUpdateError;
+
     await setNextState(id, "FLAG_TO_FINISH");
   } catch (error) {
     console.error(error);
