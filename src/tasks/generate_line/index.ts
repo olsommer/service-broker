@@ -155,6 +155,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     .update({
       company_name_cleaned: companyName.toUpperCase(),
     })
+    .eq("lead_job_id", id)
     if (companyNameUpdateError) throw companyNameUpdateError;
 
     await setNextState(id, "FLAG_TO_FINISH");
