@@ -9,6 +9,7 @@ import { gptGetLine } from "./gptGetLine";
 import { gptGetChallenge } from "./gptGetChallenge";
 import { gptGetCompliment } from "./gptGetCompliment";
 import { gptGetRefinedLine } from "./gptGetRefinedLine";
+import { gptGetCompanyName } from "./gptGetCompanyName";
 
 export async function generate(job: SandboxedJob<Payload, any>) {
   const { new: record } = job.data;
@@ -56,6 +57,11 @@ export async function generate(job: SandboxedJob<Payload, any>) {
 
     /* Get Industry */
     const { data: industry, meta: industryMeta } = await gptGetIndustry(
+      content,
+    );
+
+    /* Get Company name */
+    const { data: companyName, meta: companyNameMeta } = await gptGetCompanyName(
       content,
     );
 
@@ -108,6 +114,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
       content,
       industry,
       focus,
+      companyName,
     );
 
     // Save to the database

@@ -8,6 +8,7 @@ export async function gptGetRefinedLine(
   industry: string,
   content: string,
   focus: Focus,
+  company_name: string | undefined,
 ) {
   const settings = {
     model: "gpt-3.5-turbo",
@@ -31,14 +32,16 @@ export async function gptGetRefinedLine(
     The line I will provide you with is the first line of the email.
     The goal of this first line is to get the attention of the potential client and to make them want to read the rest of the email.
     Therefore it is important that the line is engaging and relevant to the potential client. 
-    The industry of the potential client is "${industry}" the company bio is "${content}".\n;
+    The industry of the potential client is "${industry}" the company bio is "${content}" and the company name is "${company_name}".\n;
     `;
 
   const cot1 = `
     Alice, here is your first task - do not break the previous rules:
     \n- The sentence shall start with ${beginning} (make sure you keep the context, relevance and reference to the company).
-    \n- Make sure that my potential client is addressed in the second person (you, your).
-    \n- Rewrite so that the sentence has only 12-17 words and remove fillers.      
+    \n- Make sure that my potential customer is addressed in the second person and with the company name.
+    \n- You are not allowed to generalize the subject of the message (example of what not to use "this company, their service, this website")
+    \n- Rewrite so that the sentence has only 15-20 words 
+    \n- Remove fillers   
     \n\n
     \nSentence: ${fewShots[focus][beginning][1]["bad"]}
     \nAlice: ${fewShots[focus][beginning][1]["good"]}
