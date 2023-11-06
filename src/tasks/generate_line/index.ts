@@ -153,7 +153,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
     const { error: companyNameUpdateError } = await supa
     .from("leads")
     .update({
-      company_name_cleaned: companyName.toUpperCase(),
+      company_name_cleaned: companyName,
     })
     .eq("id", lead_id)
     if (companyNameUpdateError) throw companyNameUpdateError;
