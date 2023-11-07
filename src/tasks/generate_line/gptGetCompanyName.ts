@@ -10,7 +10,7 @@ export async function gptGetCompanyName(companyNameRaw: string) {
     Full company name: Snap Inc.\n
     Cleaned version: Snap\n
     Full company name: ${companyNameRaw}\n
-    Cleaned version:\n
+    Cleaned version:
     `;
   const messages: ChatCompletionMessageParam[] = [
     {
