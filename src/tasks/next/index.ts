@@ -12,7 +12,7 @@ export async function setNextState(
     .update({
       status,
       tries,
-      job_collected: false,
+      job_collected: status == "DONE" ? true : false,
     })
     .eq("id", id);
   if (error) throw error;

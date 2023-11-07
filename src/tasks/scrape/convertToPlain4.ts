@@ -20,12 +20,6 @@ export async function convertToPlain(html: string) {
 
   // Extract raw text content from the container element and its children
   let rawTextContent = $$.text();
-  await log(
-    "OK",
-    rawTextContent,
-    "00000000-0000-0000-0000-000000000000",
-    "scrape",
-  );
 
   const htmlTags =
     /<script|<style|<nav|<button|<a|<img|<svg|<video|<audio|<iframe|<table|<footer/g;

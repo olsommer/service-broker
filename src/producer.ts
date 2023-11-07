@@ -77,8 +77,6 @@ async function route(
         removeOnFail: true,
       }).then(delivered);
       break;
-    case ("DONE"):
-      break;
   }
 }
 //
