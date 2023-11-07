@@ -197,30 +197,51 @@ export interface Database {
       leads: {
         Row: {
           campaign_id: string
+          company_name: string | null
           company_name_cleaned: string | null
           created_at: string
+          email: string | null
           id: string
+          industry: string | null
           lead: Json
           updated_at: string
           user_id: string
+          website: string | null
+          website_content: string | null
+          website_content_cleaned: string | null
+          website_summary: string | null
         }
         Insert: {
           campaign_id: string
+          company_name?: string | null
           company_name_cleaned?: string | null
           created_at?: string
+          email?: string | null
           id?: string
+          industry?: string | null
           lead: Json
           updated_at?: string
           user_id: string
+          website?: string | null
+          website_content?: string | null
+          website_content_cleaned?: string | null
+          website_summary?: string | null
         }
         Update: {
           campaign_id?: string
+          company_name?: string | null
           company_name_cleaned?: string | null
           created_at?: string
+          email?: string | null
           id?: string
+          industry?: string | null
           lead?: Json
           updated_at?: string
           user_id?: string
+          website?: string | null
+          website_content?: string | null
+          website_content_cleaned?: string | null
+          website_summary?: string | null
         }
         Relationships: [
           {

@@ -9,22 +9,23 @@ import { ChatCompletionMessageParam } from "openai/resources";
 
 export async function summarize(job: SandboxedJob<Payload, any>) {
   const { new: record } = job.data;
-  const { id, job_id } = record;
+  const { id, job_id, lead_id } = record;
   try {
     if (!job_id) throw new Error("No job id");
+    if (!lead_id) throw new Error("No lead_id provided");
     // Get form data
     // --------------------------------------
-    const { data: scrData, error: scrErr } = await supa
-      .from("scrapes")
+    const { data: leadsData, error: leadsErr } = await supa
+      .from("leads")
       .select("*")
-      .eq("lead_job_id", id)
-      .order("created_at", { ascending: false })
+      .eq("id", lead_id)
       .limit(1)
       .single();
-    if (scrErr) throw scrErr;
-    if (!scrData || !scrData.content_cleaned) throw new Error("No data");
-    const content_cleaned = scrData.content_cleaned;
-
+    if (leadsErr) throw leadsErr;
+    if (!leadsData || !leadsData.website_content_cleaned) {
+      throw new Error("No data");
+    }
+    const content_cleaned = leadsData.website_content_cleaned;
     // Get job data
     // --------------------------------------
     const { data: jobsData, error: jobsErr } = await supa
@@ -69,7 +70,7 @@ export async function summarize(job: SandboxedJob<Payload, any>) {
     ];
     const chatCompletion = await openai.chat.completions.create({
       messages,
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo-1106",
       stream: false,
       temperature: 0,
       max_tokens: 1024,
@@ -84,17 +85,47 @@ export async function summarize(job: SandboxedJob<Payload, any>) {
 
     // Save the summary content to the database
     // --------------------------------------
-    const { error } = await supa
-      .from("summaries")
+    // const { error } = await supa
+    //   .from("summaries")
+    //   .insert(
+    //     {
+    //       content: summary,
+    //       meta,
+    //       type: "HOMEPAGE",
+    //       lead_job_id: id,
+    //     },
+    //   );
+    // if (error) throw error;
+
+    /* Save scrapes to db */
+    const { error: leadsError } = await supa
+      .from("leads")
+      .update({
+        website_summary: summary,
+      })
+      .eq("id", lead_id);
+    if (leadsError) throw leadsError;
+
+    /* Save costs */
+    const { error: metaError } = await supa
+      .from("costs")
       .insert(
         {
-          content: summary,
+          lead_id,
           meta,
-          type: "HOMEPAGE",
-          lead_job_id: id,
+          job: "SUMMARIZE",
         },
       );
-    if (error) throw error;
+    if (metaError) {
+      await log(
+        "ERROR",
+        metaError.message,
+        id,
+        "continue but could not save meta",
+      );
+    }
+
+    /* Set next state */
     await setNextState(id, "FLAG_TO_GENERATE");
   } catch (error) {
     console.log(error);

@@ -16,8 +16,9 @@ export async function generate(job: SandboxedJob<Payload, any>) {
   const { id, lead_id, job_id } = record;
   try {
     if (!job_id) throw new Error("No job id");
-    // Get form data
-    // --------------------------------------
+    if (!lead_id) throw new Error("No lead_id provided");
+
+    /* Get form data */
     const { data: jobsData, error: jobsErr } = await supa
       .from("jobs")
       .select("*")
@@ -32,8 +33,7 @@ export async function generate(job: SandboxedJob<Payload, any>) {
       companyUSP: string;
     };
 
-    // Get company name 
-    // --------------------------------------
+    /* Get company name */
     if (!lead_id) throw new Error("No lead provided");
     const { data: leadsData, error: leadsErr } = await supa
       .from("leads")
@@ -47,21 +47,9 @@ export async function generate(job: SandboxedJob<Payload, any>) {
       company_name: string;
     };
 
-    // Get summary data
-    // --------------------------------------
-    const { data: sumData, error: sumErr } = await supa
-      .from("summaries")
-      .select("*")
-      .eq("lead_job_id", id)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single();
-
-    if (sumErr) throw sumErr;
-    if (!sumData || !sumData.content) throw new Error("No data");
-
     /* summary */
-    const content = sumData.content;
+    const content = leadsData.website_summary;
+    if (!content) throw new Error("No website summary provided");
 
     /* focus */
     const focus = form.focus ??
@@ -72,13 +60,14 @@ export async function generate(job: SandboxedJob<Payload, any>) {
 
     /* Get Industry */
     const { data: industry, meta: industryMeta } = await gptGetIndustry(
-      content
+      content,
     );
 
     /* Get Company name */
-    const { data: companyName, meta: companyNameMeta } = await gptGetCompanyName(
-      lead.company_name
-    );
+    const { data: companyName, meta: companyNameMeta } =
+      await gptGetCompanyName(
+        lead.company_name,
+      );
 
     let preLine;
     let preLineMeta;
@@ -121,9 +110,9 @@ export async function generate(job: SandboxedJob<Payload, any>) {
         preLineMeta = line3Meta;
         break;
     }
-
     if (!preLine) throw new Error("Nothing was generated");
 
+    /* Get refined line */
     const { data: finalLine, meta: finalLineMeta } = await gptGetRefinedLine(
       preLine,
       content,
@@ -132,33 +121,72 @@ export async function generate(job: SandboxedJob<Payload, any>) {
       companyName,
     );
 
-    // Save to the database
-    // --------------------------------------
+    /* Save industry and company name */
+    const { error: leadsError } = await supa
+      .from("leads")
+      .update({
+        company_name_cleaned: companyName,
+        industry,
+      })
+      .eq("id", lead_id);
+    if (leadsError) throw leadsError;
+
+    /* Save lines */
     const { error } = await supa
       .from("lines")
       .insert({
         content: finalLine,
-        meta: [industryMeta, preLineMeta, finalLineMeta],
+        meta: [preLineMeta, finalLineMeta],
         active: true,
         lead_id,
         lead_job_id: id,
-      })
-      .order("created_at", { ascending: false });
+      });
     if (error) throw error;
 
-
     /* Save cleand company name to db */
-        // Get company name 
-    // --------------------------------------
     const { error: companyNameUpdateError } = await supa
-    .from("leads")
-    .update({
-      company_name_cleaned: companyName,
-    })
-    .eq("id", lead_id)
+      .from("leads")
+      .update({
+        company_name_cleaned: companyName,
+      })
+      .eq("id", lead_id);
     if (companyNameUpdateError) throw companyNameUpdateError;
 
+    /* Save costs */
+    const { error: metaError } = await supa
+      .from("costs")
+      .insert(
+        [{
+          lead_id,
+          meta: industryMeta,
+          job: "INDUSTRY",
+        }, {
+          lead_id,
+          meta: companyNameMeta,
+          job: "COMPANY_NAME",
+        }, {
+          lead_id,
+          meta: preLineMeta,
+          job: "GENERATE_LINE_FIRST",
+        }, {
+          lead_id,
+          meta: preLineMeta,
+          job: "GENERATE_LINE_SECOND",
+        }],
+      );
+    if (metaError) {
+      await log(
+        "ERROR",
+        metaError.message,
+        id,
+        "continue but could not save meta",
+      );
+    }
+
+    /* Set next state */
     await setNextState(id, "FLAG_TO_FINISH");
+
+    /* catch error */
   } catch (error) {
     console.error(error);
     await log("ERROR", (error as Error).message, id, "generate");

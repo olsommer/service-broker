@@ -34,8 +34,8 @@ export async function rebalanceCredits(
   if (bill2Err) throw bill2Err;
   await log(
     "OK",
-    { currentCredits, delta },
+    { newCreditAmount, delta },
     leads_job_id,
-    "carryover and delta saved",
+    "rebalance saved",
   );
 }

@@ -74,7 +74,8 @@ export async function scrape(job: SandboxedJob<Payload, any>) {
       .single();
     if (leadErr) throw leadErr;
     if (!leadData) throw new Error("No data");
-    const url = (leadData.lead as { website?: string }).website;
+    // const url = (leadData.lead as { website?: string }).website;
+    const url = leadData.website;
     if (!url) throw new Error("Website URL is empty or null");
 
     // Transform url
@@ -108,18 +109,30 @@ export async function scrape(job: SandboxedJob<Payload, any>) {
     const content_cleaned = await convertToPlain(content);
 
     // Save the scraped content received from the scraper
-    const { data: scrCurrData, error } = await supa
-      .from("scrapes")
-      .insert({
-        lead_job_id: id,
-        log_request: tUrl,
-        log_callback_url: "",
-        content,
-        content_cleaned,
+    // const { data: scrCurrData, error } = await supa
+    //   .from("scrapes")
+    //   .insert({
+    //     lead_job_id: id,
+    //     log_request: tUrl,
+    //     log_callback_url: "",
+    //     content,
+    //     content_cleaned,
+    //   })
+    //   .select();
+    // if (error) throw error;
+    // if (!scrCurrData) throw new Error("No data");
+
+    /* Save scrapes to db */
+    const { error: updateLeads } = await supa
+      .from("leads")
+      .update({
+        website_content: content,
+        website_content_cleaned: content_cleaned,
       })
-      .select();
-    if (error) throw error;
-    if (!scrCurrData) throw new Error("No data");
+      .eq("id", lead_id);
+    if (updateLeads) throw updateLeads;
+
+    /* Set next state */
     await setNextState(id, "FLAG_TO_SUMMARIZE");
 
     /* Error handling */
