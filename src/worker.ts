@@ -23,11 +23,8 @@ const scraperFile = path.join(__dirname, "./worker_scrape_thread.js");
 const scraperWorker = new Worker("scraper", scraperFile, {
   connection,
   useWorkerThreads: true,
-  concurrency: 10,
+  concurrency: 6,
 });
-// const scraperWorker = new Worker("scraper", async (job) => {
-//   await scrape(job);
-// }, { connection });
 
 scraperWorker.on("ready", () => console.log(`Scrape Worker is ready`));
 
@@ -44,7 +41,7 @@ const sumFile = path.join(__dirname, "./worker_summarize_thread.js");
 const sumWorker = new Worker("summarizer", sumFile, {
   connection,
   useWorkerThreads: true,
-  concurrency: 3,
+  concurrency: 2,
 });
 // const sumWorker = new Worker("summarizer", async (job) => {
 //   await summarize(job);
@@ -65,11 +62,8 @@ const genFile = path.join(__dirname, "./worker_generate_thread.js");
 const genWorker = new Worker("generate", genFile, {
   connection,
   useWorkerThreads: true,
-  concurrency: 3,
+  concurrency: 2,
 });
-// const genWorker = new Worker("generate", async (job) => {
-//   await generate(job);
-// }, { connection });
 
 genWorker.on("ready", () => console.log(`Line Generator Worker is ready`));
 
@@ -88,9 +82,6 @@ const finWorker = new Worker("finish", finFile, {
   useWorkerThreads: true,
   concurrency: 1,
 });
-// const finWorker = new Worker("finish", async (job) => {
-//   await finish(job);
-// }, { connection });
 
 finWorker.on("ready", () => console.log(`Finish Worker is ready`));
 
@@ -109,9 +100,6 @@ const retWorker = new Worker("retry", retFile, {
   useWorkerThreads: true,
   concurrency: 1,
 });
-// const retWorker = new Worker("retry", async (job) => {
-//   await retry(job);
-// }, { connection });
 
 retWorker.on("ready", () => console.log(`Retry Worker is ready`));
 
