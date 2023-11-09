@@ -8,7 +8,7 @@ import { setNextState } from "../next";
 import { convertToPlain } from "./convertToPlain4";
 import { Job, SandboxedJob } from "bullmq";
 import { Payload } from "../../worker";
-import { summarizeQueue } from "../../utils/bullmq";
+import { retryQueue, summarizeQueue } from "../../utils/bullmq";
 import { delivered } from "../../producer";
 
 let tries = 0;
@@ -161,7 +161,14 @@ export async function scrape(job: Job<Payload, any>) {
         id,
         "Could not scrape homepage or save scrape",
       );
-      await setNextState(id, "FLAG_TO_RETRY", "FLAG_TO_SCRAPE", 3);
+
+      /* Add next job */
+      // await retryQueue.add("retryJob", job.data, {
+      //   removeOnComplete: true,
+      //   removeOnFail: true,
+      // });
+      // await setNextState(id, "FLAG_TO_RETRY", "FLAG_TO_SCRAPE", 3);
+      await setNextState(id, "ERROR_TIMEOUT", "FLAG_TO_SCRAPE", tries);
     }
   }
 }

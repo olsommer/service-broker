@@ -6,7 +6,7 @@ import { setNextState } from "../next";
 import { Job, SandboxedJob } from "bullmq";
 import { Payload } from "../../worker";
 import { ChatCompletionMessageParam } from "openai/resources";
-import { generateQueue, summarizeQueue } from "../../utils/bullmq";
+import { generateQueue, retryQueue, summarizeQueue } from "../../utils/bullmq";
 import { delivered } from "../../producer";
 
 export async function summarize(job: Job<Payload, any>) {
@@ -114,6 +114,14 @@ export async function summarize(job: Job<Payload, any>) {
     await setNextState(id, "FLAG_TO_GENERATE", "FLAG_TO_SUMMARIZE");
   } catch (error) {
     console.log(error);
+    /* Set next state */
+    // await setNextState(id, "FLAG_TO_RETRY", "FLAG_TO_SUMMARIZE");
+    /* Add next job */
+    // await retryQueue.add("retryJob", job.data, {
+    //   removeOnComplete: true,
+    //   removeOnFail: true,
+    // });
     await log("ERROR", (error as Error).message, id, "summarize");
+    await setNextState(id, "ERROR_TIMEOUT", "FLAG_TO_SUMMARIZE", 1);
   }
 }

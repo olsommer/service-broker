@@ -5,6 +5,7 @@ import { billing } from "../billing";
 import { Job, SandboxedJob } from "bullmq";
 import { Payload } from "../../worker";
 import { rebalanceCredits } from "../billing/rebalanceCredits";
+import { retryQueue } from "../../utils/bullmq";
 
 export async function finish(job: Job<Payload, any>) {
   const { new: record } = job.data;
@@ -82,6 +83,14 @@ export async function finish(job: Job<Payload, any>) {
     await setNextState(id, "DONE", "FLAG_TO_FINISH");
   } catch (error) {
     console.log(error);
+    // /* Set next state */
+    // await setNextState(id, "FLAG_TO_RETRY", "FLAG_TO_FINISH");
+    // /* Add next job */
+    // await retryQueue.add("retryJob", job.data, {
+    //   removeOnComplete: true,
+    //   removeOnFail: true,
+    // });
+    await setNextState(id, "ERROR_TIMEOUT", "FLAG_TO_FINISH", 1);
     await log("ERROR", error as any, id, "finish");
   }
 }
