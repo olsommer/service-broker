@@ -11,21 +11,31 @@ export async function retry(job: SandboxedJob<Payload, any>) {
     if (tries < 3) {
       switch (status_before) {
         case ("FLAG_TO_SCRAPE"):
-          await setNextState(id, "FLAG_TO_SCRAPE", tries + 1);
+          await setNextState(id, "FLAG_TO_SCRAPE", "FLAG_TO_RETRY", tries + 1);
           break;
         case ("FLAG_TO_SUMMARIZE"):
-          await setNextState(id, "FLAG_TO_SUMMARIZE", tries + 1);
+          await setNextState(
+            id,
+            "FLAG_TO_SUMMARIZE",
+            "FLAG_TO_RETRY",
+            tries + 1,
+          );
           break;
         case ("FLAG_TO_GENERATE"):
-          await setNextState(id, "FLAG_TO_GENERATE", tries + 1);
+          await setNextState(
+            id,
+            "FLAG_TO_GENERATE",
+            "FLAG_TO_RETRY",
+            tries + 1,
+          );
           break;
         case ("FLAG_TO_RETRY"):
-          await setNextState(id, "FLAG_TO_SCRAPE", tries + 1);
+          await setNextState(id, "FLAG_TO_SCRAPE", "FLAG_TO_RETRY", tries + 1);
           break;
       }
     } else {
       await closeJob(record);
-      await setNextState(id, "ERROR_TIMEOUT");
+      await setNextState(id, "ERROR_TIMEOUT", "FLAG_TO_RETRY");
     }
   } catch (error) {
     console.log(error);
