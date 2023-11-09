@@ -184,7 +184,7 @@ export async function generate(job: Job<Payload, any>) {
     }
 
     /* Set next state */
-    await setNextState(id, "FLAG_TO_FINISH");
+    await setNextState(id, "FLAG_TO_FINISH", "FLAG_TO_GENERATE");
 
     /* catch error */
   } catch (error) {

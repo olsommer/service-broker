@@ -79,7 +79,7 @@ export async function finish(job: Job<Payload, any>) {
     }
 
     // Update leads_job data
-    await setNextState(id, "DONE");
+    await setNextState(id, "DONE", "FLAG_TO_FINISH");
   } catch (error) {
     console.log(error);
     await log("ERROR", error as any, id, "finish");

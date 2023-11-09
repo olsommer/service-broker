@@ -133,7 +133,7 @@ export async function scrape(job: Job<Payload, any>) {
     if (updateLeads) throw updateLeads;
 
     /* Set next state */
-    await setNextState(id, "FLAG_TO_SUMMARIZE");
+    await setNextState(id, "FLAG_TO_SUMMARIZE", "FLAG_TO_SCRAPE");
 
     /* Error handling */
   } catch (error) {
@@ -153,7 +153,7 @@ export async function scrape(job: Job<Payload, any>) {
         id,
         "Could not scrape homepage or save scrape",
       );
-      await setNextState(id, "FLAG_TO_RETRY", 3);
+      await setNextState(id, "FLAG_TO_RETRY", "FLAG_TO_SCRAPE", 3);
     }
   }
 }
