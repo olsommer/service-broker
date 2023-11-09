@@ -98,10 +98,6 @@ const retWorker = new Worker("retry", retFile, {
 
 retWorker.on("ready", () => console.log(`Retry Worker is ready`));
 
-retWorker.on("completed", (job) => {
-  // console.log(`${job.name}:${job.queueName}:${job.id} has completed!`);
-});
-
 retWorker.on("failed", (job, err) => {
   console.log(`${job?.id} has failed with ${err.message}`);
 });
