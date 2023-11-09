@@ -59,7 +59,7 @@ async function scraperService(tUrl: string) {
 }
 
 /* Main */
-export async function scrape(job: SandboxedJob<Payload, any>) {
+export async function scrape(job: Job<Payload, any>) {
   const { new: record } = job.data;
   const { id, lead_id } = record;
   try {

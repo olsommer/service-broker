@@ -1,7 +1,7 @@
 import { supa } from "../../utils/supabase";
 import { log } from "../log";
 import { setNextState } from "../next";
-import { SandboxedJob } from "bullmq";
+import { Job } from "bullmq";
 import { Payload } from "../../worker";
 
 import { gptGetIndustry } from "./gptGetIndustry";
@@ -11,7 +11,7 @@ import { gptGetCompliment } from "./gptGetCompliment";
 import { gptGetRefinedLine } from "./gptGetRefinedLine";
 import { gptGetCompanyName } from "./gptGetCompanyName";
 
-export async function generate(job: SandboxedJob<Payload, any>) {
+export async function generate(job: Job<Payload, any>) {
   const { new: record } = job.data;
   const { id, lead_id, job_id } = record;
   try {

@@ -7,6 +7,10 @@ import { Tables } from "./utils/database.helpers";
 import { Worker } from "bullmq";
 import { conn1, conn2, conn3, conn4, conn5 } from "./utils/bullmq";
 import path from "path";
+import { finish } from "./tasks/finish";
+import { generate } from "./tasks/generate_line";
+import { summarize } from "./tasks/summarize";
+import { scrape } from "./tasks/scrape";
 
 export type Payload = {
   schema: string;
@@ -19,85 +23,75 @@ export type Payload = {
 };
 
 /* scraping */
-const scraperFile = path.join(__dirname, "./worker_scrape_thread.js");
-const scraperWorker = new Worker("scraper", scraperFile, {
+// const scraperFile = path.join(__dirname, "./worker_scrape_thread.js");
+// const scraperWorker = new Worker("scraper", scraperFile, {
+const scraperWorker = new Worker("scraper", scrape, {
   connection: conn1,
-  useWorkerThreads: true,
+  // useWorkerThreads: true,
   concurrency: 6,
 });
 
 scraperWorker.on("ready", () => console.log(`Scrape Worker is ready`));
-scraperWorker.on("stalled", (job) => console.log(`Scraper has stalled!`));
-scraperWorker.on("drained", () => console.log(`Scraper drained`));
-scraperWorker.on("paused", () => console.log(`Scraper drained`));
 scraperWorker.on("error", (job) => console.log(`Scraper has an error!`));
-
 scraperWorker.on("failed", (job, err) => {
   console.log(`${job?.id} has failed with ${err.message}`);
 });
 
 /* summarize */
-const sumFile = path.join(__dirname, "./worker_summarize_thread.js");
-const sumWorker = new Worker("summarizer", sumFile, {
+// const sumFile = path.join(__dirname, "./worker_summarize_thread.js");
+// const sumWorker = new Worker("summarizer", sumFile, {
+const sumWorker = new Worker("summarizer", summarize, {
   connection: conn2,
-  useWorkerThreads: true,
+  // useWorkerThreads: true,
   concurrency: 2,
 });
 
 sumWorker.on("ready", () => console.log(`Summarize Worker is ready`));
-sumWorker.on("stalled", (job) => console.log(`Summarizer has stalled!`));
-sumWorker.on("drained", () => console.log(`Summarizer drained`));
-sumWorker.on("paused", () => console.log(`Summarizer drained`));
 sumWorker.on("error", (job) => console.log(`Summarizer has an error!`));
 sumWorker.on("failed", (job, err) => {
   console.log(`${job?.id} has failed with ${err.message}`);
 });
 
 /* generate */
-const genFile = path.join(__dirname, "./worker_generate_thread.js");
-const genWorker = new Worker("generate", genFile, {
+// const genFile = path.join(__dirname, "./worker_generate_thread.js");
+// const genWorker = new Worker("generate", genFile, {
+const genWorker = new Worker("generate", generate, {
   connection: conn3,
-  useWorkerThreads: true,
+  // useWorkerThreads: true,
   concurrency: 2,
 });
 
 genWorker.on("ready", () => console.log(`Line Generator Worker is ready`));
-genWorker.on("stalled", (job) => console.log(`Generator has stalled!`));
-genWorker.on("drained", () => console.log(`Generator drained`));
-genWorker.on("paused", () => console.log(`Generator paused`));
 genWorker.on("error", (job) => console.log(`Generator has an error!`));
 genWorker.on("failed", (job, err) => {
   console.log(`${job?.id} has failed: ${err.message}`);
 });
 
 /* finish */
-const finFile = path.join(__dirname, "./worker_finish_thread.js");
-const finWorker = new Worker("finish", finFile, {
+// const finFile = path.join(__dirname, "./worker_finish_thread.js");
+// const finWorker = new Worker("finish", finFile, {
+const finWorker = new Worker("finish", finish, {
   connection: conn4,
-  useWorkerThreads: true,
+  // useWorkerThreads: true,
   concurrency: 1,
 });
 
 finWorker.on("ready", () => console.log(`Finish Worker is ready`));
-finWorker.on("stalled", (job) => console.log(`Finisher has stalled!`));
-finWorker.on("drained", () => console.log(`Finisher drained`));
-finWorker.on("paused", () => console.log(`Finisher paused`));
 finWorker.on("error", (job) => console.log(`Finisher has an error!`));
-
 finWorker.on("failed", (job, err) => {
   console.log(`${job?.id} has failed with ${err.message}`);
 });
 
 /* retry */
-const retFile = path.join(__dirname, "./worker_retry_thread.js");
-const retWorker = new Worker("retry", retFile, {
-  connection: conn5,
-  useWorkerThreads: true,
-  concurrency: 1,
-});
+// const retFile = path.join(__dirname, "./worker_retry_thread.js");
+// const retWorker = new Worker("retry", retFile, {
+//   connection: conn5,
+//   useWorkerThreads: true,
+//   concurrency: 1,
+// });
 
-retWorker.on("ready", () => console.log(`Retry Worker is ready`));
+// retWorker.on("ready", () => console.log(`Retry Worker is ready`));
 
-retWorker.on("failed", (job, err) => {
-  console.log(`${job?.id} has failed with ${err.message}`);
-});
+// retWorker.on("failed", (job, err) => {
+//   console.log(`${job?.id} has failed with ${err.message}`);
+// });

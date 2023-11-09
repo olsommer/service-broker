@@ -7,7 +7,7 @@ import { Job, SandboxedJob } from "bullmq";
 import { Payload } from "../../worker";
 import { ChatCompletionMessageParam } from "openai/resources";
 
-export async function summarize(job: SandboxedJob<Payload, any>) {
+export async function summarize(job: Job<Payload, any>) {
   const { new: record } = job.data;
   const { id, job_id, lead_id } = record;
   try {
