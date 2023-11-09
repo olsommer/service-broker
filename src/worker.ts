@@ -5,7 +5,7 @@ import { Tables } from "./utils/database.helpers";
 // import { DoneCallback, Job } from "bee-queue";
 
 import { Worker } from "bullmq";
-import { connection } from "./utils/bullmq";
+import { conn1, conn2, conn3, conn4, conn5 } from "./utils/bullmq";
 import path from "path";
 
 export type Payload = {
@@ -21,7 +21,7 @@ export type Payload = {
 /* scraping */
 const scraperFile = path.join(__dirname, "./worker_scrape_thread.js");
 const scraperWorker = new Worker("scraper", scraperFile, {
-  connection,
+  connection: conn1,
   useWorkerThreads: true,
   concurrency: 6,
 });
@@ -39,13 +39,10 @@ scraperWorker.on("failed", (job, err) => {
 /* summarize */
 const sumFile = path.join(__dirname, "./worker_summarize_thread.js");
 const sumWorker = new Worker("summarizer", sumFile, {
-  connection,
+  connection: conn2,
   useWorkerThreads: true,
   concurrency: 2,
 });
-// const sumWorker = new Worker("summarizer", async (job) => {
-//   await summarize(job);
-// }, { connection });
 
 sumWorker.on("ready", () => console.log(`Summarize Worker is ready`));
 
@@ -60,7 +57,7 @@ sumWorker.on("failed", (job, err) => {
 /* generate */
 const genFile = path.join(__dirname, "./worker_generate_thread.js");
 const genWorker = new Worker("generate", genFile, {
-  connection,
+  connection: conn3,
   useWorkerThreads: true,
   concurrency: 2,
 });
@@ -78,7 +75,7 @@ genWorker.on("failed", (job, err) => {
 /* finish */
 const finFile = path.join(__dirname, "./worker_finish_thread.js");
 const finWorker = new Worker("finish", finFile, {
-  connection,
+  connection: conn4,
   useWorkerThreads: true,
   concurrency: 1,
 });
@@ -96,7 +93,7 @@ finWorker.on("failed", (job, err) => {
 /* retry */
 const retFile = path.join(__dirname, "./worker_retry_thread.js");
 const retWorker = new Worker("retry", retFile, {
-  connection,
+  connection: conn5,
   useWorkerThreads: true,
   concurrency: 1,
 });
