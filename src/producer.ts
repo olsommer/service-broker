@@ -22,7 +22,7 @@ const was = (
 };
 
 /* confirm delivery */
-const delivered = async (
+export const delivered = async (
   job: Job<Payload, any, string>,
 ) => {
   const i = job.data.new as Tables<"leads_jobs">;
@@ -47,36 +47,36 @@ async function route(
         }).then(delivered);
       }
       break;
-    case ("FLAG_TO_SUMMARIZE"):
-      if (was(record, "FLAG_TO_SCRAPE")) {
-        summarizeQueue.add("summarizeJob", payload, {
-          removeOnComplete: true,
-          removeOnFail: true,
-        }).then(delivered);
-      }
-      break;
-    case ("FLAG_TO_GENERATE"):
-      if (was(record, "FLAG_TO_SUMMARIZE")) {
-        generateQueue.add("generateJob", payload, {
-          removeOnComplete: true,
-          removeOnFail: true,
-        }).then(delivered);
-      }
-      break;
-    case ("FLAG_TO_FINISH"):
-      if (was(record, "FLAG_TO_GENERATE")) {
-        finishQueue.add("finishJob", payload, {
-          removeOnComplete: true,
-          removeOnFail: true,
-        }).then(delivered);
-      }
-      break;
-    case ("FLAG_TO_RETRY"):
-      retryQueue.add("retryJob", payload, {
-        removeOnComplete: true,
-        removeOnFail: true,
-      }).then(delivered);
-      break;
+      // case ("FLAG_TO_SUMMARIZE"):
+      //   if (was(record, "FLAG_TO_SCRAPE")) {
+      //     summarizeQueue.add("summarizeJob", payload, {
+      //       removeOnComplete: true,
+      //       removeOnFail: true,
+      //     }).then(delivered);
+      //   }
+      //   break;
+      // case ("FLAG_TO_GENERATE"):
+      //   if (was(record, "FLAG_TO_SUMMARIZE")) {
+      //     generateQueue.add("generateJob", payload, {
+      //       removeOnComplete: true,
+      //       removeOnFail: true,
+      //     }).then(delivered);
+      //   }
+      //   break;
+      // case ("FLAG_TO_FINISH"):
+      //   if (was(record, "FLAG_TO_GENERATE")) {
+      //     finishQueue.add("finishJob", payload, {
+      //       removeOnComplete: true,
+      //       removeOnFail: true,
+      //     }).then(delivered);
+      //   }
+      //   break;
+      // case ("FLAG_TO_RETRY"):
+      //   retryQueue.add("retryJob", payload, {
+      //     removeOnComplete: true,
+      //     removeOnFail: true,
+      //   }).then(delivered);
+      //   break;
   }
 }
 //

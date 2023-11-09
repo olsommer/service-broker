@@ -10,6 +10,8 @@ import { gptGetChallenge } from "./gptGetChallenge";
 import { gptGetCompliment } from "./gptGetCompliment";
 import { gptGetRefinedLine } from "./gptGetRefinedLine";
 import { gptGetCompanyName } from "./gptGetCompanyName";
+import { finishQueue } from "../../utils/bullmq";
+import { delivered } from "../../producer";
 
 export async function generate(job: Job<Payload, any>) {
   const { new: record } = job.data;
@@ -182,6 +184,12 @@ export async function generate(job: Job<Payload, any>) {
         "continue but could not save meta",
       );
     }
+
+    /* Set next job */
+    finishQueue.add("finishJob", job.data, {
+      removeOnComplete: true,
+      removeOnFail: true,
+    }).then(delivered);
 
     /* Set next state */
     await setNextState(id, "FLAG_TO_FINISH", "FLAG_TO_GENERATE");

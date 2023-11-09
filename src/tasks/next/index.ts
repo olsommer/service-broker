@@ -14,7 +14,8 @@ export async function setNextState(
       status,
       status_before: status_before,
       tries,
-      job_collected: status == "DONE" ? true : false,
+      // job_collected: status == "DONE" ? true : false,
+      job_collected: true,
     })
     .eq("id", id);
   if (error) throw error;

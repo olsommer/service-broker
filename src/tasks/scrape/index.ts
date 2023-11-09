@@ -8,6 +8,8 @@ import { setNextState } from "../next";
 import { convertToPlain } from "./convertToPlain4";
 import { Job, SandboxedJob } from "bullmq";
 import { Payload } from "../../worker";
+import { summarizeQueue } from "../../utils/bullmq";
+import { delivered } from "../../producer";
 
 let tries = 0;
 
@@ -131,6 +133,12 @@ export async function scrape(job: Job<Payload, any>) {
       })
       .eq("id", lead_id);
     if (updateLeads) throw updateLeads;
+
+    /* Add next job */
+    summarizeQueue.add("summarizeJob", job.data, {
+      removeOnComplete: true,
+      removeOnFail: true,
+    }).then(delivered);
 
     /* Set next state */
     await setNextState(id, "FLAG_TO_SUMMARIZE", "FLAG_TO_SCRAPE");
