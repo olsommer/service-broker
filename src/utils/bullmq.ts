@@ -7,52 +7,52 @@ import { Redis } from "ioredis";
 
 export const conn1 = new Redis(process.env.REDIS_URL ?? "", {
   maxRetriesPerRequest: null,
-  sentinelMaxConnections: 20,
+  sentinelMaxConnections: 1,
 });
 
 export const conn2 = new Redis(process.env.REDIS_URL ?? "", {
   maxRetriesPerRequest: null,
-  sentinelMaxConnections: 20,
+  sentinelMaxConnections: 1,
 });
 
 export const conn3 = new Redis(process.env.REDIS_URL ?? "", {
   maxRetriesPerRequest: null,
-  sentinelMaxConnections: 20,
+  sentinelMaxConnections: 1,
 });
 
 export const conn4 = new Redis(process.env.REDIS_URL ?? "", {
   maxRetriesPerRequest: null,
-  sentinelMaxConnections: 20,
+  sentinelMaxConnections: 1,
 });
 
 export const conn5 = new Redis(process.env.REDIS_URL ?? "", {
   maxRetriesPerRequest: null,
-  sentinelMaxConnections: 20,
+  sentinelMaxConnections: 1,
 });
 
 export const conn6 = new Redis(process.env.REDIS_URL ?? "", {
   maxRetriesPerRequest: null,
-  sentinelMaxConnections: 20,
+  sentinelMaxConnections: 1,
 });
 
 export const conn7 = new Redis(process.env.REDIS_URL ?? "", {
   maxRetriesPerRequest: null,
-  sentinelMaxConnections: 20,
+  sentinelMaxConnections: 1,
 });
 
 export const conn8 = new Redis(process.env.REDIS_URL ?? "", {
   maxRetriesPerRequest: null,
-  sentinelMaxConnections: 20,
+  sentinelMaxConnections: 1,
 });
 
 export const conn9 = new Redis(process.env.REDIS_URL ?? "", {
   maxRetriesPerRequest: null,
-  sentinelMaxConnections: 20,
+  sentinelMaxConnections: 1,
 });
 
 export const conn10 = new Redis(process.env.REDIS_URL ?? "", {
   maxRetriesPerRequest: null,
-  sentinelMaxConnections: 20,
+  sentinelMaxConnections: 1,
 });
 
 export const scrapingQueue = new Queue("scraper", { connection: conn1 });
