@@ -44,11 +44,11 @@ export async function gptGetCompanyName(companyNameRaw: string) {
     prompt: prompt,
     model: "gpt-3.5-turbo-instruct",
     stream: false,
-    temperature: 0.1,
+    temperature: 0,
     max_tokens: 64,
     top_p: 0,
     frequency_penalty: 0,
-    presence_penalty: 0,
+    presence_penalty: -1.5,
   });
 
   const meta = {

@@ -32,11 +32,11 @@ export async function gptGetChallenge(
     messages,
     model: "gpt-3.5-turbo-1106",
     stream: false,
-    temperature: 1.5,
+    temperature: 0.8,
     max_tokens: 256,
     top_p: 0,
     frequency_penalty: 0,
-    presence_penalty: -1,
+    presence_penalty: -1.5,
   });
 
   const meta = {

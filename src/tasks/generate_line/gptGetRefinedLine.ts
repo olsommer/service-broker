@@ -16,12 +16,14 @@ export async function gptGetRefinedLine(
     temperature: 0.2,
     top_p: 0, // 0.05
     frequency_penalty: 0,
-    presence_penalty: -0.5,
+    presence_penalty: -1.5,
   };
 
   const beginnings = sentenceBeginning[focus];
-  const beginning = beginnings[crypto.getRandomValues(new Uint32Array(1))[0] % beginnings.length];  
-  
+  const beginning = beginnings[
+    crypto.getRandomValues(new Uint32Array(1))[0] % beginnings.length
+  ];
+
   const system = `
     Your name is Alice. You are a communications sepcialist.\n
     Optimize the provided sentence without losing context, relevance and reference to the company.\n
@@ -86,7 +88,6 @@ export async function gptGetRefinedLine(
     ...settings,
     stream: false,
   });
-
 
   const meta = {
     model: chat.model,

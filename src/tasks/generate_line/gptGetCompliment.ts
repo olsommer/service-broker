@@ -64,10 +64,10 @@ export async function gptGetCompliment(
     messages,
     model: "gpt-3.5-turbo-1106",
     stream: false,
-    temperature: 1.5,
+    temperature: 0.1,
     top_p: 0,
     frequency_penalty: 0,
-    presence_penalty: -1,
+    presence_penalty: -1.5,
   });
 
   const meta = {
