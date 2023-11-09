@@ -126,7 +126,7 @@ export async function summarize(job: Job<Payload, any>) {
     }
 
     /* Set next state */
-    await setNextState(id, "FLAG_TO_GENERATE");
+    await setNextState(id, "FLAG_TO_GENERATE", "FLAG_TO_SUMMARIZE");
   } catch (error) {
     console.log(error);
     await log("ERROR", (error as Error).message, id, "summarize");
