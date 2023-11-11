@@ -30,7 +30,7 @@ export async function generate(job: Job<Payload, any>) {
     if (jobsErr) throw jobsErr;
     if (!jobsData) throw new Error("No data");
     const form = jobsData.meta as {
-      focus: Focus;
+      focus: Focus[];
       industry: string;
       companyUSP: string;
     };
@@ -54,7 +54,7 @@ export async function generate(job: Job<Payload, any>) {
     if (!content) throw new Error("No website summary provided");
 
     /* focus */
-    const focus = form.focus ??
+    const focus = form.focus[0] ??
       "Compliments about the company";
 
     /* Get Company USP */
@@ -74,6 +74,7 @@ export async function generate(job: Job<Payload, any>) {
     let preLine;
     let preLineMeta;
 
+    /* Get line */
     switch (focus) {
       case "Trends and challenges of industry":
         const { data: challengeData, meta: challengeMeta } =

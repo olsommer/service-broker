@@ -24,21 +24,18 @@ export async function summarize(job: Job<Payload, any>) {
       .limit(1)
       .single();
     if (leadsErr) throw leadsErr;
-    if (!leadsData || !leadsData.website_content_cleaned) {
-      throw new Error("No data");
-    }
+
     const content_cleaned = leadsData.website_content_cleaned;
     // Get job data
     // --------------------------------------
-    const { data: jobsData, error: jobsErr } = await supa
-      .from("jobs")
-      .select("*")
-      .eq("id", job_id)
-      .limit(1)
-      .single();
-    if (jobsErr) throw jobsErr;
-    if (!jobsData) throw new Error("No data");
-    const form = jobsData.meta as { focus: string; industry: string };
+    // const { data: jobsData, error: jobsErr } = await supa
+    //   .from("jobs")
+    //   .select("*")
+    //   .eq("id", job_id)
+    //   .limit(1)
+    //   .single();
+    // if (jobsErr) throw jobsErr;
+    // const form = jobsData.meta as { focus: string; industry: string };
 
     // Clean HTML
     // --------------------------------------
@@ -46,10 +43,10 @@ export async function summarize(job: Job<Payload, any>) {
 
     // Prompt Focus
     // --------------------------------------
-    const focus = form.focus ? form.focus : "compliments about the company";
+    // const focus = form.focus ? form.focus : "compliments about the company";
 
     const systemPrompt =
-      `Summarize a scraped website you are provided with for a second-grade student in 1 paragraph with focus on ${focus}`;
+      `Summarize a scraped website you are provided with for a second-grade student in 1 paragraph.`;
 
     const messages: ChatCompletionMessageParam[] = [
       {
@@ -114,13 +111,6 @@ export async function summarize(job: Job<Payload, any>) {
     await setNextState(id, "FLAG_TO_GENERATE", "FLAG_TO_SUMMARIZE");
   } catch (error) {
     console.log(error);
-    /* Set next state */
-    // await setNextState(id, "FLAG_TO_RETRY", "FLAG_TO_SUMMARIZE");
-    /* Add next job */
-    // await retryQueue.add("retryJob", job.data, {
-    //   removeOnComplete: true,
-    //   removeOnFail: true,
-    // });
     await log("ERROR", (error as Error).message, id, "summarize");
     await setNextState(id, "ERROR_TIMEOUT", "FLAG_TO_SUMMARIZE", 1);
   }
