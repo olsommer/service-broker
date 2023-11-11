@@ -233,6 +233,7 @@ export interface Database {
           email: string | null
           id: string
           industry: string | null
+          is_blocked: string | null
           lead: Json
           updated_at: string
           user_id: string
@@ -249,6 +250,7 @@ export interface Database {
           email?: string | null
           id?: string
           industry?: string | null
+          is_blocked?: string | null
           lead: Json
           updated_at?: string
           user_id?: string
@@ -265,6 +267,7 @@ export interface Database {
           email?: string | null
           id?: string
           industry?: string | null
+          is_blocked?: string | null
           lead?: Json
           updated_at?: string
           user_id?: string

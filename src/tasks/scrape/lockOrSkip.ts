@@ -11,9 +11,9 @@ export async function lockOrSkip(
   while (true) {
     /* Get job data */
     const { data, error } = await supa
-      .from("leads_jobs")
+      .from("leads")
       .select("is_blocked")
-      .eq("id", leads_job_id)
+      .eq("id", lead_id)
       .limit(1)
       .single();
     if (error) throw error;
@@ -33,7 +33,7 @@ export async function lockOrSkip(
         const { error: updateErr } = await supa
           .from("leads_jobs")
           .update({ is_blocked: leads_job_id })
-          .eq("id", leads_job_id);
+          .eq("id", lead_id);
         if (updateErr) throw updateErr;
 
         await setTimeout(Math.random() * (0.3) + 0.2 * 1000); // Wait for 0.5 seconds max
