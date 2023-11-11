@@ -1,5 +1,5 @@
 import { log } from "../log";
-import { closeJob } from "./closeJob";
+// import { closeJob } from "./closeJob";
 import { setNextState } from "../next";
 import { SandboxedJob } from "bullmq";
 import { Payload } from "../../worker";
@@ -34,7 +34,7 @@ export async function retry(job: SandboxedJob<Payload, any>) {
           break;
       }
     } else {
-      await closeJob(record);
+      // await closeJob(record);
       await setNextState(id, "ERROR_TIMEOUT", "FLAG_TO_RETRY");
     }
   } catch (error) {
