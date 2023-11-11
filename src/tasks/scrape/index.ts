@@ -74,6 +74,7 @@ export async function scrape(job: Job<Payload, any>) {
     const { skip, lock } = await lockOrSkip(id, lead_id);
     console.log("skip", skip, "lock", lock);
     if (lock) {
+      console.log("looping the scrape");
       await scrapingQueue.add("scraperJob", job.data, {
         removeOnComplete: true,
         removeOnFail: true,
@@ -158,10 +159,10 @@ async function handleScrape(job: Job<Payload, any>) {
     if (updateLeads) throw updateLeads;
 
     /* Add next job */
-    summarizeQueue.add("summarizeJob", job.data, {
+    await summarizeQueue.add("summarizeJob", job.data, {
       removeOnComplete: true,
       removeOnFail: true,
-    }).then(delivered);
+    });
 
     await setNextState(id, "FLAG_TO_SUMMARIZE", "FLAG_TO_SCRAPE");
   } catch (error) {
