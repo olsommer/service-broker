@@ -8,6 +8,7 @@ import { Payload } from "../../worker";
 import { ChatCompletionMessageParam } from "openai/resources";
 import { generateQueue, retryQueue, summarizeQueue } from "../../utils/bullmq";
 import { delivered } from "../../producer";
+import { release } from "./release";
 
 export async function summarize(job: Job<Payload, any>) {
   const { new: record } = job.data;
@@ -106,6 +107,9 @@ export async function summarize(job: Job<Payload, any>) {
       removeOnComplete: true,
       removeOnFail: true,
     }).then(delivered);
+
+    /* Release lock */
+    release(id);
 
     /* Set next state */
     await setNextState(id, "FLAG_TO_GENERATE", "FLAG_TO_SUMMARIZE");

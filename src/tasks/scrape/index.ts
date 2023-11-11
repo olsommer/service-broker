@@ -2,14 +2,14 @@ import axios from "axios";
 import { log } from "../log";
 import { isValidUrl } from "./isValid";
 import { transformUrl } from "./transformUrl";
-import { Tables } from "../../utils/database.helpers";
 import { supa } from "../../utils/supabase";
 import { setNextState } from "../next";
 import { convertToPlain } from "./convertToPlain4";
-import { Job, SandboxedJob } from "bullmq";
+import { Job } from "bullmq";
 import { Payload } from "../../worker";
-import { retryQueue, summarizeQueue } from "../../utils/bullmq";
+import { generateQueue, summarizeQueue } from "../../utils/bullmq";
 import { delivered } from "../../producer";
+import { lockOrSkip } from "./lockOrSkip";
 
 let tries = 0;
 
@@ -65,7 +65,19 @@ export async function scrape(job: Job<Payload, any>) {
   const { new: record } = job.data;
   const { id, lead_id } = record;
   try {
+    if (!id) throw new Error("No lead_jobs_id provided");
     if (!lead_id) throw new Error("No lead_id provided");
+
+    const { skip } = await lockOrSkip(id, lead_id);
+
+    if (skip) {
+      generateQueue.add("generateJob", job.data, {
+        removeOnComplete: true,
+        removeOnFail: true,
+      }).then(delivered);
+      await setNextState(id, "FLAG_TO_GENERATE", "FLAG_TO_SCRAPE");
+      return;
+    }
 
     // Get lead data
     const { data: leadData, error: leadErr } = await supa
@@ -110,20 +122,6 @@ export async function scrape(job: Job<Payload, any>) {
     /* Clean */
     const content_cleaned = await convertToPlain(content);
 
-    // Save the scraped content received from the scraper
-    // const { data: scrCurrData, error } = await supa
-    //   .from("scrapes")
-    //   .insert({
-    //     lead_job_id: id,
-    //     log_request: tUrl,
-    //     log_callback_url: "",
-    //     content,
-    //     content_cleaned,
-    //   })
-    //   .select();
-    // if (error) throw error;
-    // if (!scrCurrData) throw new Error("No data");
-
     /* Save scrapes to db */
     const { error: updateLeads } = await supa
       .from("leads")
@@ -140,7 +138,6 @@ export async function scrape(job: Job<Payload, any>) {
       removeOnFail: true,
     }).then(delivered);
 
-    /* Set next state */
     await setNextState(id, "FLAG_TO_SUMMARIZE", "FLAG_TO_SCRAPE");
 
     /* Error handling */

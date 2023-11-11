@@ -198,13 +198,6 @@ export async function generate(job: Job<Payload, any>) {
     /* catch error */
   } catch (error) {
     console.error(error);
-    /* Set next state */
-    // await setNextState(id, "FLAG_TO_RETRY", "FLAG_TO_GENERATE");
-    /* Add next job */
-    // await retryQueue.add("retryJob", job.data, {
-    //   removeOnComplete: true,
-    //   removeOnFail: true,
-    // });
     await log("ERROR", (error as Error).message, id, "generate");
     await setNextState(id, "ERROR_TIMEOUT", "FLAG_TO_GENERATE", 1);
   }

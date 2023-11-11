@@ -294,9 +294,11 @@ export interface Database {
         Row: {
           created_at: string
           id: string
+          is_blocked: string | null
           job_collected: boolean
           job_id: string | null
           lead_id: string | null
+          purpose: string | null
           ref_campaign_id: string | null
           status: Database["public"]["Enums"]["job_states"] | null
           status_before: Database["public"]["Enums"]["job_states"] | null
@@ -306,9 +308,11 @@ export interface Database {
         Insert: {
           created_at?: string
           id?: string
+          is_blocked?: string | null
           job_collected?: boolean
           job_id?: string | null
           lead_id?: string | null
+          purpose?: string | null
           ref_campaign_id?: string | null
           status?: Database["public"]["Enums"]["job_states"] | null
           status_before?: Database["public"]["Enums"]["job_states"] | null
@@ -318,9 +322,11 @@ export interface Database {
         Update: {
           created_at?: string
           id?: string
+          is_blocked?: string | null
           job_collected?: boolean
           job_id?: string | null
           lead_id?: string | null
+          purpose?: string | null
           ref_campaign_id?: string | null
           status?: Database["public"]["Enums"]["job_states"] | null
           status_before?: Database["public"]["Enums"]["job_states"] | null
@@ -376,6 +382,7 @@ export interface Database {
           active: boolean
           content: string | null
           created_at: string
+          focus: string | null
           id: string
           lead_id: string | null
           lead_job_id: string
@@ -386,6 +393,7 @@ export interface Database {
           active?: boolean
           content?: string | null
           created_at?: string
+          focus?: string | null
           id?: string
           lead_id?: string | null
           lead_job_id: string
@@ -396,6 +404,7 @@ export interface Database {
           active?: boolean
           content?: string | null
           created_at?: string
+          focus?: string | null
           id?: string
           lead_id?: string | null
           lead_job_id?: string
@@ -498,79 +507,6 @@ export interface Database {
           last_generation?: string | null
         }
         Relationships: []
-      }
-      scrapes: {
-        Row: {
-          content: string | null
-          content_cleaned: string | null
-          created_at: string
-          id: string
-          lead_job_id: string | null
-          log_callback_url: string | null
-          log_request: Json | null
-        }
-        Insert: {
-          content?: string | null
-          content_cleaned?: string | null
-          created_at?: string
-          id?: string
-          lead_job_id?: string | null
-          log_callback_url?: string | null
-          log_request?: Json | null
-        }
-        Update: {
-          content?: string | null
-          content_cleaned?: string | null
-          created_at?: string
-          id?: string
-          lead_job_id?: string | null
-          log_callback_url?: string | null
-          log_request?: Json | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "scrapes_lead_job_id_fkey"
-            columns: ["lead_job_id"]
-            isOneToOne: false
-            referencedRelation: "leads_jobs"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      summaries: {
-        Row: {
-          content: string | null
-          created_at: string
-          id: string
-          lead_job_id: string | null
-          meta: Json | null
-          type: string
-        }
-        Insert: {
-          content?: string | null
-          created_at?: string
-          id?: string
-          lead_job_id?: string | null
-          meta?: Json | null
-          type?: string
-        }
-        Update: {
-          content?: string | null
-          created_at?: string
-          id?: string
-          lead_job_id?: string | null
-          meta?: Json | null
-          type?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "summaries_lead_job_id_fkey"
-            columns: ["lead_job_id"]
-            isOneToOne: false
-            referencedRelation: "leads_jobs"
-            referencedColumns: ["id"]
-          }
-        ]
       }
     }
     Views: {
