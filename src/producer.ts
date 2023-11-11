@@ -43,7 +43,7 @@ async function route(
   switch (record.status) {
     case ("FLAG_TO_SCRAPE"):
       if (was(record, null)) {
-        scrapingQueue.add("scrapingJob", payload, {
+        scrapingQueue.add("scraper", payload, {
           removeOnComplete: true,
           removeOnFail: true,
         }).then(delivered);
