@@ -7,7 +7,11 @@ import { setNextState } from "../next";
 import { convertToPlain } from "./convertToPlain4";
 import { Job } from "bullmq";
 import { Payload } from "../../worker";
-import { generateQueue, summarizeQueue } from "../../utils/bullmq";
+import {
+  generateQueue,
+  scrapingQueue,
+  summarizeQueue,
+} from "../../utils/bullmq";
 import { delivered } from "../../producer";
 import { lockOrSkip } from "./lockOrSkip";
 
@@ -67,17 +71,23 @@ export async function scrape(job: Job<Payload, any>) {
   try {
     if (!id) throw new Error("No lead_jobs_id provided");
     if (!lead_id) throw new Error("No lead_id provided");
-
-    const { skip } = await lockOrSkip(id, lead_id);
-
-    if (skip) {
-      await generateQueue.add("generateJob", job.data, {
+    const { skip, lock } = await lockOrSkip(id, lead_id);
+    if (lock) {
+      await scrapingQueue.add("scraperJob", job.data, {
         removeOnComplete: true,
         removeOnFail: true,
+        delay: 5000,
       });
-      await setNextState(id, "FLAG_TO_GENERATE", "FLAG_TO_SCRAPE");
     } else {
-      await handleScrape(job);
+      if (skip) {
+        await generateQueue.add("generateJob", job.data, {
+          removeOnComplete: true,
+          removeOnFail: true,
+        });
+        await setNextState(id, "FLAG_TO_GENERATE", "FLAG_TO_SCRAPE");
+      } else {
+        await handleScrape(job);
+      }
     }
   } catch (error) {
     await log(
