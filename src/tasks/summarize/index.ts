@@ -109,7 +109,7 @@ export async function summarize(job: Job<Payload, any>) {
     }).then(delivered);
 
     /* Release lock */
-    release(id);
+    await release(lead_id);
 
     /* Set next state */
     await setNextState(id, "FLAG_TO_GENERATE", "FLAG_TO_SUMMARIZE");

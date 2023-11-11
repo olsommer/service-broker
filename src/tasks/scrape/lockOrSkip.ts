@@ -12,26 +12,17 @@ export async function lockOrSkip(
     /* Get job data */
     const { data, error } = await supa
       .from("leads")
-      .select("is_blocked")
+      .select("*")
       .eq("id", lead_id)
       .limit(1)
       .single();
     if (error) throw error;
 
     if (data.is_blocked == null) {
-      /* Get lead data */
-      const { data: lead, error: leadErr } = await supa
-        .from("leads")
-        .select("*")
-        .eq("id", lead_id)
-        .limit(1)
-        .single();
-      if (leadErr) throw leadErr;
-
-      if (lead.website_summary == null) {
+      if (data.website_summary == null) {
         /* Set job data and get it again (double check) */
         const { error: updateErr } = await supa
-          .from("leads_jobs")
+          .from("leads")
           .update({ is_blocked: leads_job_id })
           .eq("id", lead_id);
         if (updateErr) throw updateErr;
@@ -40,9 +31,9 @@ export async function lockOrSkip(
 
         /* Get job data */
         const { data: data2, error: error2 } = await supa
-          .from("leads_jobs")
+          .from("leads")
           .select("is_blocked")
-          .eq("id", leads_job_id)
+          .eq("id", lead_id)
           .limit(1)
           .single();
         if (error2) throw error2;
