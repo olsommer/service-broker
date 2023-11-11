@@ -71,14 +71,31 @@ export async function scrape(job: Job<Payload, any>) {
     const { skip } = await lockOrSkip(id, lead_id);
 
     if (skip) {
-      generateQueue.add("generateJob", job.data, {
+      await generateQueue.add("generateJob", job.data, {
         removeOnComplete: true,
         removeOnFail: true,
-      }).then(delivered);
+      });
       await setNextState(id, "FLAG_TO_GENERATE", "FLAG_TO_SCRAPE");
-      return;
+    } else {
+      await handleScrape(job);
     }
+  } catch (error) {
+    await log(
+      "ERROR",
+      (error as Error).message,
+      id,
+      "Could not scrape homepage",
+    );
+    await setNextState(id, "ERROR_TIMEOUT", "FLAG_TO_SCRAPE");
+  }
+}
 
+async function handleScrape(job: Job<Payload, any>) {
+  const { new: record } = job.data;
+  const { id, lead_id } = record;
+  try {
+    if (!id) throw new Error("No lead_jobs_id provided");
+    if (!lead_id) throw new Error("No lead_id provided");
     // Get lead data
     const { data: leadData, error: leadErr } = await supa
       .from("leads")
@@ -139,8 +156,6 @@ export async function scrape(job: Job<Payload, any>) {
     }).then(delivered);
 
     await setNextState(id, "FLAG_TO_SUMMARIZE", "FLAG_TO_SCRAPE");
-
-    /* Error handling */
   } catch (error) {
     if (tries < 6) {
       await log(
@@ -160,11 +175,6 @@ export async function scrape(job: Job<Payload, any>) {
       );
 
       /* Add next job */
-      // await retryQueue.add("retryJob", job.data, {
-      //   removeOnComplete: true,
-      //   removeOnFail: true,
-      // });
-      // await setNextState(id, "FLAG_TO_RETRY", "FLAG_TO_SCRAPE", 3);
       await setNextState(id, "ERROR_TIMEOUT", "FLAG_TO_SCRAPE", tries);
     }
   }

@@ -11,6 +11,8 @@ import {
   scrapingQueue,
   summarizeQueue,
 } from "./utils/bullmq";
+import { setNextState } from "./tasks/next";
+import { lockOrSkip } from "./tasks/scrape/lockOrSkip";
 
 /* check the status before */
 const was = (
