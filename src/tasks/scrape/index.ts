@@ -128,7 +128,6 @@ async function handleScrape(job: Job<Payload, any>) {
     let content: string | undefined = undefined;
 
     if (tries < 3) {
-      //content = await scraperAPI(tUrl);
       content = await scraperService(tUrl);
     }
 
@@ -141,7 +140,6 @@ async function handleScrape(job: Job<Payload, any>) {
     }
 
     if (!content) {
-      await log("ERROR", "Content is empty", id, "scrape");
       throw new Error("Content is empty");
     }
 

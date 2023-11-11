@@ -19,7 +19,7 @@ export async function convertToPlain(html: string) {
   const hasTags = htmlTags.test(rawTextContent);
 
   if (hasTags) {
-    rawTextContent = convertToPlainBackup(html);
+    rawTextContent = await convertToPlainBackup(html);
   }
 
   // const cleanedText = rawTextContent.replace(/\s+/g, " ");
@@ -42,7 +42,7 @@ export async function convertToPlain(html: string) {
 }
 
 // Convert again if the first conversion fails
-const convertToPlainBackup = (html: string) => {
+const convertToPlainBackup = async (html: string) => {
   // Parse the HTML string into a DOM document
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, "text/html");
@@ -50,6 +50,20 @@ const convertToPlainBackup = (html: string) => {
   if (!doc) {
     throw new Error("Could not parse HTML because no document found");
   }
+
+  await log(
+    "OK",
+    doc.textContent,
+    "0000000-0000-0000-0000-000000000000",
+    "continue but could not save meta",
+  );
+
+  await log(
+    "OK",
+    String(doc),
+    "0000000-0000-0000-0000-000000000000",
+    "continue but could not save meta",
+  );
 
   // Find the container element (e.g., <div>) to start the extraction
   const container = doc.getElementsByTagName("body")[0];
