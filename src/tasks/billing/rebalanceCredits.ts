@@ -3,12 +3,12 @@ import { log } from "../log";
 
 export async function rebalanceCredits(
   count_gen_lines: number,
-  count_file_rows: number,
+  expected_lines: number,
   user_id: string,
   leads_job_id: string,
 ) {
   const delta = Math.max(
-    count_file_rows - count_gen_lines,
+    expected_lines - count_gen_lines,
     0,
   );
 
@@ -20,7 +20,6 @@ export async function rebalanceCredits(
     .limit(1)
     .single();
   if (rlErr) throw rlErr;
-  if (!rlData) throw new Error("No ratelimits found");
   const currentCredits = rlData.credits;
 
   const newCreditAmount = currentCredits + delta;

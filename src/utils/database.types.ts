@@ -137,6 +137,30 @@ export interface Database {
           }
         ]
       }
+      costs: {
+        Row: {
+          created_at: string
+          id: string
+          job: string | null
+          lead_id: string | null
+          meta: Json | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          job?: string | null
+          lead_id?: string | null
+          meta?: Json | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          job?: string | null
+          lead_id?: string | null
+          meta?: Json | null
+        }
+        Relationships: []
+      }
       jobs: {
         Row: {
           campaign_id: string | null
@@ -144,7 +168,9 @@ export interface Database {
           count_file_rows: number | null
           count_gen_lines: number
           created_at: string
+          expected_lines: number | null
           id: string
+          is_blocked: string | null
           meta: Json
           product: string
           status: string
@@ -157,12 +183,14 @@ export interface Database {
           count_file_rows?: number | null
           count_gen_lines?: number
           created_at?: string
+          expected_lines?: number | null
           id?: string
+          is_blocked?: string | null
           meta?: Json
           product?: string
           status?: string
           updated_at?: string
-          user_id: string
+          user_id?: string
         }
         Update: {
           campaign_id?: string | null
@@ -170,7 +198,9 @@ export interface Database {
           count_file_rows?: number | null
           count_gen_lines?: number
           created_at?: string
+          expected_lines?: number | null
           id?: string
+          is_blocked?: string | null
           meta?: Json
           product?: string
           status?: string
@@ -221,7 +251,7 @@ export interface Database {
           industry?: string | null
           lead: Json
           updated_at?: string
-          user_id: string
+          user_id?: string
           website?: string | null
           website_content?: string | null
           website_content_cleaned?: string | null

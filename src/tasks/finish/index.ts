@@ -2,10 +2,10 @@ import { log } from "../log";
 import { supa } from "../../utils/supabase";
 import { setNextState } from "../next";
 import { billing } from "../billing";
-import { Job, SandboxedJob } from "bullmq";
+import { Job } from "bullmq";
 import { Payload } from "../../worker";
 import { rebalanceCredits } from "../billing/rebalanceCredits";
-import { retryQueue } from "../../utils/bullmq";
+import { waitUntilFree } from "./waitUntilFree";
 
 export async function finish(job: Job<Payload, any>) {
   const { new: record } = job.data;
@@ -14,8 +14,10 @@ export async function finish(job: Job<Payload, any>) {
     if (!lead_id) throw new Error("No lead provided");
     if (!job_id) throw new Error("No job provided");
 
-    // Get job data
-    // --------------------------------------
+    /* Check if job data is available */
+    await waitUntilFree(job_id);
+
+    /* Get job data */
     const { data: jobData, error: jobErr } = await supa
       .from("jobs")
       .select("*")
@@ -24,37 +26,23 @@ export async function finish(job: Job<Payload, any>) {
       .single();
     if (jobErr) throw jobErr;
     if (!jobData) throw new Error("No data");
-    if (!jobData.count_file_rows) throw new Error("No counted rows provided");
+    if (!jobData.expected_lines) throw new Error("No expected lines provided");
     if (!jobData.user_id) throw new Error("Could not find user");
 
     // Update gen lines + 1
     const count_errors = jobData.count_errors;
     const count_gen_lines = jobData.count_gen_lines + 1;
     const count_sum = count_errors + count_gen_lines;
-    const count_file_rows = jobData.count_file_rows;
+    const expected_lines = jobData.expected_lines;
 
-    //
-    //
-    // Finish job if last job
-    // --------------------------------------
-    if (count_sum >= count_file_rows) {
-      // Update job data
-      // --------------------------------------
-      const { error: job3Err } = await supa
-        .from("jobs")
-        .update({
-          status: "DONE",
-          count_gen_lines,
-        })
-        .eq("id", job_id);
-      if (job3Err) throw job3Err;
-
+    /* Finish job if last job */
+    if (count_sum >= expected_lines) {
       // If Pro job, create billing
       if (jobData.product == "PRO") {
         await billing({
           job_id,
           count_gen_lines,
-          count_file_rows,
+          expected_lines,
           user_id: jobData.user_id,
           leads_job_id: id,
         });
@@ -63,17 +51,28 @@ export async function finish(job: Job<Payload, any>) {
       // Rebalance credits
       await rebalanceCredits(
         count_gen_lines,
-        count_file_rows,
+        expected_lines,
         jobData.user_id,
         id,
       );
+
+      /* Update job data */
+      const { error: job3Err } = await supa
+        .from("jobs")
+        .update({
+          status: "DONE",
+          count_gen_lines,
+          is_blocked: null,
+        })
+        .eq("id", job_id);
+      if (job3Err) throw job3Err;
     } else {
-      // Update job data
-      // --------------------------------------
+      /* Update job data */
       const { error: job2Err } = await supa
         .from("jobs")
         .update({
           count_gen_lines,
+          is_blocked: null,
         })
         .eq("id", job_id);
       if (job2Err) throw job2Err;
@@ -83,13 +82,6 @@ export async function finish(job: Job<Payload, any>) {
     await setNextState(id, "DONE", "FLAG_TO_FINISH");
   } catch (error) {
     console.log(error);
-    // /* Set next state */
-    // await setNextState(id, "FLAG_TO_RETRY", "FLAG_TO_FINISH");
-    // /* Add next job */
-    // await retryQueue.add("retryJob", job.data, {
-    //   removeOnComplete: true,
-    //   removeOnFail: true,
-    // });
     await setNextState(id, "ERROR_TIMEOUT", "FLAG_TO_FINISH", 1);
     await log("ERROR", error as any, id, "finish");
   }

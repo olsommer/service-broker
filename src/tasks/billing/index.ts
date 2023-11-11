@@ -5,13 +5,13 @@ import { reportUsage } from "./reportUsage";
 interface Props {
   job_id: string;
   count_gen_lines: number;
-  count_file_rows: number;
+  expected_lines: number;
   user_id: string;
   leads_job_id: string;
 }
 
 export async function billing(props: Props) {
-  const { job_id, count_gen_lines, count_file_rows, user_id, leads_job_id } =
+  const { job_id, count_gen_lines, expected_lines, user_id, leads_job_id } =
     props;
 
   // Get current credits
@@ -27,7 +27,7 @@ export async function billing(props: Props) {
       .from("billings")
       .update({
         quantity_generated: count_gen_lines,
-        quantity: count_file_rows,
+        quantity: expected_lines,
         report_usage_error: "No profile or subscription found ",
       })
       .eq("job_id", job_id)
@@ -40,7 +40,7 @@ export async function billing(props: Props) {
   // Report Usage to Stripe
   const { error, idempotencyKey } = await reportUsage(
     subData.subscription_item_id,
-    count_gen_lines,
+    expected_lines,
   );
 
   // Update billing data
@@ -48,7 +48,7 @@ export async function billing(props: Props) {
     .from("billings")
     .update({
       quantity_generated: count_gen_lines,
-      quantity: count_file_rows,
+      quantity: expected_lines,
       report_usage_error: error?.message,
       report_usage_idempotency_key: idempotencyKey,
     })
