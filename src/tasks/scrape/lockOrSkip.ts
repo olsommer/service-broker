@@ -27,18 +27,18 @@ export async function lockOrSkip(
       .eq("id", lead_id);
     if (updateErr) throw updateErr;
 
-    await setTimeout(Math.random() * (0.8) + 0.2 * 1000); // Wait for 1 seconds max
+    // await setTimeout(Math.random() * (0.8) + 0.2 * 1000); // Wait for 1 seconds max
 
-    /* Get job data */
-    const { data: data2, error: error2 } = await supa
-      .from("leads")
-      .select("is_blocked")
-      .eq("id", lead_id)
-      .limit(1)
-      .single();
-    if (error2) throw error2;
+    // /* Get job data */
+    // const { data: data2, error: error2 } = await supa
+    //   .from("leads")
+    //   .select("is_blocked")
+    //   .eq("id", lead_id)
+    //   .limit(1)
+    //   .single();
+    // if (error2) throw error2;
 
-    if (data2.is_blocked == leads_job_id) return { skip: false, lock: true };
+    // if (data2.is_blocked == leads_job_id) return { skip: false, lock: true };
     return { skip: false, lock: false };
     /* END FREE DONT SKIP AND DONT LOCK */
   } else return { skip: false, lock: true };

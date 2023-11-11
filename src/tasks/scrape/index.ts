@@ -72,22 +72,21 @@ export async function scrape(job: Job<Payload, any>) {
     if (!id) throw new Error("No lead_jobs_id provided");
     if (!lead_id) throw new Error("No lead_id provided");
     const { skip, lock } = await lockOrSkip(id, lead_id);
+    console.log("skip", skip, "lock", lock);
     if (lock) {
       await scrapingQueue.add("scraperJob", job.data, {
         removeOnComplete: true,
         removeOnFail: true,
         delay: 5000,
       });
+    } else if (skip) {
+      await generateQueue.add("generateJob", job.data, {
+        removeOnComplete: true,
+        removeOnFail: true,
+      });
+      await setNextState(id, "FLAG_TO_GENERATE", "FLAG_TO_SCRAPE");
     } else {
-      if (skip) {
-        await generateQueue.add("generateJob", job.data, {
-          removeOnComplete: true,
-          removeOnFail: true,
-        });
-        await setNextState(id, "FLAG_TO_GENERATE", "FLAG_TO_SCRAPE");
-      } else {
-        await handleScrape(job);
-      }
+      await handleScrape(job);
     }
   } catch (error) {
     await log(
@@ -175,7 +174,7 @@ async function handleScrape(job: Job<Payload, any>) {
         "Scraping Error - Retries: " + tries + "",
       );
       tries += 1;
-      await scrape(job);
+      await handleScrape(job);
     } else {
       await log(
         "ERROR",
@@ -183,7 +182,6 @@ async function handleScrape(job: Job<Payload, any>) {
         id,
         "Could not scrape homepage or save scrape",
       );
-
       /* Add next job */
       await setNextState(id, "ERROR_TIMEOUT", "FLAG_TO_SCRAPE", tries);
     }
