@@ -51,20 +51,6 @@ const convertToPlainBackup = async (html: string) => {
     throw new Error("Could not parse HTML because no document found");
   }
 
-  await log(
-    "OK",
-    doc.textContent,
-    "532ca13a-3823-4747-8cf8-8dba9ba3eed1",
-    "continue but could not save meta",
-  );
-
-  await log(
-    "OK",
-    String(doc),
-    "532ca13a-3823-4747-8cf8-8dba9ba3eed1",
-    "continue but could not save meta",
-  );
-
   // Find the container element (e.g., <div>) to start the extraction
   const container = doc.getElementsByTagName("body")[0];
 

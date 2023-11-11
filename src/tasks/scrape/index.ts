@@ -103,9 +103,12 @@ export async function scrape(job: Job<Payload, any>) {
 async function handleScrape(job: Job<Payload, any>) {
   const { new: record } = job.data;
   const { id, lead_id } = record;
+  let content: string | undefined = undefined;
+
+  if (!id) throw new Error("No lead_jobs_id provided");
+  if (!lead_id) throw new Error("No lead_id provided");
+
   try {
-    if (!id) throw new Error("No lead_jobs_id provided");
-    if (!lead_id) throw new Error("No lead_id provided");
     // Get lead data
     const { data: leadData, error: leadErr } = await supa
       .from("leads")
@@ -125,8 +128,6 @@ async function handleScrape(job: Job<Payload, any>) {
     const tUrl = transformUrl(url);
 
     /* Scrape */
-    let content: string | undefined = undefined;
-
     if (tries < 3) {
       content = await scraperService(tUrl);
     }
@@ -142,6 +143,30 @@ async function handleScrape(job: Job<Payload, any>) {
     if (!content) {
       throw new Error("Content is empty");
     }
+  } catch (error) {
+    if (tries < 6) {
+      await log(
+        "ERROR",
+        (error as Error).message,
+        id,
+        "Scraping Error - Retries: " + tries + "",
+      );
+      tries += 1;
+      await handleScrape(job);
+    } else {
+      await log(
+        "ERROR",
+        (error as Error).message,
+        id,
+        "Could not scrape homepage or save scrape",
+      );
+      /* Add next job */
+      await setNextState(id, "ERROR_TIMEOUT", "FLAG_TO_SCRAPE", tries);
+    }
+  }
+
+  try {
+    if (!content) throw new Error("Content is empty");
 
     /* Clean */
     const content_cleaned = await convertToPlain(content);
@@ -164,24 +189,12 @@ async function handleScrape(job: Job<Payload, any>) {
 
     await setNextState(id, "FLAG_TO_SUMMARIZE", "FLAG_TO_SCRAPE");
   } catch (error) {
-    if (tries < 6) {
-      await log(
-        "ERROR",
-        (error as Error).message,
-        id,
-        "Scraping Error - Retries: " + tries + "",
-      );
-      tries += 1;
-      await handleScrape(job);
-    } else {
-      await log(
-        "ERROR",
-        (error as Error).message,
-        id,
-        "Could not scrape homepage or save scrape",
-      );
-      /* Add next job */
-      await setNextState(id, "ERROR_TIMEOUT", "FLAG_TO_SCRAPE", tries);
-    }
+    await log(
+      "ERROR",
+      (error as Error).message,
+      id,
+      "Could not convert scrape homepage",
+    );
+    await setNextState(id, "ERROR_TIMEOUT", "FLAG_TO_SCRAPE", tries);
   }
 }
