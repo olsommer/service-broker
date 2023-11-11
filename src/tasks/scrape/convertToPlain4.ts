@@ -5,13 +5,6 @@ import { DOMParser } from "@xmldom/xmldom";
 export async function convertToPlain(html: string) {
   let $ = load(html);
 
-  // /* Check if there is a main */
-  // if ($("body").has("main").length > 0) {
-  //   _$ = $("body");
-  // } else {
-  //   _$ = $("main");
-  // }
-
   const $$ = $("main").length ? $("main") : $("body");
   $$.find(
     "script, style, nav, button, a, img, svg, video, audio, iframe, table, footer",
@@ -55,14 +48,16 @@ const convertToPlainBackup = (html: string) => {
   const doc = parser.parseFromString(html, "text/html");
 
   if (!doc) {
-    throw new Error("Could not parse HTML");
+    throw new Error("Could not parse HTML because no document found");
   }
 
   // Find the container element (e.g., <div>) to start the extraction
   const container = doc.getElementsByTagName("body")[0];
 
   if (!container) {
-    throw new Error("Could not parse HTML");
+    throw new Error(
+      "Could not parse HTML because body container was not found",
+    );
   }
   // Extract raw text content from the container element and its children
   const rawTextContent = extractRawText(container);

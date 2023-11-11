@@ -114,7 +114,6 @@ async function handleScrape(job: Job<Payload, any>) {
       .single();
     if (leadErr) throw leadErr;
     if (!leadData) throw new Error("No data");
-    // const url = (leadData.lead as { website?: string }).website;
     const url = leadData.website;
     if (!url) throw new Error("Website URL is empty or null");
 
