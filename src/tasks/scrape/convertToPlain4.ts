@@ -3,19 +3,19 @@ import { AnyNode, Cheerio, load } from "cheerio";
 import { DOMParser } from "@xmldom/xmldom";
 
 export async function convertToPlain(html: string) {
-  let $ = load(html);
+  // let $ = load(html);
 
-  const excludedTags = [
-    "script, style, nav, button, a, img, svg, video, audio, iframe, table, footer",
-  ];
+  // const excludedTags = [
+  //   "script, style, nav, button, a, img, svg, video, audio, iframe, table, footer",
+  // ];
 
-  let rawTextContent = $("html *:not(" + excludedTags.join(", ") + ")")
-    .contents()
-    .map(function () {
-      return (this.type === "text") ? $(this).text() + " " : "";
-    })
-    .get()
-    .join("");
+  // let rawTextContent = $("html *:not(" + excludedTags.join(", ") + ")")
+  //   .contents()
+  //   .map(function () {
+  //     return (this.type === "text") ? $(this).text() + " " : "";
+  //   })
+  //   .get()
+  //   .join("");
 
   // const $$ = $("main").length ? $("main") : $("body");
   // $$.find(
@@ -34,6 +34,17 @@ export async function convertToPlain(html: string) {
   //   rawTextContent = await convertToPlainBackup(html);
   // }
 
+  // Remove script, style, iframe, and image tags
+  let rawTextContent = html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
+    .replace(/<img\b[^<]*(?:(?!>)*\/?>)/gi, "");
+
+  // Remove head element
+  rawTextContent.replace(/<head\b[^<]*(?:(?!<\/head>)<[^<]*)*<\/head>/gi, "");
+  rawTextContent.replace(/<[^>]*>/g, "");
+
   // const cleanedText = rawTextContent.replace(/\s+/g, " ");
   // The regular expression [\n\r\t]+ matches one or more line breaks
   // (including newline \n and carriage return \r) and tabs \t, and replaces them with a single space.
@@ -49,7 +60,7 @@ export async function convertToPlain(html: string) {
     .replace(/\\/g, " ") // Escape backslashes
     .replace(/[\x00-\x1F]/g, " ");
 
-  const trimmedText = rawTextContent.trim();
+  const trimmedText = cleanedText.trim();
   return trimmedText;
 }
 
