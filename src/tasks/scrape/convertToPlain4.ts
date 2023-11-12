@@ -34,21 +34,6 @@ export async function convertToPlain(html: string) {
   //   rawTextContent = await convertToPlainBackup(html);
   // }
 
-  const removedTags = [
-    "nav",
-    "button",
-    "svg",
-    "video",
-    "audio",
-    "table",
-    "footer",
-    "form",
-  ];
-  const removeSpecifiedTags = new RegExp(
-    `<(${removedTags.join("|")})\\b[^>]*>.*?<\\/${removedTags.join("|")}>`,
-    "gis",
-  );
-
   // Remove script, style, iframe, and image tags
   let rawTextContent = html
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, " ")
@@ -56,7 +41,14 @@ export async function convertToPlain(html: string) {
     .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, " ")
     .replace(/<head\b[^<]*(?:(?!<\/head>)<[^<]*)*<\/head>/gi, " ")
     .replace(/<img\b[^<]*(?:(?!>)*\/?>)/gi, " ")
-    .replace(removeSpecifiedTags, " ")
+    .replace(/<nav\b[^<]*(?:(?!<\/nav>)<[^<]*)*<\/nav>/gi, " ")
+    .replace(/<button\b[^<]*(?:(?!<\/button>)<[^<]*)*<\/button>/gi, " ")
+    .replace(/<svg\b[^<]*(?:(?!<\/svg>)<[^<]*)*<\/svg>/gi, " ")
+    .replace(/<video\b[^<]*(?:(?!<\/video>)<[^<]*)*<\/video>/gi, " ")
+    .replace(/<audio\b[^<]*(?:(?!<\/audio>)<[^<]*)*<\/audio>/gi, " ")
+    .replace(/<table\b[^<]*(?:(?!<\/table>)<[^<]*)*<\/table>/gi, " ")
+    .replace(/<footer\b[^<]*(?:(?!<\/footer>)<[^<]*)*<\/footer>/gi, " ")
+    .replace(/<form\b[^<]*(?:(?!<\/form>)<[^<]*)*<\/form>/gi, " ")
     .replace(/<a\b[^<]*(?:(?!<\/a>)<[^<]*)*<\/a>/gi, " ")
     .replace(/<!--[\s\S]*?-->/g, "") // This line removes HTML comments
     .replace(/<[^>]*>/g, " ")
@@ -66,7 +58,8 @@ export async function convertToPlain(html: string) {
     .replace(/{/g, " ") // Escape curly braces {
     .replace(/}/g, " ") // Escape curly braces }
     .replace(/\\/g, " ") // Escape backslashes
-    .replace(/[\x00-\x1F]/g, " ");
+    .replace(/[\x00-\x1F]/g, " ")
+    .replace(/\u2019/g, "");
 
   await log(
     "OK",
