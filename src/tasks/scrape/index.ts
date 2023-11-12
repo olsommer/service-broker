@@ -12,7 +12,6 @@ import {
   scrapingQueue,
   summarizeQueue,
 } from "../../utils/bullmq";
-import { delivered } from "../../producer";
 import { lockOrSkip } from "./lockOrSkip";
 
 let tries = 0;
@@ -104,7 +103,7 @@ async function handleScrape(job: Job<Payload, any>) {
   const { new: record } = job.data;
   const { id, lead_id } = record;
   let content: string | undefined = undefined;
-
+  let url = null;
   if (!id) throw new Error("No lead_jobs_id provided");
   if (!lead_id) throw new Error("No lead_id provided");
 
@@ -117,14 +116,29 @@ async function handleScrape(job: Job<Payload, any>) {
       .limit(1)
       .single();
     if (leadErr) throw leadErr;
-    if (!leadData) throw new Error("No data");
-    const url = leadData.website;
+
+    // Get url
+    url = leadData.website;
     if (!url) throw new Error("Website URL is empty or null");
 
     // Transform url
     if (isValidUrl(url) === false) {
-      await log("ERROR", "result: invalid url", id, "scrape");
+      throw new Error("result: invalid url");
     }
+  } catch (error) {
+    await log(
+      "ERROR",
+      (error as Error).message,
+      id,
+      "URL is not valid",
+    );
+    await setNextState(id, "ERROR_TIMEOUT", "FLAG_TO_SCRAPE", tries);
+  }
+
+  try {
+    // Get url
+    if (!url) throw new Error("Website URL is empty or null");
+
     const tUrl = transformUrl(url);
 
     /* Scrape */
