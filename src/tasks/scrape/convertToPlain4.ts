@@ -37,7 +37,6 @@ export async function convertToPlain(html: string) {
   const removedTags = [
     "nav",
     "button",
-    "a",
     "svg",
     "video",
     "audio",
@@ -58,6 +57,7 @@ export async function convertToPlain(html: string) {
     .replace(/<head\b[^<]*(?:(?!<\/head>)<[^<]*)*<\/head>/gi, " ")
     .replace(/<img\b[^<]*(?:(?!>)*\/?>)/gi, " ")
     .replace(removeSpecifiedTags, " ")
+    .replace(/<a\b[^<]*(?:(?!<\/a>)<[^<]*)*<\/a>/gi, " ")
     .replace(/<!--[\s\S]*?-->/g, "") // This line removes HTML comments
     .replace(/<[^>]*>/g, " ")
     .replace(/[\n\r\t]+/g, " ")
@@ -65,8 +65,8 @@ export async function convertToPlain(html: string) {
     .replace(/"/g, " ") // Escape double quotes
     .replace(/{/g, " ") // Escape curly braces {
     .replace(/}/g, " ") // Escape curly braces }
-    .replace(/\\/g, " "); // Escape backslashes
-  // .replace(/[\x00-\x1F]/g, " ");
+    .replace(/\\/g, " ") // Escape backslashes
+    .replace(/[\x00-\x1F]/g, " ");
 
   await log(
     "OK",
