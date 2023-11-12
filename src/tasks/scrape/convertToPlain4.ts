@@ -52,13 +52,20 @@ export async function convertToPlain(html: string) {
 
   // Remove script, style, iframe, and image tags
   let rawTextContent = html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
-    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
-    .replace(/<head\b[^<]*(?:(?!<\/head>)<[^<]*)*<\/head>/gi, "")
-    .replace(/<img\b[^<]*(?:(?!>)*\/?>)/gi, "")
-    .replace(removeSpecifiedTags, "")
-    .replace(/<[^>]*>/g, "");
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, " ")
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, " ")
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, " ")
+    .replace(/<head\b[^<]*(?:(?!<\/head>)<[^<]*)*<\/head>/gi, " ")
+    .replace(/<img\b[^<]*(?:(?!>)*\/?>)/gi, " ")
+    .replace(removeSpecifiedTags, " ")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/[\n\r\t]+/g, " ")
+    .replace(/\s+/g, " ")
+    .replace(/"/g, " ") // Escape double quotes
+    .replace(/{/g, " ") // Escape curly braces {
+    .replace(/}/g, " ") // Escape curly braces }
+    .replace(/\\/g, " ") // Escape backslashes
+    .replace(/[\x00-\x1F]/g, " ");
 
   await log(
     "OK",
