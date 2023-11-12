@@ -42,6 +42,13 @@ export async function convertToPlain(html: string) {
     .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
     .replace(/<img\b[^<]*(?:(?!>)*\/?>)/gi, "");
 
+  await log(
+    "OK",
+    rawTextContent,
+    "40f00d77-9fb1-49d0-ab73-e23d7f221f3c",
+    "scrape",
+  );
+
   const removedTags = [
     "nav",
     "button",
@@ -63,6 +70,13 @@ export async function convertToPlain(html: string) {
   rawTextContent.replace(/<head\b[^<]*(?:(?!<\/head>)<[^<]*)*<\/head>/gi, "");
   rawTextContent.replace(/<[^>]*>/g, "");
 
+  await log(
+    "OK",
+    rawTextContent,
+    "40f00d77-9fb1-49d0-ab73-e23d7f221f3c",
+    "scrape",
+  );
+
   // const cleanedText = rawTextContent.replace(/\s+/g, " ");
   // The regular expression [\n\r\t]+ matches one or more line breaks
   // (including newline \n and carriage return \r) and tabs \t, and replaces them with a single space.
@@ -83,62 +97,62 @@ export async function convertToPlain(html: string) {
 }
 
 // Convert again if the first conversion fails
-const convertToPlainBackup = async (html: string) => {
-  // Parse the HTML string into a DOM document
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, "text/html");
+// const convertToPlainBackup = async (html: string) => {
+//   // Parse the HTML string into a DOM document
+//   const parser = new DOMParser();
+//   const doc = parser.parseFromString(html, "text/html");
 
-  if (!doc) {
-    throw new Error("Could not parse HTML because no document found");
-  }
+//   if (!doc) {
+//     throw new Error("Could not parse HTML because no document found");
+//   }
 
-  // Find the container element (e.g., <div>) to start the extraction
-  // const container = doc.getElementsByTagName("body")[0];
+//   // Find the container element (e.g., <div>) to start the extraction
+//   // const container = doc.getElementsByTagName("body")[0];
 
-  // if (!container) {
-  //   throw new Error(
-  //     "Could not parse HTML because body container was not found",
-  //   );
-  // }
-  // Extract raw text content from the container element and its children
-  const rawTextContent = extractRawText(doc);
-  return rawTextContent;
-};
+//   // if (!container) {
+//   //   throw new Error(
+//   //     "Could not parse HTML because body container was not found",
+//   //   );
+//   // }
+//   // Extract raw text content from the container element and its children
+//   const rawTextContent = extractRawText(doc);
+//   return rawTextContent;
+// };
 
 // Convert again if the first conversion fails
-const extractRawText = (node: Node) => {
-  let result = "";
+// const extractRawText = (node: Node) => {
+//   let result = "";
 
-  // If the node is a text node, concatenate its text
-  if (node.nodeType === 3) { // 3 corresponds to TEXT_NODE
-    result += node.nodeValue || "";
-  } else if (node.nodeType === 1) { // 1 corresponds to ELEMENT_NODE
-    const nodeName = node.nodeName.toLowerCase();
-    const excludedElements = [
-      "script",
-      "style",
-      "nav",
-      "button",
-      "a",
-      "img",
-      "svg",
-      "audio",
-      "iframe",
-      "table",
-      "footer",
-      "head",
-    ];
+//   // If the node is a text node, concatenate its text
+//   if (node.nodeType === 3) { // 3 corresponds to TEXT_NODE
+//     result += node.nodeValue || "";
+//   } else if (node.nodeType === 1) { // 1 corresponds to ELEMENT_NODE
+//     const nodeName = node.nodeName.toLowerCase();
+//     const excludedElements = [
+//       "script",
+//       "style",
+//       "nav",
+//       "button",
+//       "a",
+//       "img",
+//       "svg",
+//       "audio",
+//       "iframe",
+//       "table",
+//       "footer",
+//       "head",
+//     ];
 
-    // Exclude script and style elements and their content
-    // "script, style, nav, button, a, img, svg, video, audio, iframe, table, footer",
-    if (excludedElements.includes(nodeName)) {
-      return result;
-    }
+//     // Exclude script and style elements and their content
+//     // "script, style, nav, button, a, img, svg, video, audio, iframe, table, footer",
+//     if (excludedElements.includes(nodeName)) {
+//       return result;
+//     }
 
-    for (let i = 0; i < node.childNodes.length; i++) {
-      result += " " + extractRawText(node.childNodes[i]) + " ";
-    }
-  }
+//     for (let i = 0; i < node.childNodes.length; i++) {
+//       result += " " + extractRawText(node.childNodes[i]) + " ";
+//     }
+//   }
 
-  return result;
-};
+//   return result;
+// };
