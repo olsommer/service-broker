@@ -73,21 +73,26 @@ const extractRawText = (node: Node) => {
     result += node.nodeValue || "";
   } else if (node.nodeType === 1) { // 1 corresponds to ELEMENT_NODE
     const nodeName = node.nodeName.toLowerCase();
+    const excludedElements = [
+      "script",
+      "style",
+      "nav",
+      "button",
+      "a",
+      "img",
+      "svg",
+      "audio",
+      "iframe",
+      "table",
+      "footer",
+    ];
 
     // Exclude script and style elements and their content
     // "script, style, nav, button, a, img, svg, video, audio, iframe, table, footer",
-    if (
-      nodeName === "script" || nodeName === "style" || nodeName === "nav" ||
-      nodeName === "button" || nodeName === "a" || nodeName === "img" ||
-      nodeName === "svg" || nodeName === "audio" || nodeName === "iframe" ||
-      nodeName === "table" || nodeName === "footer"
-    ) {
+    if (excludedElements.includes(nodeName)) {
       return result;
     }
-    // If the node is an element node, recursively extract text from its child nodes
-    // for (const childNode of node.childNodes) {
-    //   result = " " + result + " " + extractRawText(childNode) + " ";
-    // }
+
     for (let i = 0; i < node.childNodes.length; i++) {
       result += " " + extractRawText(node.childNodes[i]) + " ";
     }
