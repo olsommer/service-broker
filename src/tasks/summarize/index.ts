@@ -6,7 +6,12 @@ import { setNextState } from "../next";
 import { Job, SandboxedJob } from "bullmq";
 import { Payload } from "../../worker";
 import { ChatCompletionMessageParam } from "openai/resources";
-import { generateQueue, retryQueue, summarizeQueue } from "../../utils/bullmq";
+import {
+  generateQ,
+  generateQueue,
+  retryQueue,
+  summarizeQueue,
+} from "../../utils/bullmq";
 import { delivered } from "../../producer";
 import { release } from "./release";
 
@@ -103,10 +108,10 @@ export async function summarize(job: Job<Payload, any>) {
     }
 
     /* Set next job */
-    generateQueue.add("generateJob", job.data, {
+    generateQueue.add(generateQ, job.data, {
       removeOnComplete: true,
       removeOnFail: true,
-    }).then(delivered);
+    });
 
     /* Release lock */
     await release(lead_id);
