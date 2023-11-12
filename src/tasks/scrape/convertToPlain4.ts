@@ -36,7 +36,6 @@ export async function convertToPlain(html: string) {
 
   // Remove script, style, iframe, and image tags
   let rawTextContent = html
-    .replace(/^<!DOCTYPE[^>]+>/, "")
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
     .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
     .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
@@ -68,7 +67,6 @@ export async function convertToPlain(html: string) {
   rawTextContent.replace(removeSpecifiedTags, "");
 
   // Remove head element
-  rawTextContent.replace(/<head\b[^<]*(?:(?!<\/head>)<[^<]*)*<\/head>/gi, "");
   rawTextContent.replace(/<[^>]*>/g, "");
 
   await log(
