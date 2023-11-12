@@ -52,15 +52,15 @@ const convertToPlainBackup = async (html: string) => {
   }
 
   // Find the container element (e.g., <div>) to start the extraction
-  const container = doc.getElementsByTagName("body")[0];
+  // const container = doc.getElementsByTagName("body")[0];
 
-  if (!container) {
-    throw new Error(
-      "Could not parse HTML because body container was not found",
-    );
-  }
+  // if (!container) {
+  //   throw new Error(
+  //     "Could not parse HTML because body container was not found",
+  //   );
+  // }
   // Extract raw text content from the container element and its children
-  const rawTextContent = extractRawText(container);
+  const rawTextContent = extractRawText(doc);
   return rawTextContent;
 };
 
@@ -85,6 +85,7 @@ const extractRawText = (node: Node) => {
       "iframe",
       "table",
       "footer",
+      "head",
     ];
 
     // Exclude script and style elements and their content
