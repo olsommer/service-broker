@@ -34,21 +34,6 @@ export async function convertToPlain(html: string) {
   //   rawTextContent = await convertToPlainBackup(html);
   // }
 
-  // Remove script, style, iframe, and image tags
-  let rawTextContent = html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
-    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
-    .replace(/<head\b[^<]*(?:(?!<\/head>)<[^<]*)*<\/head>/gi, "")
-    .replace(/<img\b[^<]*(?:(?!>)*\/?>)/gi, "");
-
-  await log(
-    "OK",
-    rawTextContent,
-    "40f00d77-9fb1-49d0-ab73-e23d7f221f3c",
-    "scrape 1",
-  );
-
   const removedTags = [
     "nav",
     "button",
@@ -64,10 +49,16 @@ export async function convertToPlain(html: string) {
     `<(${removedTags.join("|")})\\b[^>]*>.*?<\\/${removedTags.join("|")}>`,
     "gis",
   );
-  rawTextContent.replace(removeSpecifiedTags, "");
 
-  // Remove head element
-  rawTextContent.replace(/<[^>]*>/g, "");
+  // Remove script, style, iframe, and image tags
+  let rawTextContent = html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
+    .replace(/<head\b[^<]*(?:(?!<\/head>)<[^<]*)*<\/head>/gi, "")
+    .replace(/<img\b[^<]*(?:(?!>)*\/?>)/gi, "")
+    .replace(removeSpecifiedTags, "")
+    .replace(/<[^>]*>/g, "");
 
   await log(
     "OK",
