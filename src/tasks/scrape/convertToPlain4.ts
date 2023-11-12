@@ -80,16 +80,16 @@ export async function convertToPlain(html: string) {
   // Afterward, the regular expression /\s+/g is used to replace multiple consecutive
   // spaces with a single space. This should give you a cleaned text with
   // line breaks removed and spaces between words preserved.
-  const cleanedText = rawTextContent
-    .replace(/[\n\r\t]+/g, " ")
-    .replace(/\s+/g, " ")
-    .replace(/"/g, " ") // Escape double quotes
-    .replace(/{/g, " ") // Escape curly braces {
-    .replace(/}/g, " ") // Escape curly braces }
-    .replace(/\\/g, " ") // Escape backslashes
-    .replace(/[\x00-\x1F]/g, " ");
+  // const cleanedText = rawTextContent
+  //   .replace(/[\n\r\t]+/g, " ")
+  //   .replace(/\s+/g, " ")
+  //   .replace(/"/g, " ") // Escape double quotes
+  //   .replace(/{/g, " ") // Escape curly braces {
+  //   .replace(/}/g, " ") // Escape curly braces }
+  //   .replace(/\\/g, " ") // Escape backslashes
+  //   .replace(/[\x00-\x1F]/g, " ");
 
-  const trimmedText = cleanedText.trim();
+  const trimmedText = rawTextContent.trim();
   return trimmedText;
 }
 
