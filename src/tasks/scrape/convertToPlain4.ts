@@ -40,13 +40,14 @@ export async function convertToPlain(html: string) {
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
     .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
     .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
+    .replace(/<head\b[^<]*(?:(?!<\/head>)<[^<]*)*<\/head>/gi, "")
     .replace(/<img\b[^<]*(?:(?!>)*\/?>)/gi, "");
 
   await log(
     "OK",
     rawTextContent,
     "40f00d77-9fb1-49d0-ab73-e23d7f221f3c",
-    "scrape",
+    "scrape 1",
   );
 
   const removedTags = [
