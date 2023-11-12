@@ -5,22 +5,26 @@ import { DOMParser } from "@xmldom/xmldom";
 export async function convertToPlain(html: string) {
   let $ = load(html);
 
-  const $$ = $("main").length ? $("main") : $("body");
-  $$.find(
-    "script, style, nav, button, a, img, svg, video, audio, iframe, table, footer",
-  ).remove();
-  // core = core.find("p, h1, h2, h3, h4, h5, h6, li, span, div, a, b, i, u, s");
+  let rawTextContent = $("html *").contents().map(function () {
+    return (this.type === "text") ? $(this).text() + " " : "";
+  }).get().join("");
 
-  // Extract raw text content from the container element and its children
-  let rawTextContent = $$.text();
+  // const $$ = $("main").length ? $("main") : $("body");
+  // $$.find(
+  //   "script, style, nav, button, a, img, svg, video, audio, iframe, table, footer",
+  // ).remove();
+  // // core = core.find("p, h1, h2, h3, h4, h5, h6, li, span, div, a, b, i, u, s");
 
-  const htmlTags =
-    /<script|<style|<nav|<button|<a|<img|<svg|<video|<audio|<iframe|<table|<footer/g;
-  const hasTags = htmlTags.test(rawTextContent);
+  // // Extract raw text content from the container element and its children
+  // let rawTextContent = $$.text();
 
-  if (hasTags) {
-    rawTextContent = await convertToPlainBackup(html);
-  }
+  // const htmlTags =
+  //   /<script|<style|<nav|<button|<a|<img|<svg|<video|<audio|<iframe|<table|<footer/g;
+  // const hasTags = htmlTags.test(rawTextContent);
+
+  // if (hasTags) {
+  //   rawTextContent = await convertToPlainBackup(html);
+  // }
 
   // const cleanedText = rawTextContent.replace(/\s+/g, " ");
   // The regular expression [\n\r\t]+ matches one or more line breaks
@@ -37,7 +41,7 @@ export async function convertToPlain(html: string) {
     .replace(/\\/g, " ") // Escape backslashes
     .replace(/[\x00-\x1F]/g, " ");
 
-  const trimmedText = cleanedText.trim();
+  const trimmedText = rawTextContent.trim();
   return trimmedText;
 }
 

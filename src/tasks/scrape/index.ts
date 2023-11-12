@@ -70,24 +70,25 @@ export async function scrape(job: Job<Payload, any>) {
   try {
     if (!id) throw new Error("No lead_jobs_id provided");
     if (!lead_id) throw new Error("No lead_id provided");
-    const { skip, lock } = await lockOrSkip(id, lead_id);
-    console.log("skip", skip, "lock", lock);
-    if (lock) {
-      console.log("looping the scrape");
-      await scrapingQueue.add("scraperJob", job.data, {
-        removeOnComplete: true,
-        removeOnFail: true,
-        delay: 5000,
-      });
-    } else if (skip) {
-      await generateQueue.add("generateJob", job.data, {
-        removeOnComplete: true,
-        removeOnFail: true,
-      });
-      await setNextState(id, "FLAG_TO_GENERATE", "FLAG_TO_SCRAPE");
-    } else {
-      await handleScrape(job);
-    }
+
+    // const { skip, lock } = await lockOrSkip(id, lead_id);
+    // if (lock) {
+    //   console.log("looping the scrape");
+    //   await scrapingQueue.add("scraper", job.data, {
+    //     removeOnComplete: true,
+    //     removeOnFail: true,
+    //     delay: 5000,
+    //   });
+    // } else if (skip) {
+    //   await generateQueue.add("generate", job.data, {
+    //     removeOnComplete: true,
+    //     removeOnFail: true,
+    //   });
+    //   await setNextState(id, "FLAG_TO_GENERATE", "FLAG_TO_SCRAPE");
+    // } else {
+    //   await handleScrape(job);
+    // }
+    handleScrape(job);
   } catch (error) {
     await log(
       "ERROR",
