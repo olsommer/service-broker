@@ -65,8 +65,8 @@ export async function convertToPlain(html: string) {
     .replace(/"/g, " ") // Escape double quotes
     .replace(/{/g, " ") // Escape curly braces {
     .replace(/}/g, " ") // Escape curly braces }
-    .replace(/\\/g, " ") // Escape backslashes
-    .replace(/[\x00-\x1F]/g, " ");
+    .replace(/\\/g, " "); // Escape backslashes
+  // .replace(/[\x00-\x1F]/g, " ");
 
   await log(
     "OK",
