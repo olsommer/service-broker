@@ -41,6 +41,23 @@ export async function convertToPlain(html: string) {
     .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
     .replace(/<img\b[^<]*(?:(?!>)*\/?>)/gi, "");
 
+  const removedTags = [
+    "nav",
+    "button",
+    "a",
+    "svg",
+    "video",
+    "audio",
+    "table",
+    "footer",
+    "form",
+  ];
+  const removeSpecifiedTags = new RegExp(
+    `<(${removedTags.join("|")})\\b[^>]*>.*?<\\/${removedTags.join("|")}>`,
+    "gis",
+  );
+  rawTextContent.replace(removeSpecifiedTags, "");
+
   // Remove head element
   rawTextContent.replace(/<head\b[^<]*(?:(?!<\/head>)<[^<]*)*<\/head>/gi, "");
   rawTextContent.replace(/<[^>]*>/g, "");
