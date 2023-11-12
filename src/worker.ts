@@ -5,8 +5,17 @@ import { Tables } from "./utils/database.helpers";
 // import { DoneCallback, Job } from "bee-queue";
 
 import { Worker } from "bullmq";
-import { conn1, conn2, conn3, conn4, conn5 } from "./utils/bullmq";
-import path from "path";
+import {
+  conn1,
+  conn2,
+  conn3,
+  conn4,
+  conn5,
+  finishQ,
+  generateQ,
+  scraperQ,
+  summarizeQ,
+} from "./utils/bullmq";
 import { finish } from "./tasks/finish";
 import { generate } from "./tasks/generate_line";
 import { summarize } from "./tasks/summarize";
@@ -25,7 +34,7 @@ export type Payload = {
 /* scraping */
 // const scraperFile = path.join(__dirname, "./worker_scrape_thread.js");
 // const scraperWorker = new Worker("scraper", scraperFile, {
-const scraperWorker = new Worker("scraper", scrape, {
+const scraperWorker = new Worker(scraperQ, scrape, {
   connection: conn1,
   // useWorkerThreads: true,
   concurrency: 6,
@@ -40,7 +49,7 @@ scraperWorker.on("failed", (job, err) => {
 /* summarize */
 // const sumFile = path.join(__dirname, "./worker_summarize_thread.js");
 // const sumWorker = new Worker("summarizer", sumFile, {
-const sumWorker = new Worker("summarizer", summarize, {
+const sumWorker = new Worker(summarizeQ, summarize, {
   connection: conn2,
   // useWorkerThreads: true,
   concurrency: 2,
@@ -55,7 +64,7 @@ sumWorker.on("failed", (job, err) => {
 /* generate */
 // const genFile = path.join(__dirname, "./worker_generate_thread.js");
 // const genWorker = new Worker("generate", genFile, {
-const genWorker = new Worker("generate", generate, {
+const genWorker = new Worker(generateQ, generate, {
   connection: conn3,
   // useWorkerThreads: true,
   concurrency: 2,
@@ -70,7 +79,7 @@ genWorker.on("failed", (job, err) => {
 /* finish */
 // const finFile = path.join(__dirname, "./worker_finish_thread.js");
 // const finWorker = new Worker("finish", finFile, {
-const finWorker = new Worker("finish", finish, {
+const finWorker = new Worker(finishQ, finish, {
   connection: conn4,
   // useWorkerThreads: true,
   concurrency: 1,

@@ -30,8 +30,14 @@ export const conn5 = new Redis(process.env.REDIS_URL ?? "", {
   sentinelMaxConnections: 1,
 });
 
-export const scrapingQueue = new Queue("scraper", { connection: conn1 });
-export const summarizeQueue = new Queue("summarizer", { connection: conn2 });
-export const generateQueue = new Queue("generate", { connection: conn3 });
-export const finishQueue = new Queue("finish", { connection: conn4 });
-export const retryQueue = new Queue("retry", { connection: conn5 });
+export const scraperQ = "scraper";
+export const summarizeQ = "summarizer";
+export const generateQ = "generate";
+export const finishQ = "finish";
+export const retryQ = "retry";
+
+export const scrapingQueue = new Queue(scraperQ, { connection: conn1 });
+export const summarizeQueue = new Queue(summarizeQ, { connection: conn2 });
+export const generateQueue = new Queue(generateQ, { connection: conn3 });
+export const finishQueue = new Queue(finishQ, { connection: conn4 });
+export const retryQueue = new Queue(retryQ, { connection: conn5 });

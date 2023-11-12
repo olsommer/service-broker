@@ -8,8 +8,11 @@ import { convertToPlain } from "./convertToPlain4";
 import { Job } from "bullmq";
 import { Payload } from "../../worker";
 import {
+  generateQ,
   generateQueue,
+  scraperQ,
   scrapingQueue,
+  summarizeQ,
   summarizeQueue,
 } from "../../utils/bullmq";
 import { lockOrSkip } from "./lockOrSkip";
@@ -71,24 +74,27 @@ export async function scrape(job: Job<Payload, any>) {
     if (!id) throw new Error("No lead_jobs_id provided");
     if (!lead_id) throw new Error("No lead_id provided");
 
-    // const { skip, lock } = await lockOrSkip(id, lead_id);
-    // if (lock) {
-    //   console.log("looping the scrape");
-    //   await scrapingQueue.add("scraper", job.data, {
-    //     removeOnComplete: true,
-    //     removeOnFail: true,
-    //     delay: 5000,
-    //   });
-    // } else if (skip) {
-    //   await generateQueue.add("generate", job.data, {
-    //     removeOnComplete: true,
-    //     removeOnFail: true,
-    //   });
-    //   await setNextState(id, "FLAG_TO_GENERATE", "FLAG_TO_SCRAPE");
-    // } else {
-    //   await handleScrape(job);
-    // }
-    handleScrape(job);
+    const { skip, lock } = await lockOrSkip(id, lead_id);
+    if (lock) {
+      setTimeout(() => {
+        scrapingQueue.add(scraperQ, job.data, {
+          removeOnComplete: true,
+          removeOnFail: true,
+          delay: 5000,
+        });
+      }, 5000);
+    } else if (skip) {
+      await setNextState(id, "FLAG_TO_GENERATE", "FLAG_TO_SCRAPE");
+      generateQueue.add(generateQ, job.data, {
+        removeOnComplete: true,
+        removeOnFail: true,
+      });
+    }
+
+    /* ELSE: SCRAPE */
+    if (!skip && !lock) {
+      await handleScrape(job);
+    }
   } catch (error) {
     await log(
       "ERROR",
@@ -190,14 +196,14 @@ async function handleScrape(job: Job<Payload, any>) {
     const { error: updateLeads } = await supa
       .from("leads")
       .update({
-        website_content: content,
+        website_content: null,
         website_content_cleaned: content_cleaned,
       })
       .eq("id", lead_id);
     if (updateLeads) throw updateLeads;
 
     /* Add next job */
-    await summarizeQueue.add("summarizeJob", job.data, {
+    await summarizeQueue.add(summarizeQ, job.data, {
       removeOnComplete: true,
       removeOnFail: true,
     });
