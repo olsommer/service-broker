@@ -5,13 +5,14 @@ import { DOMParser } from "@xmldom/xmldom";
 export async function convertToPlain(html: string) {
   let $ = load(html);
 
-  let rawTextContent = $("html *")
-    // .not(
-    //   "script, style, nav, button, a, img, svg, video, audio, iframe, table, footer",
-    // )
+  const excludedTags = [
+    "script, style, nav, button, a, img, svg, video, audio, iframe, table, footer",
+  ];
+
+  let rawTextContent = $("html *:not(" + excludedTags.join(", ") + ")")
     .contents()
     .map(function () {
-      return (this.type === "text") ? $(this).prop("innerText") + " " : "";
+      return (this.type === "text") ? $(this).text() + " " : "";
     })
     .get()
     .join("");
