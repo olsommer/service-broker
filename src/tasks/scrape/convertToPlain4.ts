@@ -58,6 +58,7 @@ export async function convertToPlain(html: string) {
     .replace(/<head\b[^<]*(?:(?!<\/head>)<[^<]*)*<\/head>/gi, " ")
     .replace(/<img\b[^<]*(?:(?!>)*\/?>)/gi, " ")
     .replace(removeSpecifiedTags, " ")
+    .replace(/<!--[\s\S]*?-->/g, "") // This line removes HTML comments
     .replace(/<[^>]*>/g, " ")
     .replace(/[\n\r\t]+/g, " ")
     .replace(/\s+/g, " ")
