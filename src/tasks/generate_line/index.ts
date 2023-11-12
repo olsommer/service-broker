@@ -10,12 +10,13 @@ import { gptGetChallenge } from "./gptGetChallenge";
 import { gptGetCompliment } from "./gptGetCompliment";
 import { gptGetRefinedLine } from "./gptGetRefinedLine";
 import { gptGetCompanyName } from "./gptGetCompanyName";
-import { finishQueue, retryQueue } from "../../utils/bullmq";
+import { finishQ, finishQueue, retryQueue } from "../../utils/bullmq";
 import { delivered } from "../../producer";
+import { handleError } from "../next/handleError";
 
 export async function generate(job: Job<Payload, any>) {
   const { new: record } = job.data;
-  const { id, lead_id, job_id } = record;
+  const { id, lead_id, job_id, purpose } = record;
   try {
     if (!job_id) throw new Error("No job id");
     if (!lead_id) throw new Error("No lead_id provided");
@@ -30,7 +31,7 @@ export async function generate(job: Job<Payload, any>) {
     if (jobsErr) throw jobsErr;
     if (!jobsData) throw new Error("No data");
     const form = jobsData.meta as {
-      focus: Focus[];
+      //focus: Focus[];
       industry: string;
       companyUSP: string;
     };
@@ -54,7 +55,7 @@ export async function generate(job: Job<Payload, any>) {
     if (!content) throw new Error("No website summary provided");
 
     /* focus */
-    const focus = form.focus[0] ??
+    const focus = purpose as Focus ??
       "Compliments about the company";
 
     /* Get Company USP */
@@ -187,18 +188,16 @@ export async function generate(job: Job<Payload, any>) {
     }
 
     /* Set next job */
-    finishQueue.add("finishJob", job.data, {
+    finishQueue.add(finishQ, job.data, {
       removeOnComplete: true,
       removeOnFail: true,
-    }).then(delivered);
+    });
 
     /* Set next state */
     await setNextState(id, "FLAG_TO_FINISH", "FLAG_TO_GENERATE");
 
     /* catch error */
   } catch (error) {
-    console.error(error);
-    await log("ERROR", (error as Error).message, id, "generate");
-    await setNextState(id, "ERROR_TIMEOUT", "FLAG_TO_GENERATE", 1);
+    handleError(job, error, "FLAG_TO_GENERATE");
   }
 }

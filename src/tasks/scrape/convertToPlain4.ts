@@ -61,13 +61,6 @@ export async function convertToPlain(html: string) {
     .replace(/[\x00-\x1F]/g, " ")
     .replace(/\u2019/g, "");
 
-  await log(
-    "OK",
-    rawTextContent,
-    "40f00d77-9fb1-49d0-ab73-e23d7f221f3c",
-    "scrape",
-  );
-
   // const cleanedText = rawTextContent.replace(/\s+/g, " ");
   // The regular expression [\n\r\t]+ matches one or more line breaks
   // (including newline \n and carriage return \r) and tabs \t, and replaces them with a single space.

@@ -9,10 +9,12 @@ import { waitUntilFree } from "./waitUntilFree";
 
 export async function finish(job: Job<Payload, any>) {
   const { new: record } = job.data;
-  const { id, lead_id, job_id } = record;
+  const { id, lead_id, job_id, status } = record;
   try {
     if (!lead_id) throw new Error("No lead provided");
     if (!job_id) throw new Error("No job provided");
+
+    /* **WORKAROUND** Check status if is ERROR_TIMEOUT **WORKAROUND** */
 
     /* Check if job data is available */
     await waitUntilFree(job_id);
@@ -25,13 +27,15 @@ export async function finish(job: Job<Payload, any>) {
       .limit(1)
       .single();
     if (jobErr) throw jobErr;
-    if (!jobData) throw new Error("No data");
     if (!jobData.expected_lines) throw new Error("No expected lines provided");
     if (!jobData.user_id) throw new Error("Could not find user");
 
     // Update gen lines + 1
-    const count_errors = jobData.count_errors;
-    const count_gen_lines = jobData.count_gen_lines + 1;
+
+    const count_errors = jobData.count_errors +
+      (status === "ERROR_TIMEOUT" ? 1 : 0);
+    const count_gen_lines = jobData.count_gen_lines +
+      (status !== "ERROR_TIMEOUT" ? 1 : 0);
     const count_sum = count_errors + count_gen_lines;
     const expected_lines = jobData.expected_lines;
 
@@ -62,6 +66,7 @@ export async function finish(job: Job<Payload, any>) {
         .update({
           status: "DONE",
           count_gen_lines,
+          count_errors,
           is_blocked: null,
         })
         .eq("id", job_id);
@@ -72,6 +77,7 @@ export async function finish(job: Job<Payload, any>) {
         .from("jobs")
         .update({
           count_gen_lines,
+          count_errors,
           is_blocked: null,
         })
         .eq("id", job_id);

@@ -16,6 +16,7 @@ import {
   summarizeQueue,
 } from "../../utils/bullmq";
 import { lockOrSkip } from "./lockOrSkip";
+import { handleError } from "../next/handleError";
 
 let tries = 0;
 
@@ -133,13 +134,7 @@ async function handleScrape(job: Job<Payload, any>) {
       throw new Error("result: invalid url");
     }
   } catch (error) {
-    await log(
-      "ERROR",
-      (error as Error).message,
-      id,
-      "URL is not valid",
-    );
-    await setNextState(id, "ERROR_TIMEOUT", "FLAG_TO_SCRAPE", tries);
+    handleError(job, error, "FLAG_TO_SCRAPE", tries);
   }
 
   try {
@@ -175,14 +170,7 @@ async function handleScrape(job: Job<Payload, any>) {
       tries += 1;
       await handleScrape(job);
     } else {
-      await log(
-        "ERROR",
-        (error as Error).message,
-        id,
-        "Could not scrape homepage or save scrape",
-      );
-      /* Add next job */
-      await setNextState(id, "ERROR_TIMEOUT", "FLAG_TO_SCRAPE", tries);
+      handleError(job, error, "FLAG_TO_SCRAPE", tries);
     }
   }
 
@@ -203,19 +191,13 @@ async function handleScrape(job: Job<Payload, any>) {
     if (updateLeads) throw updateLeads;
 
     /* Add next job */
-    await summarizeQueue.add(summarizeQ, job.data, {
+    summarizeQueue.add(summarizeQ, job.data, {
       removeOnComplete: true,
       removeOnFail: true,
     });
 
     await setNextState(id, "FLAG_TO_SUMMARIZE", "FLAG_TO_SCRAPE");
   } catch (error) {
-    await log(
-      "ERROR",
-      (error as Error).message,
-      id,
-      "Could not convert scrape homepage",
-    );
-    await setNextState(id, "ERROR_TIMEOUT", "FLAG_TO_SCRAPE", tries);
+    handleError(job, error, "FLAG_TO_SCRAPE", tries);
   }
 }

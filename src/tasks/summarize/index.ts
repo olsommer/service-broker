@@ -14,6 +14,7 @@ import {
 } from "../../utils/bullmq";
 import { delivered } from "../../producer";
 import { release } from "./release";
+import { handleError } from "../next/handleError";
 
 export async function summarize(job: Job<Payload, any>) {
   const { new: record } = job.data;
@@ -119,8 +120,6 @@ export async function summarize(job: Job<Payload, any>) {
     /* Set next state */
     await setNextState(id, "FLAG_TO_GENERATE", "FLAG_TO_SUMMARIZE");
   } catch (error) {
-    console.log(error);
-    await log("ERROR", (error as Error).message, id, "summarize");
-    await setNextState(id, "ERROR_TIMEOUT", "FLAG_TO_SUMMARIZE", 1);
+    handleError(job, error, "FLAG_TO_SUMMARIZE");
   }
 }
