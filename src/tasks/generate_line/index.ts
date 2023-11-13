@@ -10,13 +10,13 @@ import { gptGetChallenge } from "./gptGetChallenge";
 import { gptGetCompliment } from "./gptGetCompliment";
 import { gptGetRefinedLine } from "./gptGetRefinedLine";
 import { gptGetCompanyName } from "./gptGetCompanyName";
-import { finishQ, finishQueue, retryQueue } from "../../utils/bullmq";
+import { finishQ, finishQueue } from "../../utils/bullmq";
 import { delivered } from "../../producer";
 import { handleError } from "../next/handleError";
 
 export async function generate(job: Job<Payload, any>) {
   const { new: record } = job.data;
-  const { id, lead_id, job_id, purpose } = record;
+  const { id, lead_id, job_id, purpose, ref_campaign_id } = record;
   try {
     if (!job_id) throw new Error("No job id");
     if (!lead_id) throw new Error("No lead_id provided");
@@ -144,6 +144,8 @@ export async function generate(job: Job<Payload, any>) {
         active: true,
         lead_id,
         lead_job_id: id,
+        focus: purpose,
+        ref_campaign_id,
       });
     if (error) throw error;
 

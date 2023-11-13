@@ -390,6 +390,7 @@ export interface Database {
           lead_id: string | null
           lead_job_id: string
           meta: Json | null
+          ref_campaign_id: string | null
           updated_at: string
         }
         Insert: {
@@ -401,6 +402,7 @@ export interface Database {
           lead_id?: string | null
           lead_job_id: string
           meta?: Json | null
+          ref_campaign_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -412,6 +414,7 @@ export interface Database {
           lead_id?: string | null
           lead_job_id?: string
           meta?: Json | null
+          ref_campaign_id?: string | null
           updated_at?: string
         }
         Relationships: [
