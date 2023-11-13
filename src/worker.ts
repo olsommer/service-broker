@@ -37,7 +37,7 @@ export type Payload = {
 const scraperWorker = new Worker(scraperQ, scrape, {
   connection: conn1,
   // useWorkerThreads: true,
-  concurrency: 6,
+  concurrency: 3,
 });
 
 scraperWorker.on("ready", () => console.log(`Scrape Worker is ready`));
